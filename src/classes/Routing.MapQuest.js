@@ -86,7 +86,7 @@ fm.Routing.MapQuest = ol.Class(fm.Routing, {
 		else if(oldRoute.medium == fm.Routing.Medium.BICYCLE)
 			json += ",routeType:" + oldRoute.medium;
 		else
-			json += ",routeType:" + this.routingType;
+			json += ",routeType:" + oldRoute.type;
 
 		json += "}}";
 
