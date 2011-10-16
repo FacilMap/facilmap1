@@ -401,7 +401,7 @@ fm.Control.Search = ol.Class(ol.Control, {
 	},
 
 	getStateObject : function() {
-		return this._stateObject;
+		return $.extend(true, { }, this._stateObject);
 	},
 
 	setStateObject : function(obj) {

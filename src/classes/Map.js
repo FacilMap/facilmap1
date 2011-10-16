@@ -344,8 +344,8 @@ fm.Map = ol.Class(ol.Map, {
 
 		// Set control properties
 		$.each(this.controls, function(i,it) {
-			if(it.setStateObject && query.c && query.c[it.permalinkName])
-				it.setStateObject(query.c[it.permalinkName]);
+			if(it.setStateObject)
+				it.setStateObject(query.c && query.c[it.permalinkName] || { });
 		});
 
 		// Adding markers might have moved the map, reset map view

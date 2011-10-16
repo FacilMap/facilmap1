@@ -36,6 +36,11 @@ fm.Control.HistoryStateHandler = ol.Class(ol.Control, {
 	*/
 	minRest : 750,
 
+	/**
+	 * If true, all properties stored in the location state are prefixed with the map ID.
+	 */
+	prefixWithMapId : true,
+
 	newStateTimeout : null,
 
 	initialize : function() {
@@ -63,7 +68,7 @@ fm.Control.HistoryStateHandler = ol.Class(ol.Control, {
 		this.map.events.register("newState", this, this.onNewState);
 		this.stateHandler.start();
 
-		if(this.stateHandler.getState()[this.map.uniqueId] || this.map.getCenter() == null)
+		if(this.getState() || this.map.getCenter() == null)
 			this.updateMapView();
 		else
 			this.updateHistoryState();
@@ -103,10 +108,7 @@ fm.Control.HistoryStateHandler = ol.Class(ol.Control, {
 		if(fm.Util.encodeQueryString(state) == fm.Util.encodeQueryString(this.map.getDefaultStateObject()))
 			state = null;
 
-		var obj = this.stateHandler.getState();
-		obj[this.map.uniqueId] = state;
-
-		this.stateHandler.setState(obj);
+		this.setState(state);
 		this.events.triggerEvent("stateChanged");
 	},
 
@@ -114,8 +116,26 @@ fm.Control.HistoryStateHandler = ol.Class(ol.Control, {
 	 * Updates the map view to show the content of location.hash.
 	*/
 	updateMapView : function() {
-		this.map.setStateObject(this.stateHandler.getState()[this.map.uniqueId]);
+		this.map.setStateObject(this.getState());
 		this.updateHistoryState();
+	},
+
+	getState : function() {
+		var ret = this.stateHandler.getState();
+		if(this.prefixWithMapId)
+			ret = ret[this.map.uniqueId];
+		return ret;
+	},
+
+	setState : function(state) {
+		if(this.prefixWithMapId)
+		{
+			var old = this.stateHandler.getState();
+			old[this.map.uniqueId] = state;
+			state = old;
+		}
+
+		this.stateHandler.setState(state);
 	},
 
 	CLASS_NAME : "FacilMap.Control.HistoryStateHandler"
