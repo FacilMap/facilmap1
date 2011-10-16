@@ -51,17 +51,21 @@ fm.Control.Search = ol.Class(ol.Control, {
 
 		if(create)
 		{
-			/* Seems to work without this now, and this breaks route dragging behaviour
 			// Disable map dragging inside search bar for proper mouse click handling
 			var navigationControl = this.map.getControlsByClass("OpenLayers.Control.Navigation")[0];
 			if(navigationControl)
 			{
+				var over = false;
 				$(ret).mouseover(function(){
 					navigationControl.deactivate();
+					t._layerRouting._dragFeature.deactivate();
+					t._layerRouting._featureHandler.deactivate();
 				}).mouseout(function() {
 					navigationControl.activate();
+					t._layerRouting._dragFeature.activate();
+					t._layerRouting._featureHandler.activate();
 				});
-			}*/
+			}
 
 			/////////////////
 			// Control layers
