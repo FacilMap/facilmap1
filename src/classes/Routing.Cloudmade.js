@@ -17,31 +17,67 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 FacilMap.Routing.Cloudmade = OpenLayers.Class(FacilMap.Routing, {
 	routingURL : "http://routes.cloudmade.com/0abc333ea36c4c34bc67a72442d9770b/api/0.3/",
 	attribution : OpenLayers.i18n("attribution-routing-cloudmade"),
 
-	getGPXURL : function() {
-		if(this.from == null || this.to == null || this.medium == null || this.routingType == null)
-			return null;
+	getRoute : function(options, callback) {
+		var t = this;
 
+		if(!options.from || !options.to || !options.medium || !options.type)
+		{
+			callback({ });
+			return;
+		}
+
+		if(!options.via)
+			options.via = [ ];
+
+		ol.Request.GET({
+			url : this._getGPXURL(options),
+			callback : function(resp) {
+				if(!resp || !resp.responseXML)
+					callback({ });
+				else
+				{
+					callback({
+						from : options.from,
+						to : options.to,
+						medium : options.medium,
+						type : options.type,
+						via : options.via,
+						gpx : resp.responseXML,
+						info : null,
+						distance : t._getRouteDistance(resp.responseXML),
+						duration : t._getRouteDuration(resp.responseXML),
+						getElevationProfile : null,
+						optimiseRoute : null
+					});
+				}
+			}
+		})
+	},
+
+	_getGPXURL : function(options) {
 		var url = this.routingURL +
-		          this.from.lat + "," + this.from.lon;
-		for(var i=0; i<this.via.length; i++)
-			url += (i == 0 ? ",[" : ",") + this.via[i].lat + "," + this.via[i].lon;
-		if(this.via.length > 0)
+		          options.from.lat + "," + options.from.lon;
+		for(var i=0; i<options.via.length; i++)
+			url += (i == 0 ? ",[" : ",") + options.via[i].lat + "," + options.via[i].lon;
+		if(options.via.length > 0)
 			url += "]";
-		url += "," + this.to.lat + "," + this.to.lon + "/" + this.medium;
-		if(this.medium == "foot" || this.medium == "bicycle")
+		url += "," + options.to.lat + "," + options.to.lon + "/" + options.medium;
+		if(options.medium == "foot" || options.medium == "bicycle")
 			url += "/fastest";
 		else
-			url += "/" + this.routingType;
+			url += "/" + options.type;
 		url += ".gpx?units=km";
 		return url;
 	},
 
-	getRouteLength : function() {
-		var extensions = this.dom.getElementsByTagName("extensions");
+	_getRouteDistance : function(dom) {
+		var extensions = dom.getElementsByTagName("extensions");
 		if(extensions.length > 0)
 		{
 			var distance = extensions[0].getElementsByTagName("distance");
@@ -51,8 +87,8 @@ FacilMap.Routing.Cloudmade = OpenLayers.Class(FacilMap.Routing, {
 		return null;
 	},
 
-	getRouteDuration : function() {
-		var extensions = this.dom.getElementsByTagName("extensions");
+	_getRouteDuration : function(dom) {
+		var extensions = dom.getElementsByTagName("extensions");
 		if(extensions.length > 0)
 		{
 			var duration = extensions[0].getElementsByTagName("time");
@@ -64,3 +100,5 @@ FacilMap.Routing.Cloudmade = OpenLayers.Class(FacilMap.Routing, {
 
 	CLASS_NAME : "FacilMap.Routing.Cloudmade"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

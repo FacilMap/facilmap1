@@ -17,37 +17,149 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
-FacilMap.Routing.MapQuest = OpenLayers.Class(FacilMap.Routing, {
+(function(fm, ol, $){
+
+fm.Routing.MapQuest = ol.Class(fm.Routing, {
 	routingURL : "http://open.mapquestapi.com/directions/v0/route",
 	orderedURL : "http://open.mapquestapi.com/directions/v0/optimizedRoute",
 	elevationChartURL : "http://open.mapquestapi.com/elevation/v1/getElevationChart",
-	attribution : OpenLayers.i18n("attribution-routing-mapquest"),
+	attribution : ol.i18n("attribution-routing-mapquest"),
 
-	getGPXURL : function() {
-		if(this.from == null || this.to == null || this.medium == null || this.routingType == null)
-			return null;
+	getRoute : function(options, callback) {
+		var t = this;
 
-		var json = "{locations:[{latLng:{lat:" + this.from.lat + ",lng:" + this.from.lon +"}}";
-		for(var i=0; i<this.via.length; i++)
-			json += ",{latLng:{lat:" + this.via[i].lat + ",lng:" + this.via[i].lon + "}}";
-		json += ",{latLng:{lat:" + this.to.lat + ",lng:" + this.to.lon + "}}]";
+		if(!options.from || !options.to || !options.medium || !options.type)
+		{
+			callback({ });
+			return;
+		}
+
+		if(!options.via)
+			options.via = [ ];
+
+		ol.Request.GET({
+			url : this._getGPXURL(options),
+			callback : function(resp) {
+				if(!resp || !resp.responseXML)
+					callback({ });
+				else
+				{
+					callback({
+						from : options.from,
+						to : options.to,
+						medium : options.medium,
+						type : options.type,
+						via : options.via,
+						gpx : resp.responseXML,
+						info : null,
+						distance : t._getRouteDistance(resp.responseXML),
+						duration : t._getRouteDuration(resp.responseXML),
+						getElevationProfile : function(size){ return t._getElevationProfileURL(this, size); },
+						optimiseRoute : function(callback) { t._getOptimisedRoute(this, callback); }
+					});
+				}
+			}
+		})
+	},
+
+	_getOptimisedRoute : function(oldRoute, callback) {
+		var t = this;
+
+		if(callback == null)
+			callback = function() { };
+
+		if(!oldRoute.via || oldRoute.via.length < 2)
+		{
+			callback(oldRoute);
+			return;
+		}
+
+		var json = "{locations:[{latLng:{lat:" + oldRoute.from.lat + ",lng:" + oldRoute.from.lon +"}}";
+		for(var i=0; i<oldRoute.via.length; i++)
+			json += ",{latLng:{lat:" + oldRoute.via[i].lat + ",lng:" + oldRoute.via[i].lon + "}}";
+		json += ",{latLng:{lat:" + oldRoute.to.lat + ",lng:" + oldRoute.to.lon + "}}]";
+
+		json += ",options:{generalize:-1,narrativeType:none";
+
+		if(oldRoute.medium == fm.Routing.Medium.FOOT)
+			json += ",routeType:pedestrian";
+		else if(oldRoute.medium == fm.Routing.Medium.BICYCLE)
+			json += ",routeType:" + oldRoute.medium;
+		else
+			json += ",routeType:" + this.routingType;
+
+		json += "}}";
+
+		var url = this.orderedURL + "?inFormat=json&outFormat=xml&json=" + encodeURIComponent(json);
+
+		ol.Request.GET({
+			url: url,
+			callback: function(resp) {
+				if(!resp || !resp.responseXML)
+				{
+					callback({ });
+					return;
+				}
+
+				var locSequence = resp.responseXML.getElementsByTagName("locationSequence");
+				if(locSequence.length == 0)
+				{
+					callback({ });
+					return;
+				}
+
+				locSequence = locSequence[0].firstChild.data.split(",");
+
+				var newVia = [ ];
+				for(var i=1; i<locSequence.length-1; i++) // The first and last location are the start and end points
+				{
+					if(oldRoute.via[locSequence[i]-1] == undefined)
+					{
+						callback({ });
+						return;
+					}
+					newVia.push(oldRoute.via[locSequence[i]-1]);
+				}
+
+				callback({
+					from : oldRoute.from,
+					to : oldRoute.to,
+					medium : oldRoute.medium,
+					type : oldRoute.type,
+					via : newVia,
+					gpx : resp.responseXML,
+					info : null,
+					distance : t._getRouteDistance(resp.responseXML),
+					duration : t._getRouteDuration(resp.responseXML),
+					getElevationProfile : function(size){ t._getElevationProfileURL(this, size); },
+					optimiseRoute : function(callback){ callback(this); }
+				});
+			}
+		});
+	},
+
+	_getGPXURL : function(options) {
+		var json = "{locations:[{latLng:{lat:" + options.from.lat + ",lng:" + options.from.lon +"}}";
+		for(var i=0; i<options.via.length; i++)
+			json += ",{latLng:{lat:" + options.via[i].lat + ",lng:" + options.via[i].lon + "}}";
+		json += ",{latLng:{lat:" + options.to.lat + ",lng:" + options.to.lon + "}}]";
 
 		json += ",options:{unit:k,generalize:0,narrativeType:none";
 
-		if(this.medium == FacilMap.Routing.Medium.FOOT)
+		if(options.medium == fm.Routing.Medium.FOOT)
 			json += ",routeType:pedestrian";
-		else if(this.medium == FacilMap.Routing.Medium.BICYCLE)
-			json += ",routeType:" + this.medium;
+		else if(options.medium == fm.Routing.Medium.BICYCLE)
+			json += ",routeType:" + options.medium;
 		else
-			json += ",routeType:" + this.routingType;
+			json += ",routeType:" + options.type;
 
 		json += "}}";
 
 		return this.routingURL + "?inFormat=json&outFormat=xml&json=" + encodeURIComponent(json);
 	},
 
-	getRouteLength : function() {
-		var els = this.dom.getElementsByTagName("route")[0].childNodes;
+	_getRouteDistance : function(dom) {
+		var els = dom.getElementsByTagName("route")[0].childNodes;
 		for(var i=0; i<els.length; i++)
 		{
 			if(els[i].tagName == "distance")
@@ -55,8 +167,8 @@ FacilMap.Routing.MapQuest = OpenLayers.Class(FacilMap.Routing, {
 		}
 	},
 
-	getRouteDuration : function() {
-		var els = this.dom.getElementsByTagName("route")[0].childNodes;
+	_getRouteDuration : function(dom) {
+		var els = dom.getElementsByTagName("route")[0].childNodes;
 		var time = null;
 		for(var i=0; i<els.length; i++)
 		{
@@ -73,78 +185,8 @@ FacilMap.Routing.MapQuest = OpenLayers.Class(FacilMap.Routing, {
 		}
 	},
 
-	reorderViaPoints : function(callback) {
-		if(callback == null)
-			callback = function() { };
-
-		if(this.from == null || this.to == null || this.medium == null || this.routingType == null)
-		{
-			callback("Insufficient parameters.");
-			return;
-		}
-		if(this.via.length < 2)
-		{
-			callback("Less than 2 via points.");
-			return;
-		}
-		var json = "{locations:[{latLng:{lat:" + this.from.lat + ",lng:" + this.from.lon +"}}";
-		for(var i=0; i<this.via.length; i++)
-			json += ",{latLng:{lat:" + this.via[i].lat + ",lng:" + this.via[i].lon + "}}";
-		json += ",{latLng:{lat:" + this.to.lat + ",lng:" + this.to.lon + "}}]";
-
-		json += ",options:{generalize:-1,narrativeType:none";
-
-		if(this.medium == FacilMap.Routing.Medium.FOOT || this.medium == FacilMap.Routing.Medium.BICYCLE)
-			json += ",routeType:pedestrian";
-		else if(this.medium == FacilMap.Routing.Medium.BICYCLE)
-			json += ",routeType:" + this.medium;
-		else
-			json += ",routeType:" + this.routingType;
-
-		json += "}}";
-
-		var url = this.orderedURL + "?inFormat=json&outFormat=xml&json=" + encodeURIComponent(json);
-
-		OpenLayers.Request.GET({
-			url: url,
-			success: function(resp) {
-				if(!resp.responseXML)
-				{
-					callback("Error: no response");
-					return;
-				}
-
-				var locSequence = resp.responseXML.getElementsByTagName("locationSequence");
-				if(locSequence.length == 0)
-				{
-					callback(true);
-					return;
-				}
-
-				locSequence = locSequence[0].firstChild.data.split(",");
-
-				var newVia = [ ];
-				for(var i=1; i<locSequence.length-1; i++) // The first and last location are the start and end points
-				{
-					if(this.via[locSequence[i]-1] == undefined)
-					{
-						callback("Error: non-existent location");
-						return;
-					}
-					newVia.push(this.via[locSequence[i]-1]);
-				}
-				this.via = newVia;
-				callback();
-			},
-			failure: function() {
-				callback("Request error");
-			},
-			scope: this
-		});
-	},
-
-	getElevationProfileURL : function(size) {
-		var minDist = 2 * this.getRouteLength() / size.w;
+	_getElevationProfileURL : function(route, size) {
+		var minDist = 2 * route.distance / size.w;
 
 		var calcDist = function(lonlat1, lonlat2) {
 			// Source: http://www.movable-type.co.uk/scripts/latlong.html
@@ -158,13 +200,13 @@ FacilMap.Routing.MapQuest = OpenLayers.Class(FacilMap.Routing, {
 			return R * c;
 		};
 
-		var points = this.dom.getElementsByTagName("shapePoints")[0].getElementsByTagName("latLng");
+		var points = route.gpx.getElementsByTagName("shapePoints")[0].getElementsByTagName("latLng");
 		var last = null;
 		var latlons = [ ];
 		var dist = 0;
 		for(var i=0; i < points.length; i++)
 		{
-			var it = new OpenLayers.LonLat(points[i].getElementsByTagName("lng")[0].firstChild.data, points[i].getElementsByTagName("lat")[0].firstChild.data);
+			var it = new ol.LonLat(points[i].getElementsByTagName("lng")[0].firstChild.data, points[i].getElementsByTagName("lat")[0].firstChild.data);
 
 			if(last != null)
 				dist += calcDist(last, it);
@@ -185,3 +227,5 @@ FacilMap.Routing.MapQuest = OpenLayers.Class(FacilMap.Routing, {
 
 	CLASS_NAME : "FacilMap.Routing.MapQuest"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

@@ -624,7 +624,7 @@ FacilMap.Util = {
 	 * @param title {String}
 	 */
 	popup : function(content, title) {
-		$("<div></div>").append(content).dialog({ modal: true, title: title, width: window.innerWidth/2, buttons: { "OK" : function() { $(this).dialog("close"); } }});
+		$("<div></div>").append(content).dialog({ modal: true, title: title, width: "auto", maxWidth: window.innerWidth/2, buttons: { "OK" : function() { $(this).dialog("close"); } }});
 	},
 
 	/**
@@ -635,6 +635,16 @@ FacilMap.Util = {
 	 */
 	toMapProjection : function(lonlat, map) {
 		return lonlat.clone().transform(new ol.Projection("EPSG:4326"), map.getProjectionObject());
+	},
+
+	/**
+	 * Rounds the given number to the given number of digits.
+	 * @param number {Number}
+	 * @param digits {Number}
+	 */
+	round : function(number, digits) {
+		var f = Math.pow(10, digits);
+		return Math.round(number*f)/f;
 	}
 }
 

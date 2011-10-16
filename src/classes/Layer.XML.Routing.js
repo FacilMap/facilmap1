@@ -17,157 +17,169 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Shows a calculated route on the map. Add this layer to a map and set the different paramters using the set* functions. As soon as all
  * parameters are set, the route will be displayed. The parameters can be updated then and the route will be recalculated.
 
  * @event draggedRoute The route was changed using drag and drop.
 */
-FacilMap.Layer.XML.Routing = OpenLayers.Class(FacilMap.Layer.XML, {
+fm.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 	HOVER_MAX_DISTANCE : 10,
 
-	fromIcon : new OpenLayers.Icon(FacilMap.apiUrl+"/img/route-start.png", new OpenLayers.Size(20,34), new OpenLayers.Pixel(-10, -34)),
-	toIcon : new OpenLayers.Icon(FacilMap.apiUrl+"/img/route-stop.png", new OpenLayers.Size(20,34), new OpenLayers.Pixel(-10, -34)),
-	viaIcon : new OpenLayers.Icon(FacilMap.apiUrl+"/img/yellow.png", new OpenLayers.Size(20,34), new OpenLayers.Pixel(-10, -34)),
+	fromIcon : new ol.Icon(fm.apiUrl+"/img/route-start.png", new ol.Size(20,34), new ol.Pixel(-10, -34)),
+	toIcon : new ol.Icon(fm.apiUrl+"/img/route-stop.png", new ol.Size(20,34), new ol.Pixel(-10, -34)),
+	viaIcon : new ol.Icon(fm.apiUrl+"/img/yellow.png", new ol.Size(20,34), new ol.Pixel(-10, -34)),
 
 	colour : "blue",
 
-	/**
-	 * The routing provider to use.
-	 * @var FacilMap.Routing
-	*/
-	provider : null, // is instantiated in the initialize() function
+	provider : null,
+	_currentRoute : null,
 
-	fromMarker : null,
-	toMarker : null,
-	viaMarkers : null,
+	_fromMarker : null,
+	_toMarker : null,
+	_viaMarkers : null,
 
-	zoomAtNextSuccess : false,
 	markers : null,
 	markersDrawn : false,
 
-	dragFeature : null,
-	featureHandler : null,
-	temporaryViaMarker : null,
+	_dragFeature : null,
+	_featureHandler : null,
+	_temporaryViaMarker : null,
 
 	initialize : function(name, options) {
-		FacilMap.Layer.XML.prototype.initialize.apply(this, [ name, undefined, options ]);
+		var t = this;
 
-		this.provider = this.provider == null ? new FacilMap.Routing.MapQuest : new this.provider();
+		fm.Layer.XML.prototype.initialize.apply(this, [ name, undefined, options ]);
+
+		if(!this.provider)
+			this.provider = new fm.Routing.MapQuest();
 		this.attribution = this.provider.attribution;
 
-		this.viaMarkers = [ ];
+		this._viaMarkers = [ ];
 		this.markers = [ ];
 
 		this.events.addEventType("draggedRoute");
 
-		var routingLayer = this;
-		this.dragFeature = new OpenLayers.Control.DragFeature(this, {
-			dragCallbacks : { move : function(pixel) {
-				// this.feature is the marker
-				// FIXME: Sometimes after creating two via points, this.feature.icon is null
-				var newPx = new OpenLayers.Pixel(this.feature.icon.px.x + (pixel.x - this.lastPixel.x), this.feature.icon.px.y - (this.lastPixel.y - pixel.y));
-				this.lastPixel = pixel;
-				this.feature.draw(newPx);
-			} },
+		// Feature for dragging from, to and via markers
+		this._dragFeature = new ol.Control.DragFeature(this, {
+			dragCallbacks : {
+				move : function(pixel) {
+					// this.feature is the marker
+					var newPx = new ol.Pixel(this.feature.icon.px.x + (pixel.x - this.lastPixel.x), this.feature.icon.px.y - (this.lastPixel.y - pixel.y));
+					this.lastPixel = pixel;
+					this.feature.draw(newPx);
+				}
+			},
 			onComplete : function(marker, pixel) {
-				var lonlat = this.map.getLonLatFromPixel(this.feature.icon.px).transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
-				if(marker == routingLayer.fromMarker)
-					routingLayer.setFrom(lonlat);
-				else if(marker == routingLayer.toMarker)
-					routingLayer.setTo(lonlat);
+				var lonlat = this.map.getLonLatFromPixel(this.feature.icon.px).transform(this.map.getProjectionObject(), new ol.Projection("EPSG:4326"));
+				var newRouteOptions = $.extend({ }, t._currentRoute);
+				var which;
+				if(marker == t._fromMarker)
+				{
+					$.extend(newRouteOptions, { from: lonlat });
+					which = "from";
+				}
+				else if(marker == t._toMarker)
+				{
+					$.extend(newRouteOptions, { to : lonlat });
+					which = "to";
+				}
 				else
 				{
-					for(var i=0; i<routingLayer.viaMarkers.length; i++)
+					var via = [ ].concat(t._currentRoute.via);
+					for(var i=0; i<t._viaMarkers.length; i++)
 					{
-						if(marker == routingLayer.viaMarkers[i])
+						if(marker == t._viaMarkers[i])
 						{
-							if(lonlat.lon != routingLayer.provider.via[i].lon || lonlat.lat != routingLayer.provider.via[i].lat)
-							{
-								routingLayer.provider.via[i] = lonlat;
-								routingLayer.updateRouting();
-							}
+							via[i] = lonlat;
 							break;
 						}
 					}
-					routingLayer.events.triggerEvent("stateObjectChanged");
+					$.extend(newRouteOptions, { via : via });
+					which = "via";
 				}
-				routingLayer.events.triggerEvent("draggedRoute");
+				t.setRoute(newRouteOptions);
+				t.events.triggerEvent("draggedRoute", { newRouteOptions : newRouteOptions, draggedPoint : which });
 			}
 		});
-		this.featureHandler = OpenLayers.Util.extend(new OpenLayers.Handler({ map : null }), {
+
+		// Dragging of route
+		this._featureHandler = ol.Util.extend(new ol.Handler({ map : null }), {
 			lastPoint : null,
 			lastXY : null,
 			mousemove : function(evt) {
-				var point = routingLayer.getPointFromMousePosition(evt.xy);
-				if(point != null && !routingLayer.dragFeature.handlers.drag.active)
+				var point = t.getPointFromMousePosition(evt.xy);
+				if(point != null && !t._dragFeature.handlers.drag.active)
 				{
-					if(routingLayer.temporaryViaMarker == null)
+					if(t._temporaryViaMarker == null)
 					{
-						routingLayer.temporaryViaMarker = new OpenLayers.Marker(new OpenLayers.LonLat(0, 0), routingLayer.viaIcon.clone());
-						routingLayer.temporaryViaMarker.layer = routingLayer;
-						routingLayer.addMarker(routingLayer.temporaryViaMarker);
-						routingLayer.map.cursorRoutingBkp = (routingLayer.map.viewPortDiv.style.cursor || "");
+						t._temporaryViaMarker = new ol.Marker(new ol.LonLat(0, 0), t.viaIcon.clone());
+						t._temporaryViaMarker.layer = t;
+						t.addMarker(t._temporaryViaMarker);
+						t.map.cursorRoutingBkp = (t.map.viewPortDiv.style.cursor || "");
 					}
-					routingLayer.temporaryViaMarker.lonlat = point.lonlat;
-					routingLayer.drawMarker(routingLayer.temporaryViaMarker);
+					t._temporaryViaMarker.lonlat = point.lonlat;
+					t.drawMarker(t._temporaryViaMarker);
 					this.lastPoint = point;
 					this.lastXY = evt.xy;
-					routingLayer.map.viewPortDiv.style.cursor = "pointer";
+					t.map.viewPortDiv.style.cursor = "pointer";
 				}
-				else if(routingLayer.temporaryViaMarker != null)
+				else if(t._temporaryViaMarker != null)
 				{
-					routingLayer.removeMarker(routingLayer.temporaryViaMarker);
-					routingLayer.temporaryViaMarker.destroy();
-					routingLayer.temporaryViaMarker = null;
+					t.removeMarker(t._temporaryViaMarker);
+					t._temporaryViaMarker.destroy();
+					t._temporaryViaMarker = null;
 					this.lastPoint = null;
-					routingLayer.map.viewPortDiv.style.cursor = routingLayer.map.cursorRoutingBkp;
+					t.map.viewPortDiv.style.cursor = t.map.cursorRoutingBkp;
 				}
 			},
 			mousedown : function(evt) {
 				if(this.lastPoint != null)
 				{
-					routingLayer.map.viewPortDiv.style.cursor = routingLayer.map.cursorRoutingBkp;
+					t.map.viewPortDiv.style.cursor = t.map.cursorRoutingBkp;
 
-					var newIndex = routingLayer.provider.via.length;
+					var newIndex = t._currentRoute.via.length;
 					while(newIndex > 0)
 					{
-						var thisPoint = routingLayer.getPointFromLonLat(routingLayer.provider.via[newIndex-1].clone().transform(new OpenLayers.Projection("EPSG:4326"), routingLayer.map.getProjectionObject()));
+						var thisPoint = t.getPointFromLonLat(fm.Util.toMapProjection(t._currentRoute.via[newIndex-1], t.map));
 						if(thisPoint == null || thisPoint.index > this.lastPoint.index)
 						{
-							routingLayer.provider.via[newIndex] = routingLayer.provider.via[newIndex-1];
-							routingLayer.viaMarkers[newIndex] = routingLayer.viaMarkers[newIndex-1];
+							t._currentRoute.via[newIndex] = t._currentRoute.via[newIndex-1];
+							t._viaMarkers[newIndex] = t._viaMarkers[newIndex-1];
 							newIndex--;
 						}
 						else
 							break;
 					}
-					routingLayer.temporaryViaMarker.draw(new OpenLayers.Pixel(this.lastXY.x, this.lastXY.y+2));
-					routingLayer.provider.via[newIndex] = this.lastPoint.lonlat;
-					routingLayer.viaMarkers[newIndex] = routingLayer.temporaryViaMarker;
-					routingLayer.temporaryViaMarker = null;
+					t._temporaryViaMarker.draw(new ol.Pixel(this.lastXY.x, this.lastXY.y+2));
+					t._currentRoute.via[newIndex] = this.lastPoint.lonlat;
+					t._viaMarkers[newIndex] = t._temporaryViaMarker;
+					t._temporaryViaMarker = null;
 					this.lastPoint = null;
 
-					routingLayer.dragFeature.handlers.feature.mousemove({ type : "mousemove", target : routingLayer.viaMarkers[newIndex].icon.imageDiv.firstChild });
-					routingLayer.dragFeature.handlers.drag.mousedown(evt);
+					t._dragFeature.handlers.feature.mousemove({ type : "mousemove", target : t._viaMarkers[newIndex].icon.imageDiv.firstChild });
+					t._dragFeature.handlers.drag.mousedown(evt);
 
-					OpenLayers.Event.stop(evt);
+					ol.Event.stop(evt);
 					return false;
 				}
 			},
 			dblclick : function(evt) {
-				var feature = routingLayer.getFeatureFromEvent(evt);
+				var feature = t.getFeatureFromEvent(evt);
 				if(feature == null)
 					return true;
 
-				for(var i=0; i<routingLayer.viaMarkers.length; i++)
+				for(var i=0; i<t._viaMarkers.length; i++)
 				{
-					if(routingLayer.viaMarkers[i] == feature)
+					if(t._viaMarkers[i] == feature)
 					{
-						routingLayer.provider.via.splice(i, 1);
-						routingLayer.updateRouting();
-						routingLayer.events.triggerEvent("stateObjectChanged");
-						routingLayer.events.triggerEvent("draggedRoute");
+						t.removeMarker(t._viaMarkers[i]);
+						var newRouteOptions = $.extend({ }, t._currentRoute);
+						newRouteOptions.via.splice(i, 1);
+						t.setRoute(newRouteOptions);
+						t.events.triggerEvent("draggedRoute", { newRouteOptions : newRouteOptions });
 						return false;
 					}
 				}
@@ -178,18 +190,18 @@ FacilMap.Layer.XML.Routing = OpenLayers.Class(FacilMap.Layer.XML, {
 	},
 
 	setMap : function(map) {
-		FacilMap.Layer.XML.prototype.setMap.apply(this, arguments);
+		fm.Layer.XML.prototype.setMap.apply(this, arguments);
 
-		map.addControl(this.dragFeature);
-		this.dragFeature.activate();
+		map.addControl(this._dragFeature);
+		this._dragFeature.activate();
 
-		this.featureHandler.setMap(map);
-		this.featureHandler.activate();
+		this._featureHandler.setMap(map);
+		this._featureHandler.activate();
 	},
 
 	getFeatureFromEvent : function(evt) {
 		// We don't want to drag the actual features, but the markers instead
-		var markers = [ this.fromMarker, this.toMarker ].concat(this.viaMarkers);
+		var markers = [ this._fromMarker, this._toMarker ].concat(this._viaMarkers);
 		for(var i=0; i<markers.length; i++)
 		{
 			if(markers[i] != null && markers[i].icon && markers[i].icon.imageDiv && (evt.target || evt.srcElement) == markers[i].icon.imageDiv.firstChild)
@@ -249,263 +261,113 @@ FacilMap.Layer.XML.Routing = OpenLayers.Class(FacilMap.Layer.XML, {
 		}
 
 		if(smallestDistancePoint != null)
-			return { index : smallestDistancePoint[0], lonlat : new OpenLayers.LonLat(smallestDistancePoint[1].x, smallestDistancePoint[1].y) };
+			return { index : smallestDistancePoint[0], lonlat : new ol.LonLat(smallestDistancePoint[1].x, smallestDistancePoint[1].y) };
 		else
 			return null;
 	},
 
-	/**
-	 * Reorders the via points so that the total driving time/distance is minimised but still all the targets are
-	 * reached. Only does something when there are 2 or more via points. In case of an error, nothing is done.
-	 * @param callback {Function} A callback function to be called as soon as the points are ordered or an error has
-	 *                          occurred. On success, the first parameter is null, else it may be an error message.
-	 * @return {void}
-	*/
-	reorderViaPoints : function(callback) {
-		var layer = this;
-		this.provider.reorderViaPoints(function(error) {
-			layer.events.triggerEvent("stateObjectChanged");
-			layer.updateRouting(false);
+	setRoute : function(options) {
+		this.setUrl();
 
-			if(callback != null)
-				callback(error);
-		});
-	},
-
-	/**
-	 * Set the start point of this route. Recalculates the route.
-	 * @param from {OpenLayers.LonLat} The start point to set for this route.
-	 * @param zoom {boolean} Zoom the map to this route after it has been loaded?
-	 * @return {void}
-	*/
-	setFrom : function(from, zoom) {
-		if(from == this.provider.from)
+		if(this._fromMarker != null)
 		{
-			if(zoom) this.zoomMap();
-			return;
-		}
-		this.provider.from = from;
-
-		this.events.triggerEvent("stateObjectChanged");
-		this.updateRouting(zoom);
-	},
-
-	/**
-	 * Set the destination point of this route. Recalculates the route.
-	 * @param to {OpenLayers.LonLat} The destination point to set for this route.
-	 * @param zoom {boolean} Zoom the map to this route after it has been loaded?
-	 * @return {void}
-	*/
-	setTo : function(to, zoom) {
-		if(to == this.provider.to)
-		{
-			if(zoom) this.zoomMap();
-			return;
-		}
-		this.provider.to = to;
-
-		this.events.triggerEvent("stateObjectChanged");
-		this.updateRouting(zoom);
-	},
-
-	/**
-	 * Set the means of transportation for this route. Recalculates the route.
-	 * @param medium {FacilMap.Layer.XML.Routing.Medium} The means of transportation to use for this route.
-	 * @param zoom {boolean} Zoom the map to this route after it has been loaded?
-	 * @return {void}
-	*/
-	setMedium : function(medium, zoom) {
-		if(medium == this.provider.medium)
-		{
-			if(zoom) this.zoomMap();
-			return;
-		}
-		this.provider.medium = medium;
-		this.events.triggerEvent("stateObjectChanged");
-		this.updateRouting(zoom);
-	},
-
-	/**
-	 * Set the route calculation mechanism for this route. Recalculates the route.
-	 * @param type {FacilMap.Layer.XML.Routing.Type} The route calculation mechanism to use for this route.
-	 * @param zoom {boolean} Zoom the map to this route after it has been loaded?
-	 * @return {void}
-	*/
-	setType : function(type, zoom) {
-		if(type == this.provider.routingType)
-		{
-			if(zoom) this.zoomMap();
-			return;
-		}
-		this.provider.routingType = type;
-		this.events.triggerEvent("stateObjectChanged");
-		this.updateRouting(zoom);
-	},
-
-	updateRouting : function(zoom) {
-		if(this.fromMarker != null)
-		{
-			this.removeMarker(this.fromMarker);
-			this.fromMarker = null;
-		}
-		if(this.provider.from != null)
-		{
-			this.fromMarker = new OpenLayers.Marker(this.provider.from.clone().transform(new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()), this.fromIcon.clone())
-			this.fromMarker.layer = this; // Required for the drag control
-			this.addMarker(this.fromMarker);
+			this.removeMarker(this._fromMarker);
+			this._fromMarker = null;
 		}
 
-		if(this.toMarker != null)
+		if(this._toMarker != null)
 		{
-			this.removeMarker(this.toMarker);
-			this.toMarker = null;
-		}
-		if(this.provider.to != null)
-		{
-			this.toMarker = new OpenLayers.Marker(this.provider.to.clone().transform(new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()), this.toIcon.clone())
-			this.toMarker.layer = this; // Required for the drag control
-			this.addMarker(this.toMarker);
+			this.removeMarker(this._toMarker);
+			this._toMarker = null;
 		}
 
-		for(var i=0; i<this.viaMarkers.length; i++)
+		for(var i=0; i<this._viaMarkers.length; i++)
 		{
-			this.removeMarker(this.viaMarkers[i]);
-			this.viaMarkers[i].destroy();
+			this.removeMarker(this._viaMarkers[i]);
+			this._viaMarkers[i].destroy();
 		}
-		this.viaMarkers = [ ];
-		for(var i=0; i<this.provider.via.length; i++)
+		this._viaMarkers = [ ];
+
+		this._currentRoute = null;
+
+		if(options)
 		{
-			this.viaMarkers[i] = new OpenLayers.Marker(this.provider.via[i].clone().transform(new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()), this.viaIcon.clone())
-			this.viaMarkers[i].layer = this; // Required for the drag control
-			this.addMarker(this.viaMarkers[i]);
-		}
-
-		this.zoomAtNextSuccess = zoom;
-		this.provider.setDOM(null);
-
-		this.setUrl(this.provider.getGPXURL());
-	},
-
-	/**
-	 * Returns a link to a web page displaying detailed information about the route, such as driving instructions.
-	 * @return {String} A link to a web page or null if this route is not initialised yet.
-	*/
-	getDetailedLink : function() {
-		return this.provider.getPermalinkURL();
-	},
-
-	getDistance : function() {
-		return this.provider.getRouteLength();
-	},
-
-	getDuration : function() {
-		return this.provider.getRouteDuration();
-	},
-
-	getElevationProfileURL : function(size) {
-		return this.provider.getElevationProfileURL(size);
-	},
-
-	requestSuccess : function(request) {
-		if(request.responseXML)
-		{ // Do this before calling the parent function as that invokes the loadend event
-			this.provider.setDOM(request.responseXML);
-		}
-
-		FacilMap.Layer.XML.prototype.requestSuccess.apply(this, arguments);
-
-		if(this.zoomAtNextSuccess)
-			this.zoomMap();
-	},
-
-	zoomMap : function() {
-		var extent = this.getDataExtent();
-		if(extent != null)
-			this.map.zoomToExtent(extent);
-	},
-
-	getStateObject : function() {
-		if(this.provider.from == null || this.provider.to == null || this.provider.medium == null || this.provider.routingType == null)
-			return { };
-		else
-		{
-			var ret = {
-				from : { lon : this.provider.from.lon, lat : this.provider.from.lat },
-				to : { lon : this.provider.to.lon, lat : this.provider.to.lat },
-				medium : this.provider.medium,
-				type : this.provider.routingType
-			};
-			if(this.provider.via.length > 0)
-			{
-				ret.via = { };
-				for(var i=0; i<this.provider.via.length; i++)
-					ret.via[i] = { lon : this.provider.via[i].lon, lat : this.provider.via[i].lat };
-			}
-			return ret;
-		}
-	},
-
-	setStateObject : function(obj) {
-		var doUpdate = false;
-		if(obj.medium != this.provider.medium)
-		{
-			this.provider.medium = obj.medium;
-			doUpdate = true;
-		}
-		if(obj.type != this.provider.routingType)
-		{
-			this.provider.routingType = obj.type;
-			doUpdate = true;
-		}
-		if(obj.from == undefined && this.provider.from != null)
-		{
-			this.provider.from = null;
-			doUpdate = true;
-		}
-		else if(obj.from != undefined && obj.from.lat != undefined && obj.from.lon != undefined && (this.provider.from == null || obj.from.lat != this.provider.from.lat || obj.from.lon != this.provider.from.lon))
-		{
-			this.provider.from = new OpenLayers.LonLat(obj.from.lon, obj.from.lat);
-			doUpdate = true;
-		}
-		if(obj.to == undefined && this.provider.to != null)
-		{
-			this.provider.to = null;
-			doUpdate = true;
-		}
-		else if(obj.to != undefined && obj.to.lat != undefined && obj.to.lon != undefined && (this.provider.to == null || obj.to.lat != this.provider.to.lat || obj.to.lon != this.provider.to.lon))
-		{
-			this.provider.to = new OpenLayers.LonLat(obj.to.lon, obj.to.lat);
-			doUpdate = true;
-		}
-
-		var i = 0;
-		var wrong = false;
-		if(obj.via != undefined)
-		{
-			for(; obj.via[i] != undefined; i++)
-			{
-				if(obj.via[i].lon == undefined || obj.via[i].lat == undefined)
-					continue;
-				if(this.provider.via[i] == undefined || this.provider.via[i].lon != obj.via[i].lon || this.provider.via[i].lat != obj.via[i].lat)
+			this.provider.getRoute(options, $.proxy(function(route) {
+				if(route.from != null)
 				{
-					wrong = true;
-					break;
+					this._fromMarker = new ol.Marker(route.from.clone().transform(new ol.Projection("EPSG:4326"), this.map.getProjectionObject()), this.fromIcon.clone())
+					this._fromMarker.layer = this; // Required for the drag control
+					this.addMarker(this._fromMarker);
 				}
-			}
+
+				if(route.to != null)
+				{
+					this._toMarker = new ol.Marker(route.to.clone().transform(new ol.Projection("EPSG:4326"), this.map.getProjectionObject()), this.toIcon.clone())
+					this._toMarker.layer = this; // Required for the drag control
+					this.addMarker(this._toMarker);
+				}
+
+				if(route.via)
+				{
+					for(var i=0; i<route.via.length; i++)
+					{
+						this._viaMarkers[i] = new ol.Marker(fm.Util.toMapProjection(route.via[i], this.map), this.viaIcon.clone())
+						this._viaMarkers[i].layer = this; // Required for the drag control
+						this.addMarker(this._viaMarkers[i]);
+					}
+				}
+
+				this.requestSuccess({ responseXML : route.gpx });
+				this._currentRoute = route;
+				this.events.triggerEvent("allloadend");
+			}, this));
 		}
-		if(wrong || i != this.provider.via.length)
+	},
+
+	getRouteInfoHtml : function() {
+		var t = this;
+		var route = this._currentRoute;
+
+		var ret = $('<ul></ul>');
+
+		if(route.distance != null)
+			ret.append('<li>'+ol.i18n("Distance")+': '+fm.Util.round(route.distance, 1)+"\u2009"+'<abbr title="'+ol.i18n("kilometers")+'">km</abbr></li>');
+
+		if(route.duration != null)
 		{
-			this.via = [ ];
-			if(obj.via != undefined)
-			{
-				for(var i=0; obj.via[i] != undefined; i++)
-					this.provider.via.push(new OpenLayers.LonLat(obj.via[i].lon, obj.via[i].lat));
-			}
-			doUpdate = true;
+			var minutes = Math.round(route.duration*60)%60;
+			if(minutes < 10)
+				minutes = "0"+minutes;
+			ret.append('<li>'+ol.i18n("Duration")+': '+Math.floor(route.duration)+':'+minutes+"\u2009"+'<abbr title="'+ol.i18n("hours")+'">h</abbr></li>');
 		}
 
-		if(doUpdate)
-			this.updateRouting(false);
+		if(route.info)
+			ret.append('<li><a href="'+fm.Util.htmlspecialchars(route.info)+'">'+ol.i18n("Detailed driving instructions")+'</a></li>');
+
+		if(route.getElevationProfile)
+		{
+			var link = $('<a href="#">'+ol.i18n("Elevation profile")+'</a>');
+			link.click(function(){
+				var size = new ol.Size(Math.round(window.innerWidth/2), Math.round(window.innerHeight/2));
+				fm.Util.popup("<div><img src=\""+fm.Util.htmlspecialchars(route.getElevationProfile(size))+"\" alt=\"\" style=\"width:"+size.w+"px; height:"+size.h+"px;\" /></div>", ol.i18n("Elevation profile"));
+				return false;
+			});
+			$('<li />').append(link).appendTo(ret);
+		}
+
+		if(route.optimiseRoute && route.via.length >= 2)
+		{
+			var link = $('<a href="#">'+ol.i18n("Optimise route points")+'</a></li>');
+			link.click(function() {
+				route.optimiseRoute(function(newRoute) {
+					t.setRoute(newRoute);
+				});
+				return false;
+			});
+			$('<li />').append(link).appendTo(ret);
+		}
+
+		return ret;
 	},
 
 	drawMarker : function(marker) {
@@ -523,11 +385,11 @@ FacilMap.Layer.XML.Routing = OpenLayers.Class(FacilMap.Layer.XML, {
 				marker.icon.moveTo(px);
 		}
 	},
-	addMarker : OpenLayers.Layer.Markers.prototype.addMarker,
-	removeMarker : OpenLayers.Layer.Markers.prototype.removeMarker,
-	clearMarkers : OpenLayers.Layer.Markers.prototype.clearMarkers,
+	addMarker : ol.Layer.Markers.prototype.addMarker,
+	removeMarker : ol.Layer.Markers.prototype.removeMarker,
+	clearMarkers : ol.Layer.Markers.prototype.clearMarkers,
 	moveTo : function(bounds, zoomChanged, dragging) {
-		FacilMap.Layer.XML.prototype.moveTo.apply(this, arguments);
+		fm.Layer.XML.prototype.moveTo.apply(this, arguments);
 		if(zoomChanged || !this.markersDrawn || !dragging)
 		{
 			for(var i=0, len=this.markers.length; i<len; i++)
@@ -538,3 +400,5 @@ FacilMap.Layer.XML.Routing = OpenLayers.Class(FacilMap.Layer.XML, {
 
 	CLASS_NAME : "FacilMap.Layer.XML.Routing"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

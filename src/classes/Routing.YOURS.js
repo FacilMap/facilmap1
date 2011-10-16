@@ -17,23 +17,59 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
-FacilMap.Routing.YOURS = OpenLayers.Class(FacilMap.Routing, {
+(function(fm, ol, $){
+
+fm.Routing.YOURS = ol.Class(fm.Routing, {
 	routingURL : "http://www.yournavigation.org/api/1.0/gosmore.php",
 	permalinkURL : "http://www.yournavigation.org/",
 	routingMediumMapping : { "car" : "motorcar", "bicycle" : "bicycle", "foot" : "foot" },
 	routingTypeMapping : { "shortest" : "0", "fastest" : "1" },
-	attribution : OpenLayers.i18n("attribution-routing-yours"),
+	attribution : ol.i18n("attribution-routing-yours"),
 
-	getGPXURL : function() {
-		if(this.from == null || this.to == null || this.medium == null || this.routingType == null)
-			return null;
+	getRoute : function(options, callback) {
+		var t = this;
 
+		if(!options.from || !options.to || !options.medium || !options.type)
+		{
+			callback({ });
+			return;
+		}
+
+		if(!options.via)
+			options.via = [ ];
+
+		ol.Request.GET({
+			url : this._getGPXURL(options),
+			callback : function(resp) {
+				if(!resp || !resp.responseXML)
+					callback({ });
+				else
+				{
+					callback({
+						from : options.from,
+						to : options.to,
+						medium : options.medium,
+						type : options.type,
+						via : options.via,
+						gpx : resp.responseXML,
+						info : t._getInfoURL(options),
+						distance : t._getRouteDistance(resp.responseXML),
+						duration : null,
+						getElevationProfile : null,
+						optimiseRoute : null
+					});
+				}
+			}
+		})
+	},
+
+	_getGPXURL : function(options) {
 		var url = this.routingURL +
-			"?v="+this.routingMediumMapping[this.medium] +
-			"&fast="+this.routingTypeMapping[this.routingType] +
+			"?v="+this.routingMediumMapping[options.medium] +
+			"&fast="+this.routingTypeMapping[options.routingType] +
 			"&format=kml";
 		var urls = [ ];
-		var nodes = [ this.from ].concat(this.via).concat([ this.to ]);
+		var nodes = [ options.from ].concat(options.via).concat([ options.to ]);
 		for(var i=1; i<nodes.length; i++)
 		{
 			urls.push(url +
@@ -45,26 +81,23 @@ FacilMap.Routing.YOURS = OpenLayers.Class(FacilMap.Routing, {
 		return urls;
 	},
 
-	getPermalinkURL : function() {
-		if(this.from == null || this.to == null || this.medium == null || this.routingType == null)
-			return null;
-
-		var url = this.permalinkURL + "?flat="+this.from.lat +
-			"&flon="+this.from.lon +
-			"&tlat="+this.to.lat +
-			"&tlon="+this.to.lon +
-			"&v="+this.routingMediumMapping[this.medium] +
-			"&fast="+this.routingTypeMapping[this.routingType];
-		for(var i=0; i<this.via.length; i++)
+	_getInfoURL : function(options) {
+		var url = this.permalinkURL + "?flat="+options.from.lat +
+			"&flon="+options.from.lon +
+			"&tlat="+options.to.lat +
+			"&tlon="+options.to.lon +
+			"&v="+this.routingMediumMapping[options.medium] +
+			"&fast="+this.routingTypeMapping[options.type];
+		for(var i=0; i<options.via.length; i++)
 		{
-			url += "&wlat="+this.via[i].lat +
-			          "&wlon="+this.via[i].lon;
+			url += "&wlat="+options.via[i].lat +
+			       "&wlon="+options.via[i].lon;
 		}
 		return url;
 	},
 
-	getRouteLength : function() {
-		var distanceEls = this.dom.getElementsByTagName("distance");
+	_getRouteDistance : function(dom) {
+		var distanceEls = dom.getElementsByTagName("distance");
 		if(distanceEls.length > 0)
 			return 1*distanceEls[0].firstChild.data;
 		else
@@ -73,3 +106,5 @@ FacilMap.Routing.YOURS = OpenLayers.Class(FacilMap.Routing, {
 
 	CLASS_NAME : "FacilMap.Routing.YOURS"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

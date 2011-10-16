@@ -17,93 +17,48 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
-FacilMap.Routing = OpenLayers.Class({
-	/**
-	 * The start coordinates in WGS-84
-	 * @var OpenLayers.LonLat
-	*/
-	from : null,
-	/**
-	 * The target coordinates in WGS-84
-	 * @var OpenLayers.LonLat
-	*/
-	to : null,
-	/**
-	 * The means of transport
-	 * @var FacilMap.Routing.Medium
-	*/
-	medium : null,
-	/**
-	 * The routing type, either fastest or shortest.
-	 * @var FacilMap.Routing.Type
-	*/
-	routingType : null,
-	/**
-	 * An array of via points in WGS-84.
-	 * @var Array[OpenLayers.LonLat]
-	*/
-	via : null,
+(function(fm, ol, $){
 
-	dom : null,
-
+fm.Routing = ol.Class({
 	initialize : function() {
-		this.via = [ ];
-	},
 
-	setDOM : function(dom) {
-		this.dom = dom;
 	},
 
 	/**
-	 * Returns the URL of the GPX file containing the route with the set parameters. May return an array of URLs if multiple files
-	 * have to be loaded.
-	 * @return {String|Array[String]}
-	*/
-	getGPXURL : function() {
-		return null;
-	},
-
-	/**
-	 * Returns a Permalink to the original page that created the route or null if not appropriate.
-	 * @return {String}
-	*/
-	getPermalinkURL : function() {
-		return null;
-	},
-
-	/**
-	 * Extracts the length of the route in kilometers from the GPX DOM tree.
-	 * @return {Number}
-	*/
-	getRouteLength : function() {
-		return null;
-	},
-
-	/**
-	 * Extracts the duration of the route in hours from the GPX DOM tree.
-	 * @return {Number}
-	*/
-	getRouteDuration : function() {
-		return null;
-	},
-
-	/**
-	 * Reorders the via points so that the total driving time/distance is minimised but still all the targets are
-	 * reached. Only does something when there are 2 or more via points (otherwise calls the callback function immediately).
-	 * @param callback {Function} A callback function that is called in any case after the ordering has been done
-	 *                          or an error has occurred. May receive an error message as first parameter.
-	 * @return {void}
-	*/
-	reorderViaPoints : function(callback) {
-	},
-
-	/**
-	 * Returns a URL to an image containing the elevation profile of this route.
-	 * @param size {OpenLayers.Size} The desired size of the image
-	 * @return {String}
-	*/
-	getElevationProfileURL : function(size) {
-		return null;
+	 * Calculates a route.
+	 * @param options {Object} Contains the following properties:
+	 *                         from {OpenLayers.LonLat}
+	 *                         to {OpenLayers.LonLat}
+	 *                         medium {FacilMap.Routing.Medium}
+	 *                         type {FacilMap.Routing.Type}
+	 *                         via {Array<OpenLayers.LonLat>}
+	 * @param callback {Function} Receives an object as parameter that may have the following properties:
+	 *                            from {OpenLayers.LonLat}
+	 *                            to {OpenLayers.LonLat}
+	 *                            medium {FacilMap.Routing.Medium}
+	 *                            type {FacilMap.Routing.Type}
+	 *                            via {Array<OpenLayers.LonLat}
+	 *                            gpx {Element} The GPX route
+	 *                            info {String} A link to a page with additional route information
+	 *                            distance {Number} Route distance in km
+	 *                            duration {Number} Route duration in s
+	 *                            getElevationProfile {Function} Returns a link to an elevation profile image. Expects a width for the image as first parameter.
+	 *                            optimiseRoute {Function} The first parameter has to be a callback function that receives a new route object with opimised via point order.
+	 */
+	getRoute : function(options, callback) {
+		callback({
+			from : null,
+			to : null,
+			medium : null,
+			type : null,
+			via : null,
+			gpx : null,
+			info : null,
+			distance : null,
+			duration : null,
+			getElevationProfile : null,
+			optimiseRoute : null
+		});
 	},
 
 	CLASS_NAME : "FacilMap.Routing"
@@ -112,7 +67,7 @@ FacilMap.Routing = OpenLayers.Class({
 /**
  * Means of transportation.
 */
-FacilMap.Routing.Medium = {
+fm.Routing.Medium = {
 	CAR : "car",
 	BICYCLE : "bicycle",
 	FOOT : "foot"
@@ -121,7 +76,9 @@ FacilMap.Routing.Medium = {
 /**
  * Route calculation mechanisms.
 */
-FacilMap.Routing.Type = {
+fm.Routing.Type = {
 	FASTEST : "fastest",
 	SHORTEST : "shortest"
 };
+
+})(FacilMap, OpenLayers, FacilMap.$);

@@ -81,11 +81,10 @@ fm.NameFinder = ol.Class({
 	 *                                    and the values being the return values of {@link #find}.
 	 */
 	findMultiple : function(queries, callbackFunction) {
-		var todo = 0;
+		var todo = queries.length;
 		var t = this;
 		var ret = { };
 		$.each(queries, function(i, it) {
-			todo++;
 			t.find(it, function(result) {
 				ret[it] = result;
 				if(--todo == 0)

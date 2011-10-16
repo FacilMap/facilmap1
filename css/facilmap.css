@@ -51,6 +51,8 @@
 .olMap .fmControlSearch.routing .clear { left:322px; }
 .olMap .fmControlSearch.routing .directions { top:55px; }
 
+.olMap .fmControlSearch .route-info { font-weight:bold; }
+
 .olMap .fmControlSearch .results {
 	overflow:auto;
 	max-height:300px;

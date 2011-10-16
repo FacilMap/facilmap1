@@ -51,6 +51,7 @@ fm.Control.Search = ol.Class(ol.Control, {
 
 		if(create)
 		{
+			/* Seems to work without this now, and this breaks route dragging behaviour
 			// Disable map dragging inside search bar for proper mouse click handling
 			var navigationControl = this.map.getControlsByClass("OpenLayers.Control.Navigation")[0];
 			if(navigationControl)
@@ -60,26 +61,43 @@ fm.Control.Search = ol.Class(ol.Control, {
 				}).mouseout(function() {
 					navigationControl.activate();
 				});
-			}
+			}*/
 
 			/////////////////
 			// Control layers
 
-			t._layerMarkers = new fm.Layer.Markers.SearchResults(ol.i18n("Search results"));
-			t.map.addLayer(t._layerMarkers);
-
-			t._layerRouting = new fm.Layer.XML.Routing("[routing]", { showInLayerSwitcher : false });
-			t.map.addLayer(t._layerRouting);
-
-			t._layerXML = new fm.Layer.XML("[xml]", null, { showInLayerSwitcher : false });
-			t.map.addLayer(t._layerXML);
-			t._layerXML.events.register("allloadend", t._layerXML, function() {
-				if(this._fmZoomToExtent)
+			var zoomFunc = function(){
+				if(this._fmZoom)
 				{
 					var extent = this.getDataExtent();
 					if(extent)
 						this.map.zoomToExtent(extent);
+					this._fmZoom = false;
 				}
+			};
+
+			t._layerMarkers = new fm.Layer.Markers.SearchResults("[results]", { displayInLayerSwitcher : false });
+			t.map.addLayer(t._layerMarkers);
+
+			t._layerXML = new fm.Layer.XML("[xml]", null, { displayInLayerSwitcher : false });
+			t.map.addLayer(t._layerXML);
+			t._layerXML.events.register("allloadend", t._layerXML, zoomFunc);
+
+			t._layerRouting = new fm.Layer.XML.Routing("[routing]", { displayInLayerSwitcher : false });
+			t.map.addLayer(t._layerRouting);
+			t._layerRouting.events.register("draggedRoute", this, function(e) {
+				if(e.draggedPoint == "from")
+					$(".from", t.div).val(t._stateObject.from = fm.Util.round(e.newRouteOptions.from.lat, 5)+","+fm.Util.round(e.newRouteOptions.from.lon, 5));
+				else if(e.draggedPoint == "to")
+					$(".to", t.div).val(t._stateObject.to = fm.Util.round(e.newRouteOptions.to.lat, 5)+","+fm.Util.round(e.newRouteOptions.to.lon, 5));
+				else if(e.draggedPoint == "via")
+					t._stateObject.via = $.map(e.newRouteOptions.via, function(it){ return fm.Util.round(it.lat, 5)+","+fm.Util.round(it.lon, 5); });
+				t.events.triggerEvent("stateObjectChanged");
+			});
+			t._layerRouting.events.register("allloadend", t._layerRouting, zoomFunc);
+			t._layerRouting.events.register("allloadend", t, function() {
+				$(".route-info", t.div).remove();
+				t._layerRouting.getRouteInfoHtml().addClass("route-info").insertAfter($("form", t.div));
 			});
 
 			///////////////
@@ -184,12 +202,13 @@ fm.Control.Search = ol.Class(ol.Control, {
 	/**
 	 * Calls the {@link #search} function with the values of the form fields.
 	 * @param zoom {Boolean} Zoom to results?
+	 * @param via {Array<OpenLayers.LonLat>} Possible via points for the route
 	 */
-	submit : function(zoom) {
+	submit : function(zoom, via) {
 		if(!$(this.div).hasClass("routing"))
-			this.search($(".from", this.div).val(), null, null, null, zoom);
+			this.search($(".from", this.div).val(), null, null, null, null, zoom);
 		else
-			this.search($(".from", this.div).val(), $(".to", this.div).val(), $(".type", this.div).val(), $(".medium", this.div).val(), zoom);
+			this.search($(".from", this.div).val(), $(".to", this.div).val(), $(".type", this.div).val(), $(".medium", this.div).val(), via, zoom);
 	},
 
 	/**
@@ -199,9 +218,10 @@ fm.Control.Search = ol.Class(ol.Control, {
 	 * @param query2 {String} The content of the “to” field
 	 * @param type {FacilMap.Routing.Type}
 	 * @param medium {FacilMap.Routing.Medium}
+	 * @param via {Array<OpenLayers.LonLat>} Possible via points for the route
 	 * @param zoom {Boolean} Zoom to results?
 	 */
-	search : function(query1, query2, type, medium, zoom) {
+	search : function(query1, query2, type, medium, via, zoom) {
 		this.clear();
 
 		query1 = (query1 || "").replace(/^\s+/, "").replace(/\s+$/, "");
@@ -215,10 +235,11 @@ fm.Control.Search = ol.Class(ol.Control, {
 					from : query1,
 					to : query2,
 					type : type,
-					medium : medium
+					medium : medium,
+					via : via ? $.map(via, function(it){ return fm.Util.round(it.lat, 5)+","+fm.Util.round(it.lon, 5); }) : null
 				};
 				this.events.triggerEvent("stateObjectChanged");
-				this.showRoute(query1, query2, type, medium, zoom);
+				this.showRoute(query1, query2, type, medium, via, zoom);
 			}
 			else
 			{
@@ -254,12 +275,11 @@ fm.Control.Search = ol.Class(ol.Control, {
 	},
 
 	clear : function() {
-		$("div.results", this.div).remove();
+		$(".results,.route-info", this.div).remove();
 
 		this._layerMarkers.clearMarkers();
 		this._layerXML.setUrl();
-		this._layerRouting.setFrom(null);
-		this._layerRouting.setTo(null);
+		this._layerRouting.setRoute(null);
 
 		this._stateObject = { };
 		this.events.triggerEvent("stateObjectChanged");
@@ -310,26 +330,29 @@ fm.Control.Search = ol.Class(ol.Control, {
 	showGPX : function(url, zoom) {
 		var t = this;
 
-		t._layerXML._fmZoomToExtent = zoom;
+		t._layerXML._fmZoom = zoom;
 		t._layerXML.setUrl(url);
 	},
 
-	showRoute : function(query1, query2, type, medium, zoom) {
+	showRoute : function(query1, query2, type, medium, via, zoom) {
 		var t = this;
 
 		t.nameFinder.findMultiple([ query1, query2 ], function(results) {
-			t._layerRouting.setType(type, zoom);
-			t._layerRouting.setMedium(medium, zoom);
+			t._layerRouting._fmZoom = zoom;
+			var options = { type : type, medium : medium, via : via };
 
 			if(results[query1].length > 0 && results[query2].length > 0)
 			{
-				t._layerRouting.setFrom(results[query1][0].lonlat, zoom);
-				t._layerRouting.setTo(results[query2][0].lonlat, zoom);
+				options.from = results[query1][0].lonlat;
+				options.to = results[query2][0].lonlat;
+				t._layerRouting.setRoute(options);
 			}
 			if(results[query1].length == 0 || results[query2].length > 0)
 			{
 				t._makeResultList(query1, results[query1], ol.i18n("Did you mean?"), function(result) {
-					t._layerRouting.setFrom(result.lonlat, zoom);
+					options.from = result.lonlat;
+					t._layerRouting._fmZoom = true;
+					t._layerRouting.setRoute(options);
 					$(".from", t.div).val(t._stateObject.from = result.name);
 					t.events.triggerEvent("stateObjectChanged");
 				}).appendTo(t.div);
@@ -337,7 +360,9 @@ fm.Control.Search = ol.Class(ol.Control, {
 			if(results[query2].length == 0 || results[query1].length > 0)
 			{
 				t._makeResultList(query2, results[query2], ol.i18n("Did you mean?"), function(result) {
-					t._layerRouting.setTo(result.lonlat, zoom);
+					options.to = result.lonlat;
+					t._layerRouting._fmZoom = true;
+					t._layerRouting.setRoute(options);
 					$(".to", t.div).val(t._stateObject.to = result.name);
 					t.events.triggerEvent("stateObjectChanged");
 				}).appendTo(t.div);
@@ -386,7 +411,19 @@ fm.Control.Search = ol.Class(ol.Control, {
 		if(!!obj.from != $(this.div).hasClass("routing"))
 			$(".directions", this.div).click();
 
-		this.submit(false);
+		var via = null;
+		if(obj.via)
+		{
+			via = $.map(obj.via, function(it) {
+				var m;
+				if(m = it.match(/^(\d+(\.\d+)?)\s*,\s*(\d+(\.\d+)?)$/))
+					return new OpenLayers.LonLat(1*m[3], 1*m[1]);
+				else
+					return null;
+			});
+		}
+
+		this.submit(false, via);
 	},
 
 	CLASS_NAME : "FacilMap.Control.Search"

@@ -75,6 +75,12 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
 	"License" : "Lizenz",
 	"Search help" : "Suchhilfe",
 	// TODO: searchHelpText
+	"Distance" : "Entfernung",
+	"Duration" : "Dauer",
+	"kilometers" : "Kilometer",
+	"hours" : "Stunden",
+	"Optimise route points" : "Routenpunkte optimieren",
+	"Elevation profile" : "Höhenprofil",
 	"olm.address" : "Adresse",
 	"olm.contact" : "Kontakt",
 	"olm.fuel" : "Tankstelle",
