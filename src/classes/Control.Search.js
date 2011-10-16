@@ -27,9 +27,6 @@ fm.Control.Search = ol.Class(ol.Control, {
 	_layerRouting : null,
 	_layerXML : null,
 
-	_lastFromSuggestion : null,
-	_lastToSuggestion : null,
-
 	_stateObject : { },
 
 	/**
@@ -54,8 +51,6 @@ fm.Control.Search = ol.Class(ol.Control, {
 
 		if(create)
 		{
-			var form = $("<form></form>").appendTo(ret);
-
 			// Disable map dragging inside search bar for proper mouse click handling
 			var navigationControl = this.map.getControlsByClass("OpenLayers.Control.Navigation")[0];
 			if(navigationControl)
@@ -79,60 +74,64 @@ fm.Control.Search = ol.Class(ol.Control, {
 			t._layerXML = new fm.Layer.XML("[xml]", null, { showInLayerSwitcher : false });
 			t.map.addLayer(t._layerXML);
 			t._layerXML.events.register("allloadend", t._layerXML, function() {
-				var extent = this.getDataExtent();
-				if(extent)
-					this.map.zoomToExtent(extent);
-				//onSearchEnd();
+				if(this._fmZoomToExtent)
+				{
+					var extent = this.getDataExtent();
+					if(extent)
+						this.map.zoomToExtent(extent);
+				}
 			});
 
 			///////////////
 			// Forms fields
 
-			var inputFrom = $('<input type="text" class="from" />').appendTo(form);
-			var helpButton = $('<img src="'+fm.apiUrl+'/img/help.png" alt="?" class="help" />').appendTo(form);
-			var inputTo = $('<input type="text" class="to" />').appendTo(form);
-			var linkDirections = $('<a href="#" class="directions"></a>').appendTo(form);
-			var buttonSearch = $('<input type="submit" value="" class="submit" />').appendTo(form);
-			var buttonClear = $('<input type="button" value="'+ol.i18n("Clear")+'" class="clear" />').appendTo(form);
-			var selectType = $('<select class="type">' +
-				'<option value="'+FacilMap.Routing.Type.FASTEST+'">'+ol.i18n("Fastest")+'</option>' +
-				'<option value="'+FacilMap.Routing.Type.SHORTEST+'">'+ol.i18n("Shortest")+'</option>' +
-			'</select>').appendTo(form);
-			var selectMedium = $('<select class="medium">' +
-				'<option value="'+FacilMap.Routing.Medium.CAR+'">'+ol.i18n("Car")+'</option>' +
-				'<option value="'+FacilMap.Routing.Medium.BICYCLE+'">'+ol.i18n("Bicycle")+'</option>' +
-				'<option value="'+FacilMap.Routing.Medium.FOOT+'">'+ol.i18n("Foot")+'</option>' +
-			'</select>').appendTo(form);
+			$(
+				'<form>' +
+					'<input type="text" class="from" />' +
+					'<img src="'+fm.apiUrl+'/img/help.png" alt="?" class="help" />' +
+					'<input type="text" class="to" />' +
+					'<a href="#" class="directions"></a>' +
+					'<input type="submit" value="" class="submit" />' +
+					'<input type="button" value="'+ol.i18n("Clear")+'" class="clear" />' +
+					'<select class="type">' +
+						'<option value="'+FacilMap.Routing.Type.FASTEST+'">'+ol.i18n("Fastest")+'</option>' +
+						'<option value="'+FacilMap.Routing.Type.SHORTEST+'">'+ol.i18n("Shortest")+'</option>' +
+					'</select>' +
+					'<select class="medium">' +
+						'<option value="'+FacilMap.Routing.Medium.CAR+'">'+ol.i18n("Car")+'</option>' +
+						'<option value="'+FacilMap.Routing.Medium.BICYCLE+'">'+ol.i18n("Bicycle")+'</option>' +
+						'<option value="'+FacilMap.Routing.Medium.FOOT+'">'+ol.i18n("Foot")+'</option>' +
+					'</select>' +
+				'</form>'
+			).appendTo(ret);
 
 			/////////////////
 			// Event handlers
 
-			// AutoSuggest feature: store selected suggestion to avoid duplicate NameFinder calls
-			new FacilMap.AutoSuggest(inputFrom[0], this.makeSuggestions, { setValue : function(suggestion) { t._lastFromSuggestion = suggestion; inputFrom.val(suggestion.value); }});
-			new FacilMap.AutoSuggest(inputTo[0], this.makeSuggestions, { setValue : function(suggestion) { t._lastToSuggestion = suggestion; inputTo.val(suggestion.value); }});
+			new FacilMap.AutoSuggest($(".from", ret)[0], this.makeSuggestions);
+			new FacilMap.AutoSuggest($(".to", ret)[0], this.makeSuggestions);
 
 			var routingVisible = true;
-			linkDirections.click(function(){
+			$(".directions", ret).click(function(){
 				routingVisible = !routingVisible;
-				inputFrom.attr("placeholder", routingVisible ? ol.i18n("From") : "");
-				linkDirections.html(ol.i18n(routingVisible ? "Hide directions" : "Get directions"));
-				inputTo.add(selectType).add(selectMedium).css("display", routingVisible ? "" : "none").attr("placeholder", routingVisible ? ol.i18n("To") : "");
-				buttonSearch.val(ol.i18n(routingVisible ? "Get directions" : "Search"));
+				$(".from", ret).attr("placeholder", routingVisible ? ol.i18n("From") : "");
+				$(".directions", ret).html(ol.i18n(routingVisible ? "Hide directions" : "Get directions"));
+				$(".to,.type,.medium", ret).css("display", routingVisible ? "" : "none").attr("placeholder", routingVisible ? ol.i18n("To") : "");
+				$(".submit", ret).val(ol.i18n(routingVisible ? "Get directions" : "Search"));
 				$(ret)[routingVisible ? "addClass" : "removeClass"]("routing");
-				helpButton.css("display", routingVisible ? "none" : "");
+				$(".help", ret).css("display", routingVisible ? "none" : "");
 
-				$.each(routingVisible ? [ inputFrom, inputTo, buttonSearch, buttonClear, selectType, selectMedium, linkDirections ] : [ inputFrom, buttonSearch, buttonClear, linkDirections ], function(i, it) {
-					it.attr("tabindex", t.tabindex+i);
+				$.each(routingVisible ? [ ".from", ".to", ".submit", ".clear", ".type", ".medium", ".directions" ] : [ ".from", ".search", ".clear", ".directions" ], function(i, it) {
+					$(it, ret).attr("tabindex", t.tabindex+i);
 				});
 
 				return false;
-			});
-			linkDirections.click();
+			}).click();
 
-			helpButton.click(function(){ fm.Util.popup(ol.i18n("searchHelpText"), ol.i18n("Search help")); });
+			$(".help", ret).click(function(){ fm.Util.popup(ol.i18n("searchHelpText"), ol.i18n("Search help")); });
 
-			form.submit(function(){ t.search(inputFrom.val(), routingVisible ? inputTo.val() : null); return false; });
-			buttonClear.click(function() { t.search(""); });
+			$("form", ret).submit(function(){ t.submit(true); return false; });
+			$(".clear", ret).click(function() { $(".from,.to", ret).val(""); t.submit(true); });
 		}
 
 		return ret;
@@ -150,8 +149,7 @@ fm.Control.Search = ol.Class(ol.Control, {
 
 		this.nameFinder.makeSuggestions(poi.place, function(suggestions) {
 			$.each(suggestions, function(i, it){
-				poi.place = it.value;
-				it.value = poi.convertBack();
+				it.value = t.convertBackPOI($.extend(poi, { place : it.value }));
 			});
 			callback(suggestions);
 		});
@@ -162,27 +160,36 @@ fm.Control.Search = ol.Class(ol.Control, {
 	 * @param query {String} The search query to split up
 	 * @return {Object} poi: “supermarket” (or null if no “near” is contained in the search query
 	 *                  place: “London, England”
-	 *                  convertBack: A function that converts the object back to a search string (useful
-	 *                               after overwriting the other properties)
 	 */
 	getPOISearchTerm : function(query) {
-		var ret = {
-			poi : null,
-			place : query,
-			convertBack : function() {
-				if(this.poi)
-					return this.poi + " near " + this.place;
-				else
-					return this.place;
-			}
-		};
-		var idx = query.toLowerCase().indexOf(" near ");
-		if(idx >= 0)
-		{
-			ret.poi = query.substring(0, idx);
-			ret.place = query.substring(idx+6);
-		}
+		var m = query.match(/^(.*?)( near (.*?))?$/i);
+		if(m[3])
+			return { poi : m[1], place : m[3] };
+		else
+			return { place : m[1] };
+	},
+
+	/**
+	 * Reverse function for {@link #getPOISearchTerm}.
+	 * @param poi {Object} An object as returned by {@link #getPOISearchTerm}
+	 * @return {String} The search query string representing that object
+	 */
+	convertBackPOI : function(poi) {
+		var ret = poi.place;
+		if(poi.poi)
+			ret = poi.poi + " near " + ret;
 		return ret;
+	},
+
+	/**
+	 * Calls the {@link #search} function with the values of the form fields.
+	 * @param zoom {Boolean} Zoom to results?
+	 */
+	submit : function(zoom) {
+		if(!$(this.div).hasClass("routing"))
+			this.search($(".from", this.div).val(), null, null, null, zoom);
+		else
+			this.search($(".from", this.div).val(), $(".to", this.div).val(), $(".type", this.div).val(), $(".medium", this.div).val(), zoom);
 	},
 
 	/**
@@ -192,8 +199,9 @@ fm.Control.Search = ol.Class(ol.Control, {
 	 * @param query2 {String} The content of the “to” field
 	 * @param type {FacilMap.Routing.Type}
 	 * @param medium {FacilMap.Routing.Medium}
+	 * @param zoom {Boolean} Zoom to results?
 	 */
-	search : function(query1, query2, type, medium) {
+	search : function(query1, query2, type, medium, zoom) {
 		this.clear();
 
 		query1 = (query1 || "").replace(/^\s+/, "").replace(/\s+$/, "");
@@ -209,13 +217,15 @@ fm.Control.Search = ol.Class(ol.Control, {
 					type : type,
 					medium : medium
 				};
-				this.showRoute(query1, query2, type, medium);
+				this.events.triggerEvent("stateObjectChanged");
+				this.showRoute(query1, query2, type, medium, zoom);
 			}
 			else
 			{
 				this._stateObject = {
 					query : query1
 				};
+				this.events.triggerEvent("stateObjectChanged");
 
 				var m = query1.match(/^(node|way|relation|trace)\s*#?\s*(\d+)$/i);
 				if(m)
@@ -230,14 +240,14 @@ fm.Control.Search = ol.Class(ol.Control, {
 				}
 
 				if(query1.match(/^(http|https|ftp):\/\//) && !this.nameFinder.isLonLatQuery(query1))
-					this.showGPX(query1);
+					this.showGPX(query1, zoom);
 				else
 				{
 					var poi = this.getPOISearchTerm(query1);
 					if(poi.poi != null)
-						this.showPOISearchResults(poi.poi, poi.place, query1);
+						this.showPOISearchResults(poi.poi, poi.place, zoom);
 					else
-						this.showSearchResults(query1);
+						this.showSearchResults(poi.place, zoom);
 				}
 			}
 		}
@@ -255,97 +265,84 @@ fm.Control.Search = ol.Class(ol.Control, {
 		this.events.triggerEvent("stateObjectChanged");
 	},
 
-	showPOISearchResults : function(poi, place, query) {
+	showPOISearchResults : function(poi, place, zoom) {
 		var t = this;
-
-		if(t._lastFromSuggestion && t._lastFromSuggestion.value == query)
-			place = t._lastFromSuggestion.result.lonlat.lat+","+t._lastFromSuggestion.result.lonlat.lon;
 
 		this.nameFinder.findNear(poi, place, function(results) {
 			t._layerMarkers.showResults(results);
-			t.map.zoomToExtent(t._layerMarkers.getDataExtent());
+
 			t._makeResultList(null, results, ol.i18n("Found the following places:"), function(result) {
 				t.map.setCenter(fm.Util.toMapProjection(result.lonlat, t.map), result.getZoom(t.map));
 				$.each(results, function(i, it) { it.marker.fmFeature.popup.hide(); });
 				result.marker.fmFeature.popup.show();
 			}).appendTo(t.div);
+
+			if(zoom && results.length > 0)
+				t.map.zoomToExtent(t._layerMarkers.getDataExtent());
 		});
 	},
 
-	showSearchResults : function(query) {
+	showSearchResults : function(query, zoom) {
 		var t = this;
 		var handleResults = function(results) {
-			var showResult = function(result) {
-				t._stateObject = { "query" : query, id : result.id };
-
+			var showResult = function(result, doNotZoom, doNotSetValue) {
 				t._layerMarkers.showResults([ result ]);
-				t.map.setCenter(fm.Util.toMapProjection(result.lonlat, t.map), result.getZoom(t.map));
+
+				if(!doNotZoom)
+					t.map.setCenter(fm.Util.toMapProjection(result.lonlat, t.map), result.getZoom(t.map));
+
+				if(!doNotSetValue)
+				{
+					$(".from", t.div).val(t._stateObject.query = result.name);
+					t.events.triggerEvent("stateObjectChanged");
+				}
 			};
 
 			t._makeResultList(null, results, ol.i18n("Did you mean?"), showResult).appendTo(t.div);
 
 			if(results.length > 0)
-				showResult(results[0]);
+				showResult(results[0], !zoom, true);
 		};
 
-		if(t._lastFromSuggestion && t._lastFromSuggestion.value == query)
-			handleResults([ t._lastFromSuggestion.result ]);
-		else
-			this.nameFinder.find(query, handleResults);
+		this.nameFinder.find(query, handleResults);
 	},
 
-	showGPX : function(url) {
+	showGPX : function(url, zoom) {
 		var t = this;
+
+		t._layerXML._fmZoomToExtent = zoom;
 		t._layerXML.setUrl(url);
-		t._stateObject = { "gpx" : url };
 	},
 
-	showRoute : function(query1, query2, type, medium) {
+	showRoute : function(query1, query2, type, medium, zoom) {
 		var t = this;
 
-		var handleResults = function(results) {
-			t._layerRouting.setType(type);
-			t._layerRouting.setMedium(medium);
+		t.nameFinder.findMultiple([ query1, query2 ], function(results) {
+			t._layerRouting.setType(type, zoom);
+			t._layerRouting.setMedium(medium, zoom);
 
 			if(results[query1].length > 0 && results[query2].length > 0)
 			{
-				t._layerRouting.setFrom(results[query1][0].lonlat, true);
-				t._layerRouting.setTo(results[query2][0].lonlat, true);
+				t._layerRouting.setFrom(results[query1][0].lonlat, zoom);
+				t._layerRouting.setTo(results[query2][0].lonlat, zoom);
 			}
 			if(results[query1].length == 0 || results[query2].length > 0)
 			{
 				t._makeResultList(query1, results[query1], ol.i18n("Did you mean?"), function(result) {
-					t._layerRouting.setFrom(result.lonlat, true);
+					t._layerRouting.setFrom(result.lonlat, zoom);
+					$(".from", t.div).val(t._stateObject.from = result.name);
+					t.events.triggerEvent("stateObjectChanged");
 				}).appendTo(t.div);
 			}
 			if(results[query2].length == 0 || results[query1].length > 0)
 			{
 				t._makeResultList(query2, results[query2], ol.i18n("Did you mean?"), function(result) {
-					t._layerRouting.setTo(result.lonlat, true);
+					t._layerRouting.setTo(result.lonlat, zoom);
+					$(".to", t.div).val(t._stateObject.to = result.name);
+					t.events.triggerEvent("stateObjectChanged");
 				}).appendTo(t.div);
 			}
-		};
-
-		var query = [ ];
-		var result = { };
-		if(t._lastFromSuggestion && t._lastFromSuggestion.value == query1)
-			result[query1] = [ t._lastFromSuggestion.result ];
-		else
-			query.push(query1);
-		if(t._lastToSuggestion && t._lastToSuggestion.value == query2)
-			result[query2] = [ t._lastToSuggestion.result ];
-		else
-			query.push(query2);
-
-		if(query.length > 0)
-		{
-			t.nameFinder.findMultiple(query, function(a_results) {
-				$.extend(result, a_results);
-				handleResults(result);
-			});
-		}
-		else
-			handleResults(result);
+		});
 	},
 
 	_makeResultList : function(query, results, heading, onclick) {
@@ -389,7 +386,7 @@ fm.Control.Search = ol.Class(ol.Control, {
 		if(!!obj.from != $(this.div).hasClass("routing"))
 			$(".directions", this.div).click();
 
-		$("form", this.div).submit();
+		this.submit(false);
 	},
 
 	CLASS_NAME : "FacilMap.Control.Search"

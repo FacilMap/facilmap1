@@ -135,6 +135,16 @@ fm.Map = ol.Class(ol.Map, {
 			this.events.triggerEvent("newState");
 	},
 
+	addControl : function(control)
+	{
+		var ret = ol.Map.prototype.addControl.apply(this, arguments);
+
+		if(control.permalinkName)
+			control.events.register("stateObjectChanged", this, function() { this.events.triggerEvent("newState"); });
+
+		return ret;
+	},
+
 	removeLayer : function(layer)
 	{
 		var trigger = (layer.permalinkName && layer.removableInLayerSwitcher);

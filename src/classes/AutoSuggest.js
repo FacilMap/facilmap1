@@ -28,6 +28,7 @@ fm.AutoSuggest = ol.Class({
 	input : null,
 	suggestionFunction : null,
 	typingTimeout : 500,
+	getValue : function(){ return this.input.val(); },
 	setValue : function(suggestion){ this.input.val(suggestion.value); },
 
 	_timeout : null,
@@ -67,7 +68,7 @@ fm.AutoSuggest = ol.Class({
 		t.input.add(t._list).mouseout(function() { mouseover = false; });
 		t.input.add(t._list).mouseover(function(){ mouseover = true; });
 
-		var clickOpener = function() { t._open(t.input.val()); };
+		var clickOpener = function() { t._open(t.getValue()); };
 		t.input.focus(function() {
 			setTimeout(function() { t.input.bind("click", clickOpener); }, 150);
 		});
@@ -107,7 +108,7 @@ fm.AutoSuggest = ol.Class({
 			{
 				// If list is closed, open list
 				if(t._list.css("display") == "none")
-					t._open(t.input.val());
+					t._open(t.getValue());
 				else
 				{
 					var newItem = selected[e.keyCode == kc_up ? "prev" : "next"]();
@@ -122,7 +123,7 @@ fm.AutoSuggest = ol.Class({
 				if(selected.size() != 0)
 				{ // If item is selected, put value in input field
 					t.setValue(selected.data("fmAutoSuggest-suggestion"));
-					t._waitingValue = t.input.val();
+					t._waitingValue = t.getValue();
 					t.input.focus();
 					t._hideList();
 					return false;
@@ -140,7 +141,7 @@ fm.AutoSuggest = ol.Class({
 		}
 
 		setTimeout(function(){
-			var val = t.input.val();
+			var val = t.getValue();
 			if(val != t._waitingValue)
 			{
 				t._waitingValue = val;

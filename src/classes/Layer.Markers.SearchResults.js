@@ -83,7 +83,8 @@ fm.Layer.Markers.SearchResults = ol.Class(fm.Layer.Markers, {
 				it.lonlat,
 				content[0],
 				false,
-				icon
+				icon,
+				true
 			);
 		});
 	},
