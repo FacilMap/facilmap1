@@ -624,7 +624,7 @@ FacilMap.Util = {
 	 * @param title {String}
 	 */
 	popup : function(content, title) {
-		$("<div></div>").append(content).dialog({ modal: true, title: title, width: "auto", maxWidth: window.innerWidth/2, buttons: { "OK" : function() { $(this).dialog("close"); } }});
+		$("<div></div>").append(content).dialog({ modal: true, title: title, width: window.innerWidth/2+15, buttons: { "OK" : function() { $(this).dialog("close"); } }});
 	},
 
 	/**
