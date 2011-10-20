@@ -1,36 +1,28 @@
 #!/bin/bash
 cd "$(dirname "$0")"
 
-list_files() {
-	find "src/jquery" -type f -name "*.js" | sort_js_files
-	echo "src/base.js"
-	echo "src/classes/Util.js"
-	find "src/olfix" -type f -name "*.js" | sort_js_files
-	find "src/i18n" -type f -name "*.js" | sort_js_files
-	find "src/classes" -type f -name "*.js" | grep -vx src/classes/Util.js | sort_js_files
+list_js_files() {
+	find "src/js/jquery" -type f -name "*.js" | sort_js_files
+	echo "src/js/base.js"
+	echo "src/js/classes/Util.js"
+	find "src/js/olfix" -type f -name "*.js" | sort_js_files
+	find "src/js/i18n" -type f -name "*.js" | sort_js_files
+	find "src/js/classes" -type f -name "*.js" | grep -vx src/js/classes/Util.js | sort_js_files
 }
 
 sort_js_files() {
 	sed -e 's/\.js$//' | sort | sed -e 's/$/.js/'
 }
 
-files="$(list_files)"
+js_files="$(list_js_files)"
 
-if which git > /dev/null; then
-	#rev="$(git rev-list --max-count=1 HEAD)"
-	#rev="$(date -u -d "1970-01-01 UTC $(git rev-list --max-count=1 --timestamp HEAD | cut -d' ' -f1) seconds" "+%FT%TZ")"
-	rev="$(date -u "+%FT%TZ")"
-	out_dir="builds/$rev"
-	mkdir -p "$out_dir"
-else
-	out_dir=.
-fi
+rev="$(date -u "+%FT%TZ")"
+out_dir="builds/$rev"
+mkdir -p "$out_dir"
+rm -f builds/latest
+ln -s "$rev" builds/latest
 
-echo -n > "$out_dir/facilmap_debug.js"
-echo -n > "$out_dir/facilmap_src.js"
-rm -f "$out_dir/facilmap.js"
-
-echo "$files" | while read fname; do
+echo "$js_files" | while read fname; do
 	echo "document.write(\"<script type=\\\"text/javascript\\\" src=\\\"$fname\\\"></script>\");" >> "$out_dir/facilmap_debug.js"
 	(
 		echo "////////// $fname ///////////"
@@ -40,12 +32,21 @@ echo "$files" | while read fname; do
 	) >> "$out_dir/facilmap_src.js"
 done
 
+find src/css -name "*.css" | while read fname; do
+	(
+		echo "/********* $fname **********/"
+		cat "$fname"
+		echo
+		echo
+	) >> "$out_dir/facilmap_src.css"
+done
+
+rsync -a src/resources/ "$out_dir/"
+
 if [ -f yuicompressor-*.jar ]; then
 	java -jar yuicompressor-*.jar "$out_dir/facilmap_src.js" > "$out_dir/facilmap.js"
+	java -jar yuicompressor-*.jar "$out_dir/facilmap_src.css" > "$out_dir/facilmap.css"
 else
 	ln -s facilmap_src.js "$out_dir/facilmap.js"
-fi
-
-if [[ "$out_dir" != "." ]]; then
-	ln -sf "$out_dir"/{facilmap.js,facilmap_src.js,facilmap_debug.js} .
+	ln -s facilmap_src.css "$out_dir/facilmap.css"
 fi
