@@ -427,7 +427,7 @@ fm.Control.Search = ol.Class(ol.Control, {
 			});
 		}
 
-		this.submit(false, via);
+		this.submit(!!obj.zoom, via);
 	},
 
 	CLASS_NAME : "FacilMap.Control.Search"
