@@ -18,8 +18,8 @@
 */
 
 OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
-	"[Zoom]" : "[Zoom]",
-	"[Remove]" : "[Remove]",
+	"Zoom" : "Zoom",
+	"Remove" : "Remove",
 	"attribution-osm" : "Rendering CC-by-SA by ${rendering}, Data CC-by-SA by <a href=\"http://www.openstreetmap.org/\">OpenStreetMap</a>",
 	"attribution-relief" : "Relief by <a href=\"http://hikebikemap.de/\">Hike &amp; Bike Map</a>",
 	"attribution-oom-streets" : "Streets overlay CC-by-SA by <a href=\"http://oobrien.com/oom/\">OpenOrienteeringMap</a>/<a href=\"http://www.openstreetmap.org/\">OpenStreetMap</a> data",
@@ -105,6 +105,11 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
 	"hours" : "hours",
 	"Optimise route points" : "Optimise route points",
 	"Elevation profile" : "Elevation profile",
+	"Tools" : "Tools",
+	"OpenStreetMap" : "OpenStreetMap",
+	"Google" : "Google",
+	"Yahoo" : "Yahoo",
+	"Other" : "Other",
 	"olm.object" : "Objects",
 	"olm.address" : "Address",
 	"olm.contact" : "Contact",

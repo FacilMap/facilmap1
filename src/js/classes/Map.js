@@ -157,18 +157,19 @@ fm.Map = ol.Class(ol.Map, {
 	addAllAvailableOSMLayers : function()
 	{
 		var map = this;
+		var cat = ol.i18n("OpenStreetMap");
 
-		this.addLayer(new fm.Layer.OSM.Mapnik(ol.i18n("Mapnik"), { permalinkName : "Mpnk" }));
-		this.addLayer(new fm.Layer.OSM.MapSurfer.Road(ol.i18n("MapSurfer Road"), { permalinkName : "MSfR" }));
-		this.addLayer(new fm.Layer.OSM.MapSurfer.Topographic(ol.i18n("MapSurfer Topographic"), { permalinkName : "MSfT" }));
-		this.addLayer(new fm.Layer.OSM.OpenStreetBrowser(ol.i18n("OpenStreetBrowser"), { permalinkName : "OSBr" }));
-		this.addLayer(new fm.Layer.OSM.Osmarender(ol.i18n("Osmarender"), { permalinkName : "Osmr" }));
-		this.addLayer(new fm.Layer.OSM.CycleMap(ol.i18n("OpenCycleMap"), { permalinkName : "OCyc" }));
-		//this.addLayer(new fm.Layer.OSM.Wanderkarte(ol.i18n("Reit- und Wanderkarte"), { permalinkName : "OSMC" }));
-		this.addLayer(new fm.Layer.OSM.HikeAndBike(ol.i18n("Hike & Bike Map"), { permalinkName : "HiBi" }));
-		this.addLayer(new fm.Layer.OSM.OpenPisteMap(ol.i18n("OpenPisteMap"), { permalinkName : "OPis" }));
-		//this.addLayer(new fm.Layer.OSM.OPNVKarte(ol.i18n("ÖPNV-Karte"), { permalinkName : "OPNV" }));
-		//this.addLayer(new fm.Layer.OSM.Kybl3DMap(ol.i18n("Izometrická 3D mapa ČR"), { permalinkName : "kybl" }));
+		this.addLayer(new fm.Layer.OSM.Mapnik(ol.i18n("Mapnik"), { permalinkName : "Mpnk", category : cat }));
+		this.addLayer(new fm.Layer.OSM.MapSurfer.Road(ol.i18n("MapSurfer Road"), { permalinkName : "MSfR", category : cat }));
+		this.addLayer(new fm.Layer.OSM.MapSurfer.Topographic(ol.i18n("MapSurfer Topographic"), { permalinkName : "MSfT", category : cat }));
+		this.addLayer(new fm.Layer.OSM.OpenStreetBrowser(ol.i18n("OpenStreetBrowser"), { permalinkName : "OSBr", category : cat }));
+		this.addLayer(new fm.Layer.OSM.Osmarender(ol.i18n("Osmarender"), { permalinkName : "Osmr", category : cat }));
+		this.addLayer(new fm.Layer.OSM.CycleMap(ol.i18n("OpenCycleMap"), { permalinkName : "OCyc", category : cat }));
+		//this.addLayer(new fm.Layer.OSM.Wanderkarte(ol.i18n("Reit- und Wanderkarte"), { permalinkName : "OSMC", category : cat }));
+		this.addLayer(new fm.Layer.OSM.HikeAndBike(ol.i18n("Hike & Bike Map"), { permalinkName : "HiBi", category : cat }));
+		this.addLayer(new fm.Layer.OSM.OpenPisteMap(ol.i18n("OpenPisteMap"), { permalinkName : "OPis", category : cat }));
+		//this.addLayer(new fm.Layer.OSM.OPNVKarte(ol.i18n("ÖPNV-Karte"), { permalinkName : "OPNV", category : cat }));
+		//this.addLayer(new fm.Layer.OSM.Kybl3DMap(ol.i18n("Izometrická 3D mapa ČR"), { permalinkName : "kybl", category : cat }));
 
 		this.addLayer(new fm.Layer.OSM.OpenPTMap(ol.i18n("Public transportation"), { permalinkName : "OPTM", visibility : false }));
 		this.addLayer(new fm.Layer.OSM.OOMStreets(ol.i18n("Streets overlay"), { permalinkName : "OOMS", visibility : false }));
@@ -184,23 +185,25 @@ fm.Map = ol.Class(ol.Map, {
 	addAllAvailableGoogleLayers : function()
 	{
 		var map = this;
+		var cat = ol.i18n("Google");
 		fm.Layer.Google.loadAPI(function() {
-			map.addLayer(new fm.Layer.Google.Maps(ol.i18n("Google Streets"), { permalinkName : "GgSt" }));
-			map.addLayer(new fm.Layer.Google.MapsSatellite(ol.i18n("Google Satellite"), { permalinkName : "GgSa" }));
-			map.addLayer(new fm.Layer.Google.MapsHybrid(ol.i18n("Google Hybrid"), { permalinkName : "GgHy" }));
-			map.addLayer(new fm.Layer.Google.MapsTerrain(ol.i18n("Google Terrain"), { permalinkName : "GgTe" }));
-			map.addLayer(new fm.Layer.Google.MapMaker(ol.i18n("Google MapMaker"), { permalinkName : "GgMM" }));
-			map.addLayer(new fm.Layer.Google.MapMakerHybrid(ol.i18n("Google MapMaker Hybrid"), { permalinkName : "GgMH" }));
+			map.addLayer(new fm.Layer.Google.Maps(ol.i18n("Google Streets"), { permalinkName : "GgSt", category: cat }));
+			map.addLayer(new fm.Layer.Google.MapsSatellite(ol.i18n("Google Satellite"), { permalinkName : "GgSa", category: cat }));
+			map.addLayer(new fm.Layer.Google.MapsHybrid(ol.i18n("Google Hybrid"), { permalinkName : "GgHy", category: cat }));
+			map.addLayer(new fm.Layer.Google.MapsTerrain(ol.i18n("Google Terrain"), { permalinkName : "GgTe", category: cat }));
+			map.addLayer(new fm.Layer.Google.MapMaker(ol.i18n("Google MapMaker"), { permalinkName : "GgMM", category: cat }));
+			map.addLayer(new fm.Layer.Google.MapMakerHybrid(ol.i18n("Google MapMaker Hybrid"), { permalinkName : "GgMH", category: cat }));
 		});
 	},
 
 	addAllAvailableYahooLayers : function()
 	{
 		var map = this;
+		var cat = ol.i18n("Yahoo");
 		fm.Layer.Yahoo.loadAPI(function() {
-			map.addLayer(new fm.Layer.Yahoo.Maps(ol.i18n("Yahoo Street"), { permalinkName : "YaSt" }));
-			map.addLayer(new fm.Layer.Yahoo.Satellite(ol.i18n("Yahoo Satellite"), { permalinkName : "YaSa" }));
-			map.addLayer(new fm.Layer.Yahoo.Hybrid(ol.i18n("Yahoo Hybrid"), { permalinkName : "YaHy" }));
+			map.addLayer(new fm.Layer.Yahoo.Maps(ol.i18n("Yahoo Street"), { permalinkName : "YaSt", category : cat }));
+			map.addLayer(new fm.Layer.Yahoo.Satellite(ol.i18n("Yahoo Satellite"), { permalinkName : "YaSa", category : cat }));
+			map.addLayer(new fm.Layer.Yahoo.Hybrid(ol.i18n("Yahoo Hybrid"), { permalinkName : "YaHy", category : cat }));
 		});
 	},
 
@@ -212,7 +215,7 @@ fm.Map = ol.Class(ol.Map, {
 		this.addLayer(new fm.Layer.other.Relief(ol.i18n("Relief"), { visibility: false, permalinkName : "Rlie" }));
 
 		this.addAllAvailableOSMLayers();
-		this.addLayer(new fm.Layer.other.OSStreetView(ol.i18n("Ordnance Survey (UK)"), { permalinkName : "OSSV" }));
+		this.addLayer(new fm.Layer.other.OSStreetView(ol.i18n("Ordnance Survey (UK)"), { permalinkName : "OSSV", category : ol.i18n("Other") }));
 
 		this.addAllAvailableGoogleLayers();
 		this.addAllAvailableYahooLayers();

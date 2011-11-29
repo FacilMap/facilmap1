@@ -176,3 +176,14 @@ ol.fmAutoSuggest li.selected,ol.fmAutoSuggest li:hover {
 }
 
 /* === */
+
+/* === FacilMap.Control.ToolsMenu === */
+
+.olMap .fmControlToolsMenu {
+	position:absolute;
+	top:15px;
+	right:10px;
+	opacity:0.75;
+}
+
+/* === */

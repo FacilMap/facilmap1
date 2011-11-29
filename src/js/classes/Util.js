@@ -610,10 +610,10 @@ FacilMap.Util = {
 		var funcSave = obj[property];
 		obj[property] = function() {
 			if(before != null)
-				before.apply(obj, [ ]);
+				before.apply(obj, arguments);
 			var ret = funcSave.apply(obj, arguments);
 			if(after != null)
-				after.apply(obj, [ ]);
+				after.apply(obj, arguments);
 			return ret;
 		};
 	},

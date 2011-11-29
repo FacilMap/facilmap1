@@ -18,8 +18,8 @@
 */
 
 OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
-	"[Zoom]" : "[Zoom]",
-	"[Remove]" : "[Entfernen]",
+	"Zoom" : "Zoom",
+	"Remove" : "Entfernen",
 	"attribution-osm" : "Darstellung: ${rendering} (CC-by-SA), Daten: <a href=\"http://www.openstreetmap.org/\">OpenStreetMap</a> (CC-by-SA)",
 	"attribution-relief" : "Reliefdarstellung: <a href=\"http://hikebikemap.de/\">Hike &amp; Bike Map</a>",
 	"attribution-oom-streets" : "Straßenhybrid von <a href=\"http://oobrien.com/oom/\">OpenOrienteeringMap</a> (<a href=\"http://www.openstreetmap.org/\">OpenStreetMap</a>-Daten, CC-by-SA)",

@@ -18,8 +18,8 @@
 */
 
 OpenLayers.Lang.nl = OpenLayers.Util.extend(OpenLayers.Lang.nl, {
-	"[Zoom]" : "[Zoom]",
-	"[Remove]" : "[Verwijderen]",
+	"Zoom" : "Zoom",
+	"Remove" : "Verwijderen",
 	"attribution-osm" : "Weergave: ${rendering} (CC-by-SA), Gegevens: <a href=\"http://www.openstreetmap.org/\">OpenStreetMap</a> (CC-by-SA)",
 	"attribution-relief" : "Reliëf: <a href=\"http://hikebikemap.de/\">Hike &amp; Bike Map</a>",
 	"attribution-oom-streets" : "Stratenlaag: <a href=\"http://oobrien.com/oom/\">OpenOrienteeringMap</a> (<a href=\"http://www.openstreetmap.org/\">OpenStreetMap</a>-gegevens, CC-by-SA)",

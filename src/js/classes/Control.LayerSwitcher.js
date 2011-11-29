@@ -62,7 +62,7 @@ fm.Control.LayerSwitcher = ol.Class(ol.Control.LayerSwitcher, {
 				var a_zoom = document.createElement("a");
 				a_zoom.href = "#";
 				ol.Event.observe(a_zoom, "click", ol.Function.bindAsEventListener(function(){ var extent = this.getDataExtent(); if(extent) this.map.zoomToExtent(extent); return false; }, layer));
-				a_zoom.appendChild(document.createTextNode(ol.i18n("[Zoom]")));
+				a_zoom.appendChild(document.createTextNode("["+ol.i18n("Zoom")+"]"));
 
 				append.push(document.createTextNode(" "));
 				append.push(a_zoom);
@@ -73,7 +73,7 @@ fm.Control.LayerSwitcher = ol.Class(ol.Control.LayerSwitcher, {
 				var a_remove = document.createElement("a");
 				a_remove.href = "#";
 				ol.Event.observe(a_remove, "click", ol.Function.bindAsEventListener(function(){ this.map.removeLayer(this); this.destroy(); return false; }, layer));
-				a_remove.appendChild(document.createTextNode(ol.i18n("[Remove]")));
+				a_remove.appendChild(document.createTextNode("["+ol.i18n("Remove")+"]"));
 
 				append.push(document.createTextNode(" "));
 				append.push(a_remove);
