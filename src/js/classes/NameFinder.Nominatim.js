@@ -448,12 +448,12 @@ fm.NameFinder.Nominatim = ol.Class(fm.NameFinder, {
 			case "it":
 				if(city)
 				{
-					if(county && county != city)
+					if(county)
 					{
 						var countyAbbr = this.stateAbbr.it[county.toLowerCase().replace(/ì/g, "i")];
 						if(countyAbbr)
 						{
-							city += " "+countyAbbr;
+							city += " ("+countyAbbr+")";
 							county = null;
 						}
 					}
