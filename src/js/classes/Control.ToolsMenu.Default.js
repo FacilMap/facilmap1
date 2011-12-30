@@ -43,7 +43,7 @@ fm.Control.ToolsMenu.Default = ol.Class(fm.Control.ToolsMenu, {
 			$.each(this._mapMoveHandlers, $.proxy(function(i,it){ it.apply(this, arguments); }, this));
 		}, this);
 
-		this.map.events.register("move", onMove);
+		this.map.events.register("move", this, onMove);
 		onMove();
 
 		return ret;
@@ -51,6 +51,9 @@ fm.Control.ToolsMenu.Default = ol.Class(fm.Control.ToolsMenu, {
 
 	_addOtherMapsLinks : function(submenu) {
 		var lonlat = fm.Util.fromMapProjection(this.map.getCenter(), this.map);
+
+		if(lonlat == null)
+			lonlat = new ol.LonLat(0, 0);
 
 		var lon = fm.Util.round(lonlat.lon, 5);
 		var lat = fm.Util.round(lonlat.lat, 5);

@@ -634,6 +634,8 @@ FacilMap.Util = {
 	 * @return {OpenLayers.LonLat}
 	 */
 	toMapProjection : function(lonlat, map) {
+		if(lonlat == null)
+			return null;
 		return lonlat.clone().transform(new ol.Projection("EPSG:4326"), map.getProjectionObject());
 	},
 
@@ -644,6 +646,8 @@ FacilMap.Util = {
 	 * @return {OpenLayers.LonLat}
 	 */
 	fromMapProjection : function(lonlat, map) {
+		if(lonlat == null)
+			return null;
 		return lonlat.clone().transform(map.getProjectionObject(), new ol.Projection("EPSG:4326"));
 	},
 
