@@ -41,7 +41,6 @@ fm.Map = ol.Class(ol.Map, {
 			controls: [
 				new ol.Control.Navigation(),
 				new ol.Control.PanZoomBar(),
-				new fm.Control.LayerSwitcher(),
 				new fm.Control.Attribution(),
 				new fm.Control.KeyboardDefaults(),
 				new ol.Control.MousePosition(),

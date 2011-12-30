@@ -83,6 +83,7 @@ ol.Lang.de = ol.Util.extend(ol.Lang.de, {
 	"hours" : "Stunden",
 	"Optimise route points" : "Routenpunkte optimieren",
 	"Elevation profile" : "Höhenprofil",
+	"Layers" : "Karten",
 	"olm.address" : "Adresse",
 	"olm.contact" : "Kontakt",
 	"olm.fuel" : "Tankstelle",

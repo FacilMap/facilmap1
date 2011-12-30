@@ -31,6 +31,7 @@ fm.Control.ToolsMenu = ol.Class(fm.Control, {
 	initialize : function() {
 		fm.Control.prototype.initialize.apply(this, arguments);
 
+		this._content = $("<ul></ul>");
 		this._layerChangeHandlers = [ ];
 	},
 
@@ -49,6 +50,8 @@ fm.Control.ToolsMenu = ol.Class(fm.Control, {
             scope: this
         });
 
+		func();
+
 		return ret;
 	},
 
@@ -62,7 +65,6 @@ fm.Control.ToolsMenu = ol.Class(fm.Control, {
 			}
 		});
 
-		this._content = $("<ul></ul>");
 		this._contentClone = this._content.clone().appendTo(ret).menu().popup({ trigger: button });
 		this._contentClone.bind("menuselect", function(event, ui) {
 			var onclick = $(ui.item).data("fmOnClick");
@@ -96,7 +98,12 @@ fm.Control.ToolsMenu = ol.Class(fm.Control, {
 		var t = this;
 
 		var link = $("<a href=\"javascript:\"></a>").append(caption);
-		var ret = $("<li></li>").append(link, after).appendTo(this._content).data("fmOnClick", onclick);
+		var ret = $("<li></li>").append(link, after).appendTo(this._content);
+
+		if(typeof onclick == "function")
+			ret.data("fmOnClick", onclick);
+		else if(typeof onclick == "string")
+			link.attr("href", onclick);
 
 		// Hack radio button checking. If a checked radio button is added and another checked radio
 		// button with the same name has been added before, the new button is not checked, despite the
@@ -108,6 +115,15 @@ fm.Control.ToolsMenu = ol.Class(fm.Control, {
 		this.redraw();
 
 		return ret;
+	},
+
+	/**
+	 * Adds an entry to the menu.
+	 * @param caption {String} The HTML caption of the menu item
+	 * @param href {String|Function} The href of the item or an onclick function
+	 */
+	addItem : function(caption, href) {
+		this._addItem(caption, href);
 	},
 
 	/**
@@ -175,7 +191,9 @@ fm.Control.ToolsMenu = ol.Class(fm.Control, {
 		}, this);
 
 		this._layerChangeHandlers.push(refresh);
-		refresh();
+
+		if(this.map)
+			refresh();
 	},
 
 	CLASS_NAME : "FacilMap.Control.ToolsMenu"

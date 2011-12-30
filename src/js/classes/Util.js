@@ -638,6 +638,16 @@ FacilMap.Util = {
 	},
 
 	/**
+	 * Reverse function for {@link #toMapProjection}
+	 * @param lonlat {OpenLayers.LonLat}
+	 * @param map {OpenLayers.Map}
+	 * @return {OpenLayers.LonLat}
+	 */
+	fromMapProjection : function(lonlat, map) {
+		return lonlat.clone().transform(map.getProjectionObject(), new ol.Projection("EPSG:4326"));
+	},
+
+	/**
 	 * Rounds the given number to the given number of digits.
 	 * @param number {Number}
 	 * @param digits {Number}
