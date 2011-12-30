@@ -26,6 +26,198 @@ fm.NameFinder.Nominatim = ol.Class(fm.NameFinder, {
 	nameFinderURL : "http://open.mapquestapi.com/nominatim/v1/search",
 	limit : 25,
 
+	stateAbbr : {
+		"us" : {
+			"alabama" : "AL",
+			"alaska" : "AK",
+			"arizona" : "AZ",
+			"arkansas" : "AR",
+			"california" : "CA",
+			"colorado" : "CO",
+			"connecticut" : "CT",
+			"delaware" : "DE",
+			"florida" : "FL",
+			"georgia" : "GA",
+			"hawaii" : "HI",
+			"idaho" : "ID",
+			"illinois" : "IL",
+			"indiana" : "IN",
+			"iowa" : "IA",
+			"kansas" : "KS",
+			"kentucky" : "KY",
+			"louisiana" : "LA",
+			"maine" : "ME",
+			"maryland" : "MD",
+			"massachusetts" : "MA",
+			"michigan" : "MI",
+			"minnesota" : "MN",
+			"mississippi" : "MS",
+			"missouri" : "MO",
+			"montana" : "MT",
+			"nebraska" : "NE",
+			"nevada" : "NV",
+			"new hampshire" : "NH",
+			"new jersey" : "NJ",
+			"new mexico" : "NM",
+			"new york" : "NY",
+			"north carolina" : "NC",
+			"north dakota" : "ND",
+			"ohio" : "OH",
+			"oklahoma" : "OK",
+			"oregon" : "OR",
+			"pennsylvania" : "PA",
+			"rhode island" : "RI",
+			"south carolina" : "SC",
+			"south dakota" : "SD",
+			"tennessee" : "TN",
+			"texas" : "TX",
+			"utah" : "UT",
+			"vermont" : "VT",
+			"virginia" : "VA",
+			"washington" : "WA",
+			"west virginia" : "WV",
+			"wisconsin" : "WI",
+			"wyoming" : "WY"
+		},
+		"it" : {
+			"agrigento" : "AG",
+			"alessandria" : "AL",
+			"ancona" : "AN",
+			"aosta" : "AO",
+			"arezzo" : "AR",
+			"ascoli piceno" : "AP",
+			"asti" : "AT",
+			"avellino" : "AV",
+			"bari" : "BA",
+			"barletta" : "BT",
+			"barletta-andria-trani" : "BT",
+			"belluno" : "BL",
+			"benevento" : "BN",
+			"bergamo" : "BG",
+			"biella" : "BI",
+			"bologna" : "BO",
+			"bolzano" : "BZ",
+			"brescia" : "BS",
+			"brindisi" : "BR",
+			"cagliari" : "CA",
+			"caltanissetta" : "CL",
+			"campobasso" : "CB",
+			"carbonia-iglesias" : "CI",
+			"caserta" : "CE",
+			"catania" : "CT",
+			"catanzaro" : "CZ",
+			"chieti" : "CH",
+			"como" : "CO",
+			"cosenza" : "CS",
+			"cremona" : "CR",
+			"crotone" : "KR",
+			"cuneo" : "CN",
+			"enna" : "EN",
+			"fermo" : "FM",
+			"ferrara" : "FE",
+			"firenze" : "FI",
+			"foggia" : "FG",
+			"forli-cesena" : "FC",
+			"frosinone" : "FR",
+			"genova" : "GE",
+			"gorizia" : "GO",
+			"grosseto" : "GR",
+			"imperia" : "IM",
+			"isernia" : "IS",
+			"la spezia" : "SP",
+			"l'aquila" : "AQ",
+			"latina" : "LT",
+			"lecce" : "LE",
+			"lecco" : "LC",
+			"livorno" : "LI",
+			"lodi" : "LO",
+			"lucca" : "LU",
+			"macerata" : "MC",
+			"mantova" : "MN",
+			"massa e carrara" : "MS",
+			"matera" : "MT",
+			"medio campidano" : "VS",
+			"messina" : "ME",
+			"milano" : "MI",
+			"modena" : "MO",
+			"monza e brianza" : "MB",
+			"napoli" : "NA",
+			"novara" : "NO",
+			"nuoro" : "NU",
+			"ogliastra" : "OG",
+			"olbia-tempio" : "OT",
+			"oristano" : "OR",
+			"padova" : "PD",
+			"palermo" : "PA",
+			"parma" : "PR",
+			"pavia" : "PV",
+			"perugia" : "PG",
+			"pesaro e urbino" : "PU",
+			"pescara" : "PE",
+			"piacenza" : "PC",
+			"pisa" : "PI",
+			"pistoia" : "PT",
+			"pordenone" : "PN",
+			"potenza" : "PZ",
+			"prato" : "PO",
+			"ragusa" : "RG",
+			"ravenna" : "RA",
+			"reggio calabria" : "RC",
+			"reggio emilia" : "RE",
+			"rieti" : "RI",
+			"rimini" : "RN",
+			"roma" : "RM",
+			"rovigo" : "RO",
+			"salerno" : "SA",
+			"sassari" : "SS",
+			"savona" : "SV",
+			"siena" : "SI",
+			"siracusa" : "SR",
+			"sondrio" : "SO",
+			"taranto" : "TA",
+			"teramo" : "TE",
+			"terni" : "TR",
+			"torino" : "TO",
+			"trapani" : "TP",
+			"trento" : "TN",
+			"treviso" : "TV",
+			"trieste" : "TS",
+			"udine" : "UD",
+			"varese" : "VA",
+			"venezia" : "VE",
+			"verbano" : "VB",
+			"verbano-cusio-ossola" : "VB",
+			"vercelli" : "VC",
+			"verona" : "VR",
+			"vibo valentia" : "VV",
+			"vicenza" : "VI",
+			"viterbo" : "VT"
+		},
+		"ca" : {
+			"ontario" : "ON",
+			"quebec" : "QC",
+			"nova scotia" : "NS",
+			"new brunswick" : "NB",
+			"manitoba" : "MB",
+			"british columbia" : "BC",
+			"prince edward island" : "PE",
+			"saskatchewan" : "SK",
+			"alberta" : "AB",
+			"newfoundland and labrador" : "NL"
+		},
+		"au" : {
+			"australian capital territory" : "ACT",
+			"jervis bay territory" : "JBT",
+			"new south wales" : "NSW",
+			"northern territory" : "NT",
+			"queensland" : "QLD",
+			"south australia" : "SA",
+			"tasmania" : "TAS",
+			"victoria" : "VIC",
+			"western australia" : "WA"
+		}
+	},
+
 	find : function(query, callbackFunction) {
 		query.replace(/^\s+/, "").replace(/\s+$/, "");
 
@@ -45,20 +237,12 @@ fm.NameFinder.Nominatim = ol.Class(fm.NameFinder, {
 							var place = $(this);
 
 							var box = place.attr("boundingbox").split(",");
-							var path = [ ];
-							$("> *", place).not("country_code,boundary").each(function(){
-								var part = $(this).text();
-								if(part)
-									path.unshift(part);
-							});
-
 							results.push({
 								id : place.attr("place_id"),
 								lonlat : new ol.LonLat(place.attr("lon"), place.attr("lat")),
-								path : path,
 								info : place.attr("class"),
 								icon : place.attr("icon"),
-								//name : place.attr("display_name"),
+								name : t.makeDisplayName(place),
 								getZoom : function(map) {
 									return map.getZoomForExtent(fm.Util.toMapProjection(new ol.Bounds(box[2], box[1], box[3], box[0]), map));
 								},
@@ -77,8 +261,6 @@ fm.NameFinder.Nominatim = ol.Class(fm.NameFinder, {
 							}
 						}
 
-						t.normaliseResultNames(results);
-
 						callbackFunction(results);
 					},
 					failure : function() {
@@ -96,36 +278,240 @@ fm.NameFinder.Nominatim = ol.Class(fm.NameFinder, {
 		this.find(query+" near "+near, callback);
 	},
 
-	normaliseResultNames : function(results) {
-		var obj = { };
+	/**
+	 * Tries to format a search result in a readable way according to the address notation habits in
+	 * the appropriate country.
+	 * @param xmlResult {Element} A place XML element as returned by Nominatim
+	 * @return {String} A readable name for the search result
+	 */
+	makeDisplayName : function(xmlResult) {
+		// See http://en.wikipedia.org/wiki/Address_%28geography%29#Mailing_address_format_by_country for
+		// address notation guidelines
 
-		var getObjForPath = function(path, cur) {
-			cur = (cur || obj);
-			path = [ ].concat(path);
-			var p = path.shift();
-			if(!cur[p])
-				cur[p] = { };
-			return (path.length == 0 ? cur[p] : getObjForPath(path, cur[p]));
-		};
+		var type = $(xmlResult).attr("type");
+		var countryCode = $("country_code", xmlResult).text();
+		var name = $(type, xmlResult).text();
 
-		$.each(results, function(i, it) {
-			getObjForPath(it.path);
-		});
+		var road = $("road", xmlResult).text();
+		var housenumber = $("house_number", xmlResult).text();
+		var suburb = $($("town,suburb,village,hamlet,residential", xmlResult)[0]).text();
+		var postcode = $("postcode", xmlResult).text();
+		var city = $("city", xmlResult).text();
+		var county = $("county", xmlResult).text();
+		var state = $("state", xmlResult).text();
 
-		$.each(results, function(i, it) {
-			var pathPart = [ ];
-			var toIndex = 1;
-			$.each(it.path, function(i2, it2) {
-				pathPart.push(it2);
-				if(fm.Util.getIndexes(getObjForPath(pathPart)).length > 1)
-					toIndex = i2+2;
-			});
-			var pathPart = it.path.slice(0, toIndex);
+		if($.inArray(type, [ "road", "residential", "town", "suburb", "village", "hamlet", "residential", "city", "county", "state" ]) != -1)
+			name = "";
 
-			if(pathPart.length != it.path.length)
-				pathPart.push(it.path[it.path.length-1]);
-			it.name = pathPart.reverse().join(", ");
-		});
+		if(!city && suburb)
+		{
+			city = suburb;
+			suburb = "";
+		}
+
+		if(road)
+		{
+			switch(countryCode)
+			{
+				case "pl":
+					road = "ul. "+road;
+					break;
+				case "ro":
+					road = "str. "+road;
+					break;
+			}
+		}
+
+		// Add house number to road
+		if(road && housenumber)
+		{
+			switch(countryCode)
+			{
+				case "ar":
+				case "at":
+				case "ca":
+				case "de":
+				case "hr":
+				case "cz":
+				case "dk":
+				case "fi":
+				case "is":
+				case "il":
+				case "it":
+				case "nl":
+				case "no":
+				case "pe":
+				case "pl":
+				case "sk":
+				case "si":
+				case "se":
+				case "tr":
+					road += " "+housenumber;
+					break;
+				case "be":
+				case "es":
+					road += ", "+housenumber;
+					break;
+				case "cl":
+					road += " N° "+housenumber;
+					break;
+				case "hu":
+					road += " "+housenumber+".";
+					break;
+				case "id":
+					road += " No. "+housenumber;
+					break;
+				case "my":
+					road = "No." +housenumber+", "+road;
+					break;
+				case "ro":
+					road += ", nr. "+road;
+					break;
+				case "au":
+				case "fr":
+				case "hk":
+				case "ie":
+				case "in":
+				case "nz":
+				case "sg":
+				case "lk":
+				case "tw":
+				case "gb":
+				case "us":
+				default:
+					road += housenumber+" "+road;
+					break;
+			}
+		}
+
+		// Add postcode and districts to city
+		switch(countryCode)
+		{
+			case "ar":
+				if(postcode && city)
+					city = postcode+", "+city;
+				else if(postcode)
+					city = postcode;
+				break;
+			case "at":
+			case "ch":
+			case "de":
+				if(city)
+				{
+					if(suburb)
+						city += "-"+(suburb);
+					suburb = null;
+					if(type == "suburb" || type == "residential")
+						type = "city";
+
+					if(postcode)
+						city = postcode+" "+city;
+				}
+				break;
+			case "be":
+			case "hr":
+			case "cz":
+			case "dk":
+			case "fi":
+			case "fr":
+			case "hu":
+			case "is":
+			case "il":
+			case "my":
+			case "nl":
+			case "no":
+			case "sk":
+			case "si":
+			case "es":
+			case "se":
+			case "tr":
+				if(city && postcode)
+					city = postcode+" "+city;
+				break;
+			case "au":
+			case "ca":
+			case "us":
+				if(city && state)
+				{
+					var stateAbbr = this.stateAbbr[countryCode][state.toLowerCase()];
+					if(stateAbbr)
+					{
+						city += " "+stateAbbr;
+						state = null;
+					}
+				}
+				if(city && postcode)
+					city += " "+postcode;
+				else if(postcode)
+					city = postcode;
+				break;
+			case "it":
+				if(city)
+				{
+					if(county && county != city)
+					{
+						var countyAbbr = this.stateAbbr.it[county.toLowerCase().replace(/ì/g, "i")];
+						if(countyAbbr)
+						{
+							city += " "+countyAbbr;
+							county = null;
+						}
+					}
+					if(postcode)
+						city  = postcode+" "+city;
+				}
+				break;
+			case "ro":
+				if(city && county)
+				{
+					city += ", jud. "+county;
+					county = null;
+				}
+				if(city && postcode)
+					city += ", "+postcode;
+				break;
+			case "cl":
+			case "hk":
+				// Postcode rarely/not used
+			case "ie":
+			case "in":
+			case "id":
+			case "nz":
+			case "pe":
+			case "sg":
+			case "lk":
+			case "tw":
+			case "gb":
+			default:
+				if(city && postcode)
+					city = city+" "+postcode;
+				else if(postcode)
+					city = postcode;
+				break;
+		}
+
+		var result = [ ];
+
+		if(name)
+			result.push(name);
+		if(road)
+			result.push(road);
+		if(suburb)
+			result.push(suburb);
+		if(city)
+			result.push(city);
+		if($.inArray(type, [ "residential", "town", "suburb", "village", "hamlet", "residential", "city", "county", "state" ]) != -1)
+		{ // Searching for a town
+			if(county && county != city)
+				result.push(county);
+			if(state && state != city)
+				result.push(state);
+		}
+
+		if(countryCode)
+			result.push(ol.i18n("country."+countryCode));
+
+		return result.join(", ");
 	},
 
 	CLASS_NAME : "FacilMap.NameFinder.Nominatim"
