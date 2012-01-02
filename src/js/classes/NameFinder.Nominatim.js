@@ -288,9 +288,10 @@ fm.NameFinder.Nominatim = ol.Class(fm.NameFinder, {
 		// See http://en.wikipedia.org/wiki/Address_%28geography%29#Mailing_address_format_by_country for
 		// address notation guidelines
 
-		var type = $(xmlResult).attr("type");
+		var first = $(">:first-child", xmlResult);
+		var type = first[0].tagName;
+		var name = first.text();
 		var countryCode = $("country_code", xmlResult).text();
-		var name = $(type, xmlResult).text();
 
 		var road = $("road", xmlResult).text();
 		var housenumber = $("house_number", xmlResult).text();
