@@ -26,7 +26,7 @@
  * POIs are identified by an ID and a type string in OpenLinkMap.
  */
 FacilMap.Layer.Markers.OpenLinkMap = OpenLayers.Class(FacilMap.Layer.Markers, {
-	api : "http://olm.openstreetmap.de/api",
+	api : "http://openlinkmap.org/api",
 	apiProjection : new OpenLayers.Projection("EPSG:4326"),
 	zoomableInLayerSwitcher : false,
 	markerIcon : new OpenLayers.Icon(FacilMap.apiUrl+"/img/circle.png", new OpenLayers.Size(32,32), new OpenLayers.Pixel(-16, -16)),
@@ -76,24 +76,18 @@ FacilMap.Layer.Markers.OpenLinkMap = OpenLayers.Class(FacilMap.Layer.Markers, {
 		var layer = this;
 
 		OpenLayers.Request.GET({
-			url : this.api + "/tiler.php",
+			url : this.api + "/list.php",
 			params : {
-				"bbox" : bbox,
-				"zoom" : this.map.getZoom()
+				"bbox" : bbox
 			},
 			success : function(request) {
 				if(request.responseText)
 				{
-					var objects = eval('(' + request.responseText + ')');
-					if(!objects.features)
-						return;
-
-					for(var i=0; i<objects.features.length; i++)
+					var objects = request.responseText.split(/<br\/>/);
+					for(var i=0; i<objects.length; i++)
 					{
-						var o = objects.features[i];
-						if(!o || !o.geometry || !o.geometry.coordinates || !o.properties)
-							continue;
-						layer.addOLMMarker(new OpenLayers.LonLat(1*o.geometry.coordinates[0], 1*o.geometry.coordinates[1]), o.properties.osm_id, o.properties.olm_type);
+						var line = objects[i].split(/\|/);
+						layer.addOLMMarker(new OpenLayers.LonLat(1*line[0], 1*line[1]), line[2], line[3]);
 					}
 				}
 			},
@@ -133,7 +127,8 @@ FacilMap.Layer.Markers.OpenLinkMap = OpenLayers.Class(FacilMap.Layer.Markers, {
 			url : this.api + "/details.php",
 			params : {
 				type : type,
-				id : id
+				id : id,
+				format : "text"
 			},
 			success : function(request) {
 				if(request.responseText)
