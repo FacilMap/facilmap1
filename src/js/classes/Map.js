@@ -174,7 +174,7 @@ fm.Map = ol.Class(ol.Map, {
 		this.addLayer(new fm.Layer.OSM.OOMStreets(ol.i18n("Streets overlay"), { permalinkName : "OOMS", visibility : false }));
 		this.addLayer(new fm.Layer.OSM.OOMLabels(ol.i18n("Labels overlay"), { permalinkName : "OOML", visibility : false }));
 		this.addLayer(new fm.Layer.OSM.Hiking(ol.i18n("Hiking symbols"), { visibility: false, permalinkName : "Hike" }));
-		this.addLayer(new fm.Layer.Markers.OpenLinkMap(ol.i18n("POI"), { permalinkName: "OLiM" }));
+		this.addLayer(new fm.Layer.Markers.OpenLinkMap(ol.i18n("POI"), { permalinkName: "OLiM", visibility: false }));
 
 		fm.Layer.Markers.OpenStreetBugs.loadAPI(function() {
 			map.addLayer(new fm.Layer.Markers.OpenStreetBugs(ol.i18n("OpenStreetBugs"), { visibility: false, permalinkName: "OSBu" }));
