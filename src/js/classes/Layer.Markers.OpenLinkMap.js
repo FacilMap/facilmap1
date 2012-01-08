@@ -88,7 +88,8 @@ FacilMap.Layer.Markers.OpenLinkMap = OpenLayers.Class(FacilMap.Layer.Markers, {
 					for(var i=0; i<objects.length; i++)
 					{
 						var line = objects[i].split(/\|/);
-						layer.addOLMMarker(new OpenLayers.LonLat(1*line[0], 1*line[1]), line[2], line[3]);
+						if(line.length >= 4)
+							layer.addOLMMarker(new OpenLayers.LonLat(1*line[0], 1*line[1]), line[2], line[3]);
 					}
 				}
 			},
