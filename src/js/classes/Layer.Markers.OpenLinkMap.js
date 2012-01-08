@@ -130,50 +130,15 @@ FacilMap.Layer.Markers.OpenLinkMap = OpenLayers.Class(FacilMap.Layer.Markers, {
 			params : {
 				type : type,
 				id : id,
-				format : "text"
+				format : "text",
+				lang : OpenLayers.Lang.getCode(),
+				offset : (new Date()).getTimezoneOffset()/60
 			},
 			success : function(request) {
 				if(request.responseText)
-					callback(layer.replaceI18n(request.responseText));
+					callback(request.responseText);
 			}
 		});
-	},
-
-	/**
-	 * When the OLM API sends POI information, internationalised strings are encoded as #key#. This function
-	 * replaces such placeholders by their actual translation.
-	 * This function is used by the {@link #getPopupContent} function.
-	 * @param str {String} The string to replace I18n string in
-	 * @return {String} The translated string
-	 */
-	replaceI18n : function(str) {
-		var togo = str;
-		var ret = "";
-
-		while(togo.length > 0)
-		{
-			var pos1 = togo.indexOf('#');
-			if(pos1 == -1)
-			{
-				ret += togo;
-				break;
-			}
-
-			ret += togo.substr(0, pos1);
-			togo = togo.substr(pos1+1);
-
-			var pos2 = togo.indexOf('#');
-			if(pos2 == -1)
-			{
-				ret += '#' + togo;
-				break;
-			}
-
-			ret += OpenLayers.i18n("olm."+togo.substr(0, pos2));
-			togo = togo.substr(pos2+1);
-		}
-
-		return ret;
 	},
 
 	CLASS_NAME : "FacilMap.Layer.Markers.OpenLinkMap"
