@@ -39,9 +39,10 @@ FacilMap.Layer.Markers.OpenLinkMap = OpenLayers.Class(FacilMap.Layer.Markers, {
 	lastZoom : null,
 
 	afterAdd : function() {
-		var ret = OpenLayers.Layer.Markers.prototype.afterAdd.apply(this, arguments);
+		var ret = FacilMap.Layer.Markers.prototype.afterAdd.apply(this, arguments);
 
 		this.map.events.register("moveend", this, this.loadMarkers);
+		this.events.register("visibilitychanged", this, this.loadMarkers);
 		this.loadMarkers();
 
 		return ret;
