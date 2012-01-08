@@ -17,9 +17,14 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Google Streets (http://maps.google.com/)
 */
-FacilMap.Layer.Google.Maps = OpenLayers.Class(FacilMap.Layer.Google, {
+
+FacilMap.Layer.Google.Maps = ol.Class(fm.Layer.Google, {
 	CLASS_NAME : "FacilMap.Layer.Google.Maps"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

@@ -17,14 +17,18 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Relief rendering from Hike & Bike map (http://hikebikemap.de/)
 */
-FacilMap.Layer.other.Relief = OpenLayers.Class(OpenLayers.Layer.OSM, {
+FacilMap.Layer.other.Relief = ol.Class(ol.Layer.OSM, {
 	isBaseLayer : false,
-	attribution : OpenLayers.i18n("attribution-relief"),
+	attribution : ol.i18n("attribution-relief"),
 	initialize: function(name, options) {
-		OpenLayers.Layer.OSM.prototype.initialize.apply(this, [ name, "http://toolserver.org/~cmarqu/hill/${z}/${x}/${y}.png", options ]);
+		ol.Layer.OSM.prototype.initialize.apply(this, [ name, "http://toolserver.org/~cmarqu/hill/${z}/${x}/${y}.png", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.other.Relief"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

@@ -17,12 +17,14 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Adds a “Go home” link to the map in browsers that support geolocation. The link requests the current position of the user and zooms
  * the map there.
 */
 
-FacilMap.Control.GeoLocation = OpenLayers.Class(OpenLayers.Control, {
+FacilMap.Control.GeoLocation = ol.Class(ol.Control, {
 	/**
 	 * The zoom level to use when zooming to the user’s location.
 	 * @var Number
@@ -32,7 +34,7 @@ FacilMap.Control.GeoLocation = OpenLayers.Class(OpenLayers.Control, {
 	element : null,
 
 	draw : function() {
-		var ret = OpenLayers.Control.prototype.draw.apply(this, arguments);
+		var ret = ol.Control.prototype.draw.apply(this, arguments);
 
 		if(!navigator.geolocation)
 			return ret;
@@ -44,10 +46,10 @@ FacilMap.Control.GeoLocation = OpenLayers.Class(OpenLayers.Control, {
 			this.element = document.createElement("a");
 			this.element.appendChild(document.createTextNode("Go home"));
 			this.element.href = "#";
-			OpenLayers.Event.observe(this.element, "click",
-				OpenLayers.Function.bindAsEventListener(function(e) {
+			ol.Event.observe(this.element, "click",
+				ol.Function.bindAsEventListener(function(e) {
 					this.goToGeoLocation();
-					OpenLayers.Event.stop(e);
+					ol.Event.stop(e);
 				}, this)
 			);
 			this.div.appendChild(this.element);
@@ -65,9 +67,11 @@ FacilMap.Control.GeoLocation = OpenLayers.Class(OpenLayers.Control, {
 		var map = this.map;
 		var zoomLevel = this.zoomLevel;
 		navigator.geolocation.getCurrentPosition(function(position) {
-			map.setCenter(new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude).transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject()), zoomLevel);
+			map.setCenter(new ol.LonLat(position.coords.longitude, position.coords.latitude).transform(new ol.Projection("EPSG:4326"), map.getProjectionObject()), zoomLevel);
 		});
 	},
 
 	CLASS_NAME : "FacilMap.Control.GeoLocation"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

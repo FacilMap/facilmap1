@@ -17,7 +17,9 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
-FacilMap.Layer.Google = OpenLayers.Class(OpenLayers.Layer.Google, {
+(function(fm, ol, $){
+
+FacilMap.Layer.Google = ol.Class(ol.Layer.Google, {
 	sphericalMercator : true,
 	CLASS_NAME : "FacilMap.Layer.Google"
 });
@@ -41,7 +43,9 @@ FacilMap.Layer.Google.API_KEY = null;
 */
 FacilMap.Layer.Google.loadAPI = function(callback) {
 	var url = null;
-	if(FacilMap.Layer.Google.API_KEY != null)
-		url = "http://maps.google.com/maps?file=api&v=2&key="+encodeURIComponent(FacilMap.Layer.Google.API_KEY);
-	FacilMap.Util.loadJavaScript(url, function() { return window.GMap2 != undefined; }, callback);
+	if(fm.Layer.Google.API_KEY != null)
+		url = "http://maps.google.com/maps?file=api&v=2&key="+encodeURIComponent(fm.Layer.Google.API_KEY);
+	fm.Util.loadJavaScript(url, function() { return window.GMap2 != undefined; }, callback);
 };
+
+})(FacilMap, OpenLayers, FacilMap.$);

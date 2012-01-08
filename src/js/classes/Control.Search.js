@@ -19,7 +19,7 @@
 
 (function(fm, ol, $){
 
-fm.Control.Search = ol.Class(ol.Control, {
+FacilMap.Control.Search = ol.Class(ol.Control, {
 	nameFinder : null,
 	tabindex : 1,
 

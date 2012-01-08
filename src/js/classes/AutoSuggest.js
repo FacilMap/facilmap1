@@ -21,9 +21,9 @@
 
 /**
  * Shows a list with suggestions under an input field while the user is typing.
- */
+*/
 
-fm.AutoSuggest = ol.Class({
+FacilMap.AutoSuggest = ol.Class({
 
 	input : null,
 	suggestionFunction : null,

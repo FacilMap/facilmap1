@@ -19,9 +19,9 @@
 
 (function(fm, ol, $){
 
-FacilMap.Routing.Cloudmade = OpenLayers.Class(FacilMap.Routing, {
+FacilMap.Routing.Cloudmade = ol.Class(fm.Routing, {
 	routingURL : "http://routes.cloudmade.com/0abc333ea36c4c34bc67a72442d9770b/api/0.3/",
-	attribution : OpenLayers.i18n("attribution-routing-cloudmade"),
+	attribution : ol.i18n("attribution-routing-cloudmade"),
 
 	getRoute : function(options, callback) {
 		var t = this;

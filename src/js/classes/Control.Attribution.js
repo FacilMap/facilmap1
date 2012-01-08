@@ -23,7 +23,8 @@
  * Like OpenLayers.Control.Attribution. Instead of writing hundreds of attributions on the map, shows a link that opens
  * a popup to show the attributions.
 */
-fm.Control.Attribution = ol.Class(ol.Control, {
+
+FacilMap.Control.Attribution = ol.Class(ol.Control, {
 	draw : function() {
 		var div = ol.Control.prototype.draw.apply(this, arguments);
 		var l = this;

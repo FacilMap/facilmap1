@@ -17,13 +17,18 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Google MapMaker streets (http://www.google.com/mapmaker)
 */
-FacilMap.Layer.Google.MapMaker = OpenLayers.Class(FacilMap.Layer.Google, {
+
+FacilMap.Layer.Google.MapMaker = ol.Class(fm.Layer.Google, {
 	initialize : function() {
 		this.type = G_MAPMAKER_NORMAL_MAP;
-		FacilMap.Layer.Google.prototype.initialize.apply(this, arguments);
+		fm.Layer.Google.prototype.initialize.apply(this, arguments);
 	},
 	CLASS_NAME : "FacilMap.Layer.Google.MapMaker"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

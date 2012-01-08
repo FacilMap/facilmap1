@@ -17,18 +17,20 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
-FacilMap.Routing.Cloudmade.Format = OpenLayers.Class(OpenLayers.Format.GPX, {
+(function(fm, ol, $){
+
+FacilMap.Routing.Cloudmade.Format = ol.Class(ol.Format.GPX, {
 	read : function(doc) {
 		if (typeof doc == "string") {
-			doc = OpenLayers.Format.XML.prototype.read.apply(this, [doc]);
+			doc = ol.Format.XML.prototype.read.apply(this, [doc]);
 		}
 
 		var points = doc.getElementsByTagName("wpt");
         var point_features = [];
         for (var i = 0, len = points.length; i < len; i++) {
-            point_features.push(new OpenLayers.Geometry.Point(points[i].getAttribute("lon"), points[i].getAttribute("lat")));
+            point_features.push(new ol.Geometry.Point(points[i].getAttribute("lon"), points[i].getAttribute("lat")));
         }
-		features = [ new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString(point_features), null) ];
+		features = [ new ol.Feature.Vector(new ol.Geometry.LineString(point_features), null) ];
 
 		if (this.internalProjection && this.externalProjection) {
 			for (var g = 0, featLength = features.length; g < featLength; g++) {
@@ -41,3 +43,5 @@ FacilMap.Routing.Cloudmade.Format = OpenLayers.Class(OpenLayers.Format.GPX, {
 
 	CLASS_NAME : "FacilMap.Routing.Cloudmade.Format"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

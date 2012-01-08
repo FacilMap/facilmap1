@@ -17,13 +17,18 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Yahoo Satellite (http://maps.yahoo.com/)
 */
-FacilMap.Layer.Yahoo.Satellite = OpenLayers.Class(FacilMap.Layer.Yahoo, {
+
+FacilMap.Layer.Yahoo.Satellite = ol.Class(fm.Layer.Yahoo, {
 	initialize: function(name, options) {
 		this.type = YAHOO_MAP_SAT;
-		FacilMap.Layer.Yahoo.prototype.initialize.apply(this, arguments);
+		fm.Layer.Yahoo.prototype.initialize.apply(this, arguments);
 	},
 	CLASS_NAME : "FacilMap.Layer.Yahoo.Satellite"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

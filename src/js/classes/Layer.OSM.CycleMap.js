@@ -17,14 +17,17 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * CycleMap rendering from openstreetmap.org.
 */
-FacilMap.Layer.OSM.CycleMap = OpenLayers.Class(OpenLayers.Layer.OSM, {
+
+FacilMap.Layer.OSM.CycleMap = ol.Class(fm.Layer.OSM, {
 	numZoomLevels : 19,
-	attribution : OpenLayers.String.format(OpenLayers.i18n("attribution-osm"), { rendering: "<a href=\"http://www.opencyclemap.org/\">OpenCycleMap</a>" }),
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://www.opencyclemap.org/\">OpenCycleMap</a>" }),
 	initialize : function(name, options) {
-		OpenLayers.Layer.OSM.prototype.initialize.apply(this, [
+		ol.Layer.OSM.prototype.initialize.apply(this, [
 			name,
 			[ "http://a.andy.sandbox.cloudmade.com/tiles/cycle/${z}/${x}/${y}.png", "http://b.andy.sandbox.cloudmade.com/tiles/cycle/${z}/${x}/${y}.png", "http://c.andy.sandbox.cloudmade.com/tiles/cycle/${z}/${x}/${y}.png" ],
 			options
@@ -32,3 +35,5 @@ FacilMap.Layer.OSM.CycleMap = OpenLayers.Class(OpenLayers.Layer.OSM, {
 	},
 	CLASS_NAME : "FacilMap.Layer.OSM.CycleMap"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

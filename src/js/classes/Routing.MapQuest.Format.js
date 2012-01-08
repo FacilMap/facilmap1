@@ -17,18 +17,20 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
-FacilMap.Routing.MapQuest.Format = OpenLayers.Class(OpenLayers.Format.GPX, {
+(function(fm, ol, $){
+
+FacilMap.Routing.MapQuest.Format = ol.Class(ol.Format.GPX, {
 	read : function(doc) {
 		if (typeof doc == "string") {
-			doc = OpenLayers.Format.XML.prototype.read.apply(this, [doc]);
+			doc = ol.Format.XML.prototype.read.apply(this, [doc]);
 		}
 
 		var points = doc.getElementsByTagName("shapePoints")[0].getElementsByTagName("latLng");
 		var point_features = [];
 		for (var i = 0, len = points.length; i < len; i++) {
-			point_features.push(new OpenLayers.Geometry.Point(points[i].getElementsByTagName("lng")[0].firstChild.data, points[i].getElementsByTagName("lat")[0].firstChild.data));
+			point_features.push(new ol.Geometry.Point(points[i].getElementsByTagName("lng")[0].firstChild.data, points[i].getElementsByTagName("lat")[0].firstChild.data));
 		}
-		features = [ new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString(point_features), null) ];
+		features = [ new ol.Feature.Vector(new ol.Geometry.LineString(point_features), null) ];
 
 		if (this.internalProjection && this.externalProjection) {
 			for (var g = 0, featLength = features.length; g < featLength; g++) {
@@ -39,3 +41,5 @@ FacilMap.Routing.MapQuest.Format = OpenLayers.Class(OpenLayers.Format.GPX, {
 		return features;
 	}
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

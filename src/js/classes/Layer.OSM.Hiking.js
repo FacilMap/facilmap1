@@ -17,14 +17,19 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Hiking symbol overlay by Lonvia (http://osm.lonvia.de/)
 */
-FacilMap.Layer.OSM.Hiking = OpenLayers.Class(OpenLayers.Layer.OSM, {
+
+FacilMap.Layer.OSM.Hiking = ol.Class(fm.Layer.OSM, {
 	isBaseLayer : false,
-	attribution : OpenLayers.i18n("attribution-hiking"),
+	attribution : ol.i18n("attribution-hiking"),
 	initialize : function(name, options) {
-		OpenLayers.Layer.OSM.prototype.initialize.apply(this, [ name, "http://osm.lonvia.de/hiking/${z}/${x}/${y}.png", options ]);
+		ol.Layer.OSM.prototype.initialize.apply(this, [ name, "http://osm.lonvia.de/hiking/${z}/${x}/${y}.png", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.OSM.Hiking"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

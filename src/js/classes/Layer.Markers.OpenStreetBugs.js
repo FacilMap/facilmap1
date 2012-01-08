@@ -17,6 +17,8 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * An extended version of the OpenStreetBugs layer from http://wiki.openstreetmap.org/wiki/OpenStreetBugs_layer.
  *
@@ -24,28 +26,29 @@
  *
  * Make sure to load the OpenStreetBugs API from http://api.facilmap.org/osblayer/osblayer.js before adding this
  * layer or use the {@link FacilMap.Layer.Markers.OpenStreetBugs.loadAPI} function.
- */
-FacilMap.Layer.Markers.OpenStreetBugs = OpenLayers.Class(FacilMap.Layer.Markers, {
+*/
+
+FacilMap.Layer.Markers.OpenStreetBugs = ol.Class(fm.Layer.Markers, {
 	zoomableInLayerSwitcher : false,
 
 	initialize : function(name, options)
 	{
-		this.fmParentClasses.push(OpenLayers.Layer.OpenStreetBugs);
+		this.fmParentClasses.push(ol.Layer.OpenStreetBugs);
 
-		FacilMap.Layer.Markers.prototype.initialize.apply(this, arguments);
+		fm.Layer.Markers.prototype.initialize.apply(this, arguments);
 
-		for(var i in OpenLayers.Layer.OpenStreetBugs.prototype)
+		for(var i in ol.Layer.OpenStreetBugs.prototype)
 		{
 			if(i != "initialize" && i != "_createMarker" && i != "CLASS_NAME")
-				this[i] = OpenLayers.Layer.OpenStreetBugs.prototype[i];
+				this[i] = ol.Layer.OpenStreetBugs.prototype[i];
 		}
 
-		OpenLayers.Layer.OpenStreetBugs.prototype.initialize.apply(this, arguments);
+		ol.Layer.OpenStreetBugs.prototype.initialize.apply(this, arguments);
 	},
 
 	_createMarker: function(id, lonlat, comments, closed, icon)
 	{
-		var feature = FacilMap.Layer.Markers.prototype.createMarker.apply(this, [ lonlat, null, false, icon, true ]).fmFeature;
+		var feature = fm.Layer.Markers.prototype.createMarker.apply(this, [ lonlat, null, false, icon, true ]).fmFeature;
 
 		if(id != null) // Existing bug, not bug creation form
 		{
@@ -57,8 +60,8 @@ FacilMap.Layer.Markers.OpenStreetBugs = OpenLayers.Class(FacilMap.Layer.Markers,
 		}
 
 		// Make the popup intransparent initially
-		FacilMap.Util.wrapFunction(feature, "createPopup", null, function() {
-			FacilMap.Util.wrapFunction(this.popup, "draw", null, function() { this.unsetOpacity(0); });
+		fm.Util.wrapFunction(feature, "createPopup", null, function() {
+			fm.Util.wrapFunction(this.popup, "draw", null, function() { this.unsetOpacity(0); });
 		});
 
 		return feature;
@@ -73,5 +76,7 @@ FacilMap.Layer.Markers.OpenStreetBugs = OpenLayers.Class(FacilMap.Layer.Markers,
  * @param callback {Function} A function to call as soon as the API is loaded.
  */
 FacilMap.Layer.Markers.OpenStreetBugs.loadAPI = function(callback) {
-	FacilMap.Util.loadJavaScript("http://api.facilmap.org/osblayer/osblayer.js", function() { return OpenLayers.Layer.OpenStreetBugs != undefined; }, callback);
+	fm.Util.loadJavaScript("http://api.facilmap.org/osblayer/osblayer.js", function() { return ol.Layer.OpenStreetBugs != undefined; }, callback);
 };
+
+})(FacilMap, OpenLayers, FacilMap.$);

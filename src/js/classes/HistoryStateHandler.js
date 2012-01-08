@@ -23,7 +23,8 @@
  * A class to control the history state saved in the browser’s location bar.
  * @event stateChanged The history state has been changed by the user
 */
-fm.HistoryStateHandler = ol.Class({
+
+FacilMap.HistoryStateHandler = ol.Class({
 	/**
 	 * The interval in milliseconds, how often location.hash shall be checked for changes.
 	 * @var Number
@@ -125,7 +126,7 @@ fm.HistoryStateHandler = ol.Class({
 
 	/**
 	 * @return {String}
-	 */
+	*/
 	_getLocationHash : function() {
 		// At least in Firefox, location.hash contains “&” if the hash part contains “%26”. This makes searching for URLs (such as OSM PermaLinks) hard and we work around that problem by extracting the desired value from location.href.
 		var match = location.href.match(/#(.*)$/);
@@ -137,7 +138,7 @@ fm.HistoryStateHandler = ol.Class({
 
 	/**
 	 * @param hash {String}
-	 */
+	*/
 	_setLocationHash : function(hash)
 	{
 		if(hash == this._getLocationHash())

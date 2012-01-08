@@ -17,13 +17,18 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Google Hybrid (Streets and Satellite) (http://maps.google.com/)
 */
-FacilMap.Layer.Google.MapsHybrid = OpenLayers.Class(FacilMap.Layer.Google, {
+
+FacilMap.Layer.Google.MapsHybrid = ol.Class(fm.Layer.Google, {
 	initialize : function() {
 		this.type = G_HYBRID_MAP;
-		FacilMap.Layer.Google.prototype.initialize.apply(this, arguments);
+		fm.Layer.Google.prototype.initialize.apply(this, arguments);
 	},
 	CLASS_NAME : "FacilMap.Layer.Google.MapsHybrid"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

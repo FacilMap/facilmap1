@@ -24,7 +24,8 @@
  * Additionally, overlay layers that have the “zoomableInLayerSwitcher” property get a button that zooms to the data extent of the layer.
  * Overlay layers that have the “removableInLayerSwitcher” property set get a button to remove the layer from the map.
 */
-fm.Control.LayerSwitcher = ol.Class(ol.Control.LayerSwitcher, {
+
+FacilMap.Control.LayerSwitcher = ol.Class(ol.Control.LayerSwitcher, {
 	roundedCorner : false, // Is done in CSS instead
 
 	loadContents : function() {

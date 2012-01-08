@@ -27,7 +27,7 @@
  * @event searchFailure No results have been found or an error occured
 */
 
-fm.Layer.Markers.SearchResults = ol.Class(fm.Layer.Markers, {
+FacilMap.Layer.Markers.SearchResults = ol.Class(fm.Layer.Markers, {
 	lastSearch : false,
 
 	/**

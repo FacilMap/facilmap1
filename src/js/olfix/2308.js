@@ -17,21 +17,25 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Necessary improvement to the translate function: Fall back to default language if translated string is not
  * available (see http://trac.openlayers.org/ticket/2308).
 */
 
 OpenLayers.i18n = OpenLayers.Lang.translate = function(key, context) {
-	var message = OpenLayers.Lang[OpenLayers.Lang.getCode()][key];
+	var message = ol.Lang[ol.Lang.getCode()][key];
 	if(!message)
 	{
-		if(OpenLayers.Lang[OpenLayers.Lang.defaultCode][key])
-			message = OpenLayers.Lang[OpenLayers.Lang.defaultCode][key];
+		if(ol.Lang[ol.Lang.defaultCode][key])
+			message = ol.Lang[ol.Lang.defaultCode][key];
 		else
 			message = key;
 	}
 	if(context)
-		message = OpenLayers.String.format(message, context);
+		message = ol.String.format(message, context);
 	return message;
 };
+
+})(FacilMap, OpenLayers, FacilMap.$);

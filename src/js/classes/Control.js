@@ -19,8 +19,8 @@
 
 (function(fm, ol, $){
 
-	fm.Control = ol.Class(ol.Control, {
-		CLASS_NAME : "FacilMap.Control"
-	});
+FacilMap.Control = ol.Class(ol.Control, {
+	CLASS_NAME : "FacilMap.Control"
+});
 
 })(FacilMap, OpenLayers, FacilMap.$);

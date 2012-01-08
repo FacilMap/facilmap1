@@ -17,10 +17,14 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Parent class for MapSurfer (http://www.mapsurfer.net/) renderings.
 */
-FacilMap.Layer.OSM.MapSurfer = OpenLayers.Class(OpenLayers.Layer.OSM, {
-	attribution : OpenLayers.String.format(OpenLayers.i18n("attribution-osm"), { rendering: "<a href=\"http://www.mapsurfer.net/\">MapSurfer</a>" }),
+FacilMap.Layer.OSM.MapSurfer = ol.Class(fm.Layer.OSM, {
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://www.mapsurfer.net/\">MapSurfer</a>" }),
 	CLASS_NAME : "FacilMap.Layer.OSM.MapSurfer"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

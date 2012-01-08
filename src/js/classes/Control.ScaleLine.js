@@ -17,10 +17,15 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Like {@link OpenLayers.Control.ScaleLine}, but is displayed on the right side
  * of the map.
 */
-FacilMap.Control.ScaleLine = OpenLayers.Class(OpenLayers.Control.ScaleLine, {
+
+FacilMap.Control.ScaleLine = ol.Class(ol.Control.ScaleLine, {
 	CLASS_NAME : "FacilMap.Control.ScaleLine"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

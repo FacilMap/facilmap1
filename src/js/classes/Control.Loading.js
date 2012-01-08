@@ -18,53 +18,55 @@
 */
 
 (function(fm, ol, $){
-	fm.Control.Loading = ol.Class(fm.Control, {
-		_loadingInstances : 0,
-		_interval : null,
 
-		draw : function(px) {
-			var ret = fm.Control.prototype.draw.apply(this, arguments);
+FacilMap.Control.Loading = ol.Class(fm.Control, {
+	_loadingInstances : 0,
+	_interval : null,
 
-			$(this.div).append("<p>"+ol.i18n("Loading")+"</p>");
-			this._update();
+	draw : function(px) {
+		var ret = fm.Control.prototype.draw.apply(this, arguments);
 
-			return ret;
-		},
+		$(this.div).append("<p>"+ol.i18n("Loading")+"</p>");
+		this._update();
 
-		loadStart : function() {
-			this._loadingInstances++;
-			this._update();
-		},
+		return ret;
+	},
 
-		loadEnd : function() {
-			this._loadingInstances--;
-			this._update();
-		},
+	loadStart : function() {
+		this._loadingInstances++;
+		this._update();
+	},
 
-		_update : function() {
-			var visible = (this._loadingInstances > 0);
-			$(this.div).css("display", visible ? "block" : "none");
+	loadEnd : function() {
+		this._loadingInstances--;
+		this._update();
+	},
 
-			if(visible && this._interval == null)
-			{
-				var text = ol.i18n("Loading");
-				var el = $("> p", this.div);
-				this._interval = setInterval(function(){
-					switch(el.html()) {
-						case text: el.html("."+text+"."); break;
-						case "."+text+".": el.html(".."+text+".."); break;
-						case ".."+text+"..": el.html("..."+text+"..."); break;
-						default: el.html(text); break;
-					}
-				}, 1000);
-			}
-			else if(!visible && this._interval != null)
-			{
-				clearInterval(this._interval);
-				this._interval = null;
-			}
-		},
+	_update : function() {
+		var visible = (this._loadingInstances > 0);
+		$(this.div).css("display", visible ? "block" : "none");
 
-		CLASS_NAME : "FacilMap.Control.Loading"
-	});
+		if(visible && this._interval == null)
+		{
+			var text = ol.i18n("Loading");
+			var el = $("> p", this.div);
+			this._interval = setInterval(function(){
+				switch(el.html()) {
+					case text: el.html("."+text+"."); break;
+					case "."+text+".": el.html(".."+text+".."); break;
+					case ".."+text+"..": el.html("..."+text+"..."); break;
+					default: el.html(text); break;
+				}
+			}, 1000);
+		}
+		else if(!visible && this._interval != null)
+		{
+			clearInterval(this._interval);
+			this._interval = null;
+		}
+	},
+
+	CLASS_NAME : "FacilMap.Control.Loading"
+});
+
 })(FacilMap, OpenLayers, FacilMap.$);

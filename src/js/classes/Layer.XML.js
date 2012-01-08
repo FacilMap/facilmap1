@@ -17,6 +17,8 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Displays an XML file on the map (such as GPX, KML or OSM) auto-determining of the format. The colour is
  * randomly assigned.
@@ -27,7 +29,7 @@
  * @event allloadend If an array of URL is passed, this is only called when the last URL is actually loaded.
 */
 
-FacilMap.Layer.XML = OpenLayers.Class(OpenLayers.Layer.GML, {
+FacilMap.Layer.XML = ol.Class(ol.Layer.GML, {
 	fmURL : null,
 	relations : null,
 	colour : null,
@@ -37,7 +39,7 @@ FacilMap.Layer.XML = OpenLayers.Class(OpenLayers.Layer.GML, {
 		strokeWidth: 3,
 		strokeOpacity: 0.5
 	},
-	projection : new OpenLayers.Projection("EPSG:4326"),
+	projection : new ol.Projection("EPSG:4326"),
 	zoomableInLayerSwitcher : true,
 
 	initialize : function(name, url, options) {
@@ -46,7 +48,7 @@ FacilMap.Layer.XML = OpenLayers.Class(OpenLayers.Layer.GML, {
 
 		if(this.colour == null)
 		{
-			switch((FacilMap.Layer.XML.colourCounter++)%4)
+			switch((fm.Layer.XML.colourCounter++)%4)
 			{
 				case 0: this.colour = "red"; break;
 				case 1: this.colour = "blue"; break;
@@ -55,12 +57,12 @@ FacilMap.Layer.XML = OpenLayers.Class(OpenLayers.Layer.GML, {
 			}
 		}
 
-		OpenLayers.Layer.GML.prototype.initialize.apply(this, [ name ? name : url, url, options ]);
+		ol.Layer.GML.prototype.initialize.apply(this, [ name ? name : url, url, options ]);
 
 		this.events.addEventType("allloadend");
 	},
 	afterAdd : function() {
-		var ret = OpenLayers.Layer.GML.prototype.afterAdd.apply(this, arguments);
+		var ret = ol.Layer.GML.prototype.afterAdd.apply(this, arguments);
 		this.map.setLayerZIndex(this, 0);
 		return ret;
 	},
@@ -84,7 +86,7 @@ FacilMap.Layer.XML = OpenLayers.Class(OpenLayers.Layer.GML, {
 			if(!url[i])
 				continue;
 			this.toLoad++;
-			OpenLayers.Request.GET({
+			ol.Request.GET({
 				url: url[i],
 				success: function() {
 					this.requestSuccess.apply(this, arguments);
@@ -107,27 +109,27 @@ FacilMap.Layer.XML = OpenLayers.Class(OpenLayers.Layer.GML, {
 			{
 				case "gpx":
 					if(request.responseXML.documentElement.getAttribute("creator") == "CloudMade")
-						this.format = FacilMap.Routing.Cloudmade.Format;
+						this.format = fm.Routing.Cloudmade.Format;
 					else
-						this.format = OpenLayers.Format.GPX;
+						this.format = ol.Format.GPX;
 					break;
-				case "osm": this.format = OpenLayers.Format.OSM; break;
-				case "kml": this.format = OpenLayers.Format.KML; break;
-				case "response": this.format = FacilMap.Routing.MapQuest.Format;
+				case "osm": this.format = ol.Format.OSM; break;
+				case "kml": this.format = ol.Format.KML; break;
+				case "response": this.format = fm.Routing.MapQuest.Format;
 			}
 		}
 		this.formatOptions = { extractAttributes: false };
 		try
 		{
-			OpenLayers.Layer.GML.prototype.requestSuccess.apply(this, arguments);
+			ol.Layer.GML.prototype.requestSuccess.apply(this, arguments);
 		}
 		catch(e)
 		{
-			alert(OpenLayers.i18n("Error parsing file."));
+			alert(ol.i18n("Error parsing file."));
 			this.events.triggerEvent("loadend");
 		}
 
-		if(FacilMap.Layer.XML.relationURL && this.format == OpenLayers.Format.OSM && request.responseXML)
+		if(fm.Layer.XML.relationURL && this.format == ol.Format.OSM && request.responseXML)
 		{
 			var relations = request.responseXML.getElementsByTagName("relation");
 			for(var i=0; i<relations.length; i++)
@@ -137,7 +139,7 @@ FacilMap.Layer.XML = OpenLayers.Class(OpenLayers.Layer.GML, {
 					continue;
 				this.relations[id] = true;
 
-				var url = OpenLayers.String.format(FacilMap.Layer.XML.relationURL, {"id": id});
+				var url = ol.String.format(fm.Layer.XML.relationURL, {"id": id});
 				if(url == this.url)
 					continue;
 				this.loadGML(url);
@@ -168,3 +170,5 @@ FacilMap.Layer.XML = OpenLayers.Class(OpenLayers.Layer.GML, {
 FacilMap.Layer.XML.relationURL = "http://www.openstreetmap.org/api/0.6/relation/${id}/full";
 
 FacilMap.Layer.XML.colourCounter = 1;
+
+})(FacilMap, OpenLayers, FacilMap.$);

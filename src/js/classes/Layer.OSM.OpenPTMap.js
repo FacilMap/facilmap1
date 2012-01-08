@@ -21,8 +21,9 @@
 
 /**
  * Overlay layer from http://openptmap.org/
- */
-fm.Layer.OSM.OpenPTMap = ol.Class(ol.Layer.OSM, {
+*/
+
+FacilMap.Layer.OSM.OpenPTMap = ol.Class(fm.Layer.OSM, {
 	maxZoomLevel : 17,
 	numZoomLevels : 18,
 	alpha : true,
@@ -30,7 +31,7 @@ fm.Layer.OSM.OpenPTMap = ol.Class(ol.Layer.OSM, {
 	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://openptmap.org/\">openptmap.org</a>" }),
 
 	initialize : function(name, options) {
-		ol.Layer.OSM.prototype.initialize.apply(this, [ name, "http://openptmap.org/tiles/${z}/${x}/${y}.png", options ]);
+		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "http://openptmap.org/tiles/${z}/${x}/${y}.png", options ]);
 	},
 
 	CLASS_NAME : "FacilMap.Layer.OSM.OpenPTMap"

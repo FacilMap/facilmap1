@@ -17,4 +17,8 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 FacilMap.Popup = { };
+
+})(FacilMap, OpenLayers, FacilMap.$);

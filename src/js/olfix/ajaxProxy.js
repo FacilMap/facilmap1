@@ -17,6 +17,10 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 // Make use of ajax-proxy (http://gitorious.org/ajax-proxy/ajax-proxy)
 // Include http://api.facilmap.org/ajax-proxy/ajax-proxy.js to "disable" the Same Origin Policy.
-FacilMap.Util.loadJavaScript("http://api.facilmap.org/ajax-proxy/ajax-proxy.js", function() { return window.AjaxProxyXMLHttpRequest != undefined; }, function() { OpenLayers.Request.XMLHttpRequest = AjaxProxyXMLHttpRequest; });
+fm.Util.loadJavaScript("http://api.facilmap.org/ajax-proxy/ajax-proxy.js", function() { return window.AjaxProxyXMLHttpRequest != undefined; }, function() { OpenLayers.Request.XMLHttpRequest = AjaxProxyXMLHttpRequest; });
+
+})(FacilMap, OpenLayers, FacilMap.$);

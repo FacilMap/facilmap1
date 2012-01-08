@@ -22,7 +22,8 @@
 /**
  * An implementation of the NameFinder that contacts Nominatim (http://wiki.openstreetmap.org/wiki/Nominatim).
 */
-fm.NameFinder.Nominatim = ol.Class(fm.NameFinder, {
+
+FacilMap.NameFinder.Nominatim = ol.Class(fm.NameFinder, {
 	nameFinderURL : "http://open.mapquestapi.com/nominatim/v1/search",
 	limit : 25,
 

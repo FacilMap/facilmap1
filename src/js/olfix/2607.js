@@ -17,22 +17,24 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 // Workaround for http://trac.openlayers.org/ticket/2607
 
-if(FacilMap.olBackup.Control == undefined)
-	FacilMap.olBackup.Control = { };
+if(fm.olBackup.Control == undefined)
+	fm.olBackup.Control = { };
 
-FacilMap.olBackup.Control.activate = OpenLayers.Control.prototype.activate;
-FacilMap.olBackup.Control.deactivate = OpenLayers.Control.prototype.deactivate;
+fm.olBackup.Control.activate = ol.Control.prototype.activate;
+fm.olBackup.Control.deactivate = ol.Control.prototype.deactivate;
 
-OpenLayers.Control.prototype.activate = function() {
-	var ret = FacilMap.olBackup.Control.activate.apply(this, arguments);
+ol.Control.prototype.activate = function() {
+	var ret = fm.olBackup.Control.activate.apply(this, arguments);
 	if(this.map)
 	{
 		var classNames = this.displayClass.split(/\s+/);
 		for(var i=0; i<classNames.length; i++)
 		{
-			OpenLayers.Element.addClass(
+			ol.Element.addClass(
 				this.map.viewPortDiv,
 				classNames[i] + "Active"
 			);
@@ -41,14 +43,14 @@ OpenLayers.Control.prototype.activate = function() {
 	return ret;
 };
 
-OpenLayers.Control.prototype.deactivate = function() {
-	var ret = FacilMap.olBackup.Control.deactivate.apply(this, arguments);
+ol.Control.prototype.deactivate = function() {
+	var ret = fm.olBackup.Control.deactivate.apply(this, arguments);
 	if(this.map)
 	{
 		var classNames = this.displayClass.split(/\s+/);
 		for(var i=0; i<classNames.length; i++)
 		{
-			OpenLayers.Element.removeClass(
+			ol.Element.removeClass(
 				this.map.viewPortDiv,
 				classNames[i] + "Active"
 			);
@@ -57,7 +59,7 @@ OpenLayers.Control.prototype.deactivate = function() {
 	return ret;
 };
 
-OpenLayers.Control.Panel.prototype.redraw = function() {
+ol.Control.Panel.prototype.redraw = function() {
 	this.div.innerHTML = "";
 	if (this.active) {
 		for (var i=0, len=this.controls.length; i<len; i++) {
@@ -71,3 +73,5 @@ OpenLayers.Control.Panel.prototype.redraw = function() {
 		}
 	}
 };
+
+})(FacilMap, OpenLayers, FacilMap.$);

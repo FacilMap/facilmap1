@@ -17,13 +17,18 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Yahoo Hybrid (Streets and Satellite)
 */
-FacilMap.Layer.Yahoo.Hybrid = OpenLayers.Class(FacilMap.Layer.Yahoo, {
+
+FacilMap.Layer.Yahoo.Hybrid = ol.Class(fm.Layer.Yahoo, {
 	initialize: function(name, options) {
 		this.type = YAHOO_MAP_HYB;
-		FacilMap.Layer.Yahoo.prototype.initialize.apply(this, arguments);
+		fm.Layer.Yahoo.prototype.initialize.apply(this, arguments);
 	},
 	CLASS_NAME : "FacilMap.Layer.Yahoo.Hybrid"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

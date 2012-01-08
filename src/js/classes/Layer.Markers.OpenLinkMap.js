@@ -17,6 +17,8 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * OpenLinkMap from http://olm.openstreetmap.de/.
  *
@@ -25,21 +27,21 @@
  *
  * POIs are identified by an ID and a type string in OpenLinkMap.
  */
-FacilMap.Layer.Markers.OpenLinkMap = OpenLayers.Class(FacilMap.Layer.Markers, {
+FacilMap.Layer.Markers.OpenLinkMap = ol.Class(fm.Layer.Markers, {
 	api : "http://openlinkmap.org/api",
-	apiProjection : new OpenLayers.Projection("EPSG:4326"),
+	apiProjection : new ol.Projection("EPSG:4326"),
 	zoomableInLayerSwitcher : false,
-	markerIcon : new OpenLayers.Icon(FacilMap.apiUrl+"/img/circle.png", new OpenLayers.Size(32,32), new OpenLayers.Pixel(-16, -16)),
-	markerIconHighlight : new OpenLayers.Icon(FacilMap.apiUrl+"/img/circle_red.png", new OpenLayers.Size(32,32), new OpenLayers.Pixel(-16, -16)),
+	markerIcon : new ol.Icon(fm.apiUrl+"/img/circle.png", new ol.Size(32,32), new ol.Pixel(-16, -16)),
+	markerIconHighlight : new ol.Icon(fm.apiUrl+"/img/circle_red.png", new ol.Size(32,32), new ol.Pixel(-16, -16)),
 	minZoomLevel : 13,
-	attribution : OpenLayers.i18n("attribution-poi"),
+	attribution : ol.i18n("attribution-poi"),
 
 	lastBBOX : null,
 	olmMarkers : { },
 	lastZoom : null,
 
 	afterAdd : function() {
-		var ret = FacilMap.Layer.Markers.prototype.afterAdd.apply(this, arguments);
+		var ret = fm.Layer.Markers.prototype.afterAdd.apply(this, arguments);
 
 		this.map.events.register("moveend", this, this.loadMarkers);
 		this.events.register("visibilitychanged", this, this.loadMarkers);
@@ -76,7 +78,7 @@ FacilMap.Layer.Markers.OpenLinkMap = OpenLayers.Class(FacilMap.Layer.Markers, {
 
 		var layer = this;
 
-		OpenLayers.Request.GET({
+		ol.Request.GET({
 			url : this.api + "/list.php",
 			params : {
 				"bbox" : bbox
@@ -89,7 +91,7 @@ FacilMap.Layer.Markers.OpenLinkMap = OpenLayers.Class(FacilMap.Layer.Markers, {
 					{
 						var line = objects[i].split(/\|/);
 						if(line.length >= 4)
-							layer.addOLMMarker(new OpenLayers.LonLat(1*line[0], 1*line[1]), line[2], line[3]);
+							layer.addOLMMarker(new ol.LonLat(1*line[0], 1*line[1]), line[2], line[3]);
 					}
 				}
 			},
@@ -125,13 +127,13 @@ FacilMap.Layer.Markers.OpenLinkMap = OpenLayers.Class(FacilMap.Layer.Markers, {
 	 */
 	getPopupContent : function(id, type, callback) {
 		var layer = this;
-		OpenLayers.Request.GET({
+		ol.Request.GET({
 			url : this.api + "/details.php",
 			params : {
 				type : type,
 				id : id,
 				format : "text",
-				lang : OpenLayers.Lang.getCode(),
+				lang : ol.Lang.getCode(),
 				offset : (new Date()).getTimezoneOffset()/60
 			},
 			success : function(request) {
@@ -143,3 +145,5 @@ FacilMap.Layer.Markers.OpenLinkMap = OpenLayers.Class(FacilMap.Layer.Markers, {
 
 	CLASS_NAME : "FacilMap.Layer.Markers.OpenLinkMap"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

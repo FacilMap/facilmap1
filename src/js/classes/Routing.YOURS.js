@@ -19,7 +19,7 @@
 
 (function(fm, ol, $){
 
-fm.Routing.YOURS = ol.Class(fm.Routing, {
+FacilMap.Routing.YOURS = ol.Class(fm.Routing, {
 	routingURL : "http://www.yournavigation.org/api/1.0/gosmore.php",
 	permalinkURL : "http://www.yournavigation.org/",
 	routingMediumMapping : { "car" : "motorcar", "bicycle" : "bicycle", "foot" : "foot" },

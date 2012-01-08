@@ -17,6 +17,8 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Extends a FramedCloud with various useful features. An event is triggered during closing instead of passing the callback function
  * to the initialize function. You may pass a DOM element for the popup content instead of HTML code.
@@ -25,22 +27,22 @@
  * @event visibilitychange The visibility ({@link #visibile()}) of the popup has changed.
 */
 
-FacilMap.Popup.FramedCloud = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
+FacilMap.Popup.FramedCloud = ol.Class(ol.Popup.FramedCloud, {
 	contentDom: null,
 	autoSize: false,
-	minSize: new OpenLayers.Size(300, 200),
+	minSize: new ol.Size(300, 200),
 	_defaultZIndex : null,
 	initialize: function(id, lonlat, contentSize, contentDom, anchor, closeBox, closeBoxCallback) {
-		var closeCallback = function(e){ if(closeBoxCallback) closeBoxCallback(); OpenLayers.Event.stop(e); this.events.triggerEvent("close"); };
-		OpenLayers.Popup.FramedCloud.prototype.initialize.apply(this, [ id, lonlat, contentSize, null, anchor, closeBox, closeCallback ] );
+		var closeCallback = function(e){ if(closeBoxCallback) closeBoxCallback(); ol.Event.stop(e); this.events.triggerEvent("close"); };
+		ol.Popup.FramedCloud.prototype.initialize.apply(this, [ id, lonlat, contentSize, null, anchor, closeBox, closeCallback ] );
 
 		this.events.addEventType("close");
 		this.events.addEventType("visibilitychange");
 
 		this.setContentHTML(contentDom);
 
-		OpenLayers.Event.observe(this.div, "mouseover", OpenLayers.Function.bindAsEventListener(function(){ this.unsetOpacity(); }, this));
-		OpenLayers.Event.observe(this.div, "mouseout", OpenLayers.Function.bindAsEventListener(function(){ this.setOpacity(); }, this));
+		ol.Event.observe(this.div, "mouseover", ol.Function.bindAsEventListener(function(){ this.unsetOpacity(); }, this));
+		ol.Event.observe(this.div, "mouseout", ol.Function.bindAsEventListener(function(){ this.setOpacity(); }, this));
 	},
 	draw : function() {
 		// We don’t want fading on creation of the popup
@@ -48,7 +50,7 @@ FacilMap.Popup.FramedCloud = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
 		this.setOpacity = function(opacity) {
 			setOpacitySave.apply(this, [ opacity, 0 ]);
 		};
-		var ret = OpenLayers.Popup.FramedCloud.prototype.draw.apply(this, arguments);
+		var ret = ol.Popup.FramedCloud.prototype.draw.apply(this, arguments);
 		this.setOpacity = setOpacitySave;
 		return ret;
 	},
@@ -65,14 +67,14 @@ FacilMap.Popup.FramedCloud = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
 		}
 
 		if(this.contentHTML != null)
-			OpenLayers.Popup.FramedCloud.prototype.setContentHTML.apply(this, arguments);
+			ol.Popup.FramedCloud.prototype.setContentHTML.apply(this, arguments);
 		else if(this.contentDiv != null && this.contentDom != null && this.contentDom != this.contentDiv.firstChild)
 		{
 			while(this.contentDiv.firstChild)
 				this.contentDiv.removeChild(this.contentDiv.firstChild);
 			this.contentDiv.appendChild(this.contentDom);
 
-			// Copied from OpenLayers.Popup.setContentHTML():
+			// Copied from ol.Popup.setContentHTML():
 			if (this.autoSize)
 			{
                 this.registerImageListeners();
@@ -86,7 +88,7 @@ FacilMap.Popup.FramedCloud = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
 
 		if(this.div != null)
 		{
-			FacilMap.Util.changeOpacity(this.div, this.opacity, period);
+			fm.Util.changeOpacity(this.div, this.opacity, period);
 			if(this._defaultZIndex)
 				this.div.style.zIndex = this._defaultZIndex;
 		}
@@ -95,23 +97,25 @@ FacilMap.Popup.FramedCloud = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
 		if(this.div != null)
 		{
 			this._defaultZIndex = this.div.style.zIndex;
-			FacilMap.Util.changeOpacity(this.div, 1.0, period);
+			fm.Util.changeOpacity(this.div, 1.0, period);
 			this.div.style.zIndex = 2000;
 		}
 	},
 	show : function() {
-		var ret = OpenLayers.Popup.FramedCloud.prototype.show.apply(this, arguments);
+		var ret = ol.Popup.FramedCloud.prototype.show.apply(this, arguments);
 		this.events.triggerEvent("visibilitychange");
 		return ret;
 	},
 	hide : function() {
-		var ret = OpenLayers.Popup.FramedCloud.prototype.hide.apply(this, arguments);
+		var ret = ol.Popup.FramedCloud.prototype.hide.apply(this, arguments);
 		this.events.triggerEvent("visibilitychange");
 		return ret;
 	},
 	destroy: function() {
 		this.contentDom = null;
-		OpenLayers.Popup.FramedCloud.prototype.destroy.apply(this, arguments);
+		ol.Popup.FramedCloud.prototype.destroy.apply(this, arguments);
 	},
 	CLASS_NAME : "FacilMap.Popup.FramedCloud"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

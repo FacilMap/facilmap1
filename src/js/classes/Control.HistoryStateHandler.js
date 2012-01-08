@@ -23,7 +23,8 @@
  * An instance of this class keeps the location hash part in sync with the Permalink of a map object.
  * @event hashChanged location.hash was changed.
 */
-fm.Control.HistoryStateHandler = ol.Class(ol.Control, {
+
+FacilMap.Control.HistoryStateHandler = ol.Class(ol.Control, {
 	/**
 	 * @var FacilMap.HistoryStateHandler
 	*/

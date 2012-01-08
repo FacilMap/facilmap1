@@ -21,8 +21,9 @@
 
 /**
  * Adds a Tools menu button to the map where you can add different controls.
- */
-fm.Control.ToolsMenu = ol.Class(fm.Control, {
+*/
+
+FacilMap.Control.ToolsMenu = ol.Class(fm.Control, {
 	caption : ol.i18n("Tools"),
 	_content : null,
 	_contentClone : null,

@@ -19,7 +19,7 @@
 
 (function(fm, ol, $){
 
-fm.Routing = ol.Class({
+FacilMap.Routing = ol.Class({
 	initialize : function() {
 
 	},

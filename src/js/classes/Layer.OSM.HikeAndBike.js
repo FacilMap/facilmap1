@@ -17,13 +17,17 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Hike & Bike Map (http://hikebikemap.de/)
 */
-FacilMap.Layer.OSM.HikeAndBike = OpenLayers.Class(OpenLayers.Layer.OSM, {
-	attribution : OpenLayers.String.format(OpenLayers.i18n("attribution-osm"), { rendering: "<a href=\"http://hikebikemap.de/\">Hike &amp; Bike Map</a>" }),
+FacilMap.Layer.OSM.HikeAndBike = ol.Class(fm.Layer.OSM, {
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://hikebikemap.de/\">Hike &amp; Bike Map</a>" }),
 	initialize : function(name, options) {
-		OpenLayers.Layer.OSM.prototype.initialize.apply(this, [ name, "http://toolserver.org/tiles/hikebike/${z}/${x}/${y}.png", options ]);
+		ol.Layer.OSM.prototype.initialize.apply(this, [ name, "http://toolserver.org/tiles/hikebike/${z}/${x}/${y}.png", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.OSM.HikeAndBike"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

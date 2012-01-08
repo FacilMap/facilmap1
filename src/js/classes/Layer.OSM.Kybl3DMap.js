@@ -17,14 +17,18 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Izometrická 3D mapa ČR (http://osm.kyblsoft.cz/3dmapa/).
 */
-FacilMap.Layer.OSM.Kybl3DMap = OpenLayers.Class(OpenLayers.Layer.OSM, {
+FacilMap.Layer.OSM.Kybl3DMap = ol.Class(ol.Layer.OSM, {
 	numZoomLevels : 18,
-	attribution : OpenLayers.String.format(OpenLayers.i18n("attribution-osm"), { rendering: "<a href=\"http://osm.kyblsoft.cz/3dmapa/\">OpenKyblMap</a>" }),
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://osm.kyblsoft.cz/3dmapa/\">OpenKyblMap</a>" }),
 	initialize : function(name, options) {
-		OpenLayers.Layer.OSM.prototype.initialize.apply(this, [ name, "http://osm.kyblsoft.cz/3dmapa/tiles/${z}/${x}/${y}.jpg", options ]);
+		ol.Layer.OSM.prototype.initialize.apply(this, [ name, "http://osm.kyblsoft.cz/3dmapa/tiles/${z}/${x}/${y}.jpg", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.OSM.Kybl3DMap"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

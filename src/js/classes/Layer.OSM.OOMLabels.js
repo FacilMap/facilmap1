@@ -17,15 +17,20 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * OpenOrienteeringMap (http://oobrien.com/oom/) names overlay.
 */
-FacilMap.Layer.OSM.OOMLabels = OpenLayers.Class(OpenLayers.Layer.OSM, {
+
+FacilMap.Layer.OSM.OOMLabels = ol.Class(fm.Layer.OSM, {
 	numZoomLevels: 19,
 	isBaseLayer: false,
-	attribution : OpenLayers.i18n("attribution-oom-labels"),
+	attribution : ol.i18n("attribution-oom-labels"),
 	initialize : function(name, options) {
-		OpenLayers.Layer.OSM.prototype.initialize.apply(this, [ name, "http://tiler1.censusprofiler.org/labelsonly/${z}/${x}/${y}.png", options ]);
+		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "http://tiler1.censusprofiler.org/labelsonly/${z}/${x}/${y}.png", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.OSM.OOMLabels"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

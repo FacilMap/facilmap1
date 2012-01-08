@@ -17,12 +17,17 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * MapSurfer road map.
 */
-FacilMap.Layer.OSM.MapSurfer.Road = OpenLayers.Class(FacilMap.Layer.OSM.MapSurfer, {
+
+FacilMap.Layer.OSM.MapSurfer.Road = ol.Class(fm.Layer.OSM.MapSurfer, {
 	initialize : function(name, options) {
-		FacilMap.Layer.OSM.MapSurfer.prototype.initialize.apply(this, [ name, "http://tiles1.mapsurfer.net/tms_r.ashx?x=${x}&y=${y}&z=${z}", options ]);
+		fm.Layer.OSM.MapSurfer.prototype.initialize.apply(this, [ name, "http://tiles1.mapsurfer.net/tms_r.ashx?x=${x}&y=${y}&z=${z}", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.OSM.MapSurfer.Road"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

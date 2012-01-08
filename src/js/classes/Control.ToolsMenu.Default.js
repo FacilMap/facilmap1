@@ -21,8 +21,9 @@
 
 /**
  * A {@link FacilMap.Control.ToolsMenu} filled with some tools already.
- */
-fm.Control.ToolsMenu.Default = ol.Class(fm.Control.ToolsMenu, {
+*/
+
+FacilMap.Control.ToolsMenu.Default = ol.Class(fm.Control.ToolsMenu, {
 	_mapMoveHandlers : null,
 	
 	initialize : function() {

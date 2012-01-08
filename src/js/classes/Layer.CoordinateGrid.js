@@ -17,10 +17,12 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * A coordinate grid on the map. Draws coordinate lines on the map in a scale that maxHorizontalLines and maxVerticalLines aren’t exceeded.
 */
-FacilMap.Layer.CoordinateGrid = OpenLayers.Class(OpenLayers.Layer.Vector, {
+FacilMap.Layer.CoordinateGrid = ol.Class(ol.Layer.Vector, {
 	/**
 	 * The maximum number of horizontal coordinate lines on the viewport.
 	 * @var Number
@@ -57,15 +59,15 @@ FacilMap.Layer.CoordinateGrid = OpenLayers.Class(OpenLayers.Layer.Vector, {
 	*/
 	labelStyleMapHighlight : { fontColor: "#666", fontSize: "10px", fontWeight: "bold" },
 
-	projection : new OpenLayers.Projection("EPSG:4326"),
+	projection : new ol.Projection("EPSG:4326"),
 
 	initialize : function(name, options) {
 		if(name == null)
-			name = OpenLayers.i18n("Coordinate grid");
-		OpenLayers.Layer.Vector.prototype.initialize.apply(this, [ name, options ]);
+			name = ol.i18n("Coordinate grid");
+		ol.Layer.Vector.prototype.initialize.apply(this, [ name, options ]);
 	},
 	setMap : function() {
-		OpenLayers.Layer.Vector.prototype.setMap.apply(this, arguments);
+		ol.Layer.Vector.prototype.setMap.apply(this, arguments);
 
 		this.map.events.register("moveend", this, this.drawGrid);
 		this.map.events.register("mapResize", this, this.drawGrid);
@@ -95,18 +97,18 @@ FacilMap.Layer.CoordinateGrid = OpenLayers.Class(OpenLayers.Layer.Vector, {
 			var highlight = (coordinate/horizontalDivisor % 5 == 0);
 
 			this.addFeatures([
-				new OpenLayers.Feature.Vector(
-					new OpenLayers.Geometry.Point(extent.left, coordinate).transform(this.projection, this.map.getProjectionObject()),
+				new ol.Feature.Vector(
+					new ol.Geometry.Point(extent.left, coordinate).transform(this.projection, this.map.getProjectionObject()),
 					null,
-					OpenLayers.Util.extend({ label: (Math.round(coordinate*100000000)/100000000)+"°", labelAlign: "lm" }, highlight ? this.labelStyleMapHighlight : this.labelStyleMapNormal)
+					ol.Util.extend({ label: (Math.round(coordinate*100000000)/100000000)+"°", labelAlign: "lm" }, highlight ? this.labelStyleMapHighlight : this.labelStyleMapNormal)
 				),
-				new OpenLayers.Feature.Vector(
-					new OpenLayers.Geometry.Point(extent.right, coordinate).transform(this.projection, this.map.getProjectionObject()),
+				new ol.Feature.Vector(
+					new ol.Geometry.Point(extent.right, coordinate).transform(this.projection, this.map.getProjectionObject()),
 					null,
-					OpenLayers.Util.extend({ label: (Math.round(coordinate*100000000)/100000000)+"°", labelAlign: "rm" }, highlight ? this.labelStyleMapHighlight : this.labelStyleMapNormal)
+					ol.Util.extend({ label: (Math.round(coordinate*100000000)/100000000)+"°", labelAlign: "rm" }, highlight ? this.labelStyleMapHighlight : this.labelStyleMapNormal)
 				),
-				new OpenLayers.Feature.Vector(
-					new OpenLayers.Geometry.LineString([ new OpenLayers.Geometry.Point(extent.left, coordinate).transform(this.projection, this.map.getProjectionObject()), new OpenLayers.Geometry.Point(extent.right, coordinate).transform(this.projection, this.map.getProjectionObject()) ]),
+				new ol.Feature.Vector(
+					new ol.Geometry.LineString([ new ol.Geometry.Point(extent.left, coordinate).transform(this.projection, this.map.getProjectionObject()), new ol.Geometry.Point(extent.right, coordinate).transform(this.projection, this.map.getProjectionObject()) ]),
 					null,
 					highlight ? this.styleMapHighlight : this.styleMapNormal
 				)
@@ -132,18 +134,18 @@ FacilMap.Layer.CoordinateGrid = OpenLayers.Class(OpenLayers.Layer.Vector, {
 			var highlight = (coordinate/verticalDivisor % 5 == 0);
 
 			this.addFeatures([
-				new OpenLayers.Feature.Vector(
-					new OpenLayers.Geometry.Point(coordinate, extent.top).transform(this.projection, this.map.getProjectionObject()),
+				new ol.Feature.Vector(
+					new ol.Geometry.Point(coordinate, extent.top).transform(this.projection, this.map.getProjectionObject()),
 					null,
-					OpenLayers.Util.extend({ label: (Math.round(coordinate*100000000)/100000000)+"°", labelAlign: "ct" }, highlight ? this.labelStyleMapHighlight : this.labelStyleMapNormal)
+					ol.Util.extend({ label: (Math.round(coordinate*100000000)/100000000)+"°", labelAlign: "ct" }, highlight ? this.labelStyleMapHighlight : this.labelStyleMapNormal)
 				),
-				new OpenLayers.Feature.Vector(
-					new OpenLayers.Geometry.Point(coordinate, extent.bottom).transform(this.projection, this.map.getProjectionObject()),
+				new ol.Feature.Vector(
+					new ol.Geometry.Point(coordinate, extent.bottom).transform(this.projection, this.map.getProjectionObject()),
 					null,
-					OpenLayers.Util.extend({ label: (Math.round(coordinate*100000000)/100000000)+"°", labelAlign: "cb" }, highlight ? this.labelStyleMapHighlight : this.labelStyleMapNormal)
+					ol.Util.extend({ label: (Math.round(coordinate*100000000)/100000000)+"°", labelAlign: "cb" }, highlight ? this.labelStyleMapHighlight : this.labelStyleMapNormal)
 				),
-				new OpenLayers.Feature.Vector(
-					new OpenLayers.Geometry.LineString([ new OpenLayers.Geometry.Point(coordinate, extent.top).transform(this.projection, this.map.getProjectionObject()), new OpenLayers.Geometry.Point(coordinate, extent.bottom).transform(this.projection, this.map.getProjectionObject()) ]),
+				new ol.Feature.Vector(
+					new ol.Geometry.LineString([ new ol.Geometry.Point(coordinate, extent.top).transform(this.projection, this.map.getProjectionObject()), new ol.Geometry.Point(coordinate, extent.bottom).transform(this.projection, this.map.getProjectionObject()) ]),
 					null,
 					highlight ? this.styleMapHighlight : this.styleMapNormal
 				)
@@ -153,3 +155,5 @@ FacilMap.Layer.CoordinateGrid = OpenLayers.Class(OpenLayers.Layer.Vector, {
 
 	CLASS_NAME: "FacilMap.Layer.CoordinateGrid"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

@@ -17,13 +17,17 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 // Save parent classes in class objects, needed for FacilMap.Util.makeClassName()
-FacilMap.olBackup.Class = OpenLayers.Class;
-OpenLayers.Class = function() {
-	var ret = FacilMap.olBackup.Class.apply(this, arguments);
+fm.olBackup.Class = ol.Class;
+ol.Class = function() {
+	var ret = fm.olBackup.Class.apply(this, arguments);
 	ret.prototype.fmParentClasses = [ ];
 	for(var i=0; i<arguments.length; i++)
 		ret.prototype.fmParentClasses.push(arguments[i]);
 	return ret;
 };
-OpenLayers.Class.isPrototype = FacilMap.olBackup.Class.isPrototype;
+ol.Class.isPrototype = fm.olBackup.Class.isPrototype;
+
+})(FacilMap, OpenLayers, FacilMap.$);

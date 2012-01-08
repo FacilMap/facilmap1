@@ -17,4 +17,10 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
-FacilMap.Layer.OSM = { };
+(function(fm, ol, $){
+
+FacilMap.Layer.OSM = ol.Class(ol.Layer.OSM, {
+	CLASS_NAME : "FacilMap.Layers.OSM"
+});
+
+})(FacilMap, OpenLayers, FacilMap.$);

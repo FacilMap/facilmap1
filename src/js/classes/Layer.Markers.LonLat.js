@@ -17,6 +17,8 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * A Markers layer for adding LonLat markers. These markers display their coordinates and list various Permalinks to other map services.
  * See FacilMap.Control.createMarker for the functionality of creating a marker when clicking.
@@ -24,17 +26,17 @@
  * @event markerRemoved
 */
 
-FacilMap.Layer.Markers.LonLat = OpenLayers.Class(FacilMap.Layer.Markers, {
+FacilMap.Layer.Markers.LonLat = ol.Class(fm.Layer.Markers, {
 	/**
 	 * The projection in which coordinates should be displayed in the popups.
 	*/
-	readableProjection : new OpenLayers.Projection("EPSG:4326"),
+	readableProjection : new ol.Projection("EPSG:4326"),
 
 	/**
 	 * @param defaultIcon {OpenLayers.Icon} The icon to be used for the markers added by addLonLatMarker()
 	*/
 	initialize : function(name, options) {
-		FacilMap.Layer.Markers.prototype.initialize.apply(this, arguments);
+		fm.Layer.Markers.prototype.initialize.apply(this, arguments);
 		this.events.addEventType("markerAdded");
 		this.events.addEventType("markerRemoved");
 
@@ -48,7 +50,7 @@ FacilMap.Layer.Markers.LonLat = OpenLayers.Class(FacilMap.Layer.Markers, {
 		var marker = this.createMarker(lonlat, ".", true);
 		if(title)
 			marker.fmTitle = title;
-		marker.events.register("close", this, function(evt) { var feature = marker.fmFeature; delete marker.fmFeature; this.removeMarker(marker); feature.destroyMarker(); feature.destroyPopup(); this.events.triggerEvent("markerRemoved"); OpenLayers.Event.stop(evt); });
+		marker.events.register("close", this, function(evt) { var feature = marker.fmFeature; delete marker.fmFeature; this.removeMarker(marker); feature.destroyMarker(); feature.destroyPopup(); this.events.triggerEvent("markerRemoved"); ol.Event.stop(evt); });
 		this.map.events.register("zoomend", this, this.resetPopupContent);
 		this.resetPopupContent();
 		this.events.triggerEvent("markerAdded");
@@ -69,7 +71,7 @@ FacilMap.Layer.Markers.LonLat = OpenLayers.Class(FacilMap.Layer.Markers, {
 				heading.appendChild(document.createTextNode(this.markers[i].fmTitle));
 				content.appendChild(heading);
 			}
-			content.appendChild(FacilMap.Util.makePermalinks(this.markers[i].lonlat.clone().transform(this.map.getProjectionObject(), this.readableProjection), this.map.getZoom()));
+			content.appendChild(fm.Util.makePermalinks(this.markers[i].lonlat.clone().transform(this.map.getProjectionObject(), this.readableProjection), this.map.getZoom()));
 			this.markers[i].fmFeature.popup.setContentHTML(content);
 		}
 	},
@@ -93,9 +95,11 @@ FacilMap.Layer.Markers.LonLat = OpenLayers.Class(FacilMap.Layer.Markers, {
 		{
 			if(obj[i].lon == undefined || obj[i].lat == undefined)
 				continue;
-			this.addLonLatMarker(new OpenLayers.LonLat(1*obj[i].lon, 1*obj[i].lat), (obj[i].title != undefined) ? FacilMap.Util.htmlspecialchars(obj[i].title) : null);
+			this.addLonLatMarker(new ol.LonLat(1*obj[i].lon, 1*obj[i].lat), (obj[i].title != undefined) ? fm.Util.htmlspecialchars(obj[i].title) : null);
 		}
 	},
 
 	CLASS_NAME : "FacilMap.Layer.Markers.LonLat"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

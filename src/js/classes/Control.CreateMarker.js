@@ -17,18 +17,20 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * A click control to add markers to a FacilMap.Layer.Markers.LonLat layer.
  * Add an instance of this to your map using FacilMap.Map.addControl() and activate() it.
 */
 
-FacilMap.Control.CreateMarker = OpenLayers.Class(OpenLayers.Control, {
+FacilMap.Control.CreateMarker = ol.Class(ol.Control, {
 	/**
 	 * @var FacilMap.Layer.Markers.LonLat
 	*/
 	fmLayer : null,
 
-	title : OpenLayers.i18n("Create a marker"),
+	title : ol.i18n("Create a marker"),
 
 	/**
 	 * @param fmLayer {FacilMap.Layer.Markers.LonLat}
@@ -36,7 +38,7 @@ FacilMap.Control.CreateMarker = OpenLayers.Class(OpenLayers.Control, {
 	initialize: function(fmLayer, options) {
 		this.fmLayer = fmLayer;
 
-		OpenLayers.Control.prototype.initialize.apply(this, [ options ]);
+		ol.Control.prototype.initialize.apply(this, [ options ]);
 	},
 
 	destroy: function() {
@@ -44,11 +46,11 @@ FacilMap.Control.CreateMarker = OpenLayers.Class(OpenLayers.Control, {
 			this.handler.destroy();
 		this.handler = null;
 
-		OpenLayers.Control.prototype.destroy.apply(this, arguments);
+		ol.Control.prototype.destroy.apply(this, arguments);
 	},
 
 	draw: function() {
-		this.handler = new OpenLayers.Handler.Click(this, {'click': this.click}, { 'single': true, 'double': false, 'pixelTolerance': 0, 'stopSingle': false, 'stopDouble': false });
+		this.handler = new ol.Handler.Click(this, {'click': this.click}, { 'single': true, 'double': false, 'pixelTolerance': 0, 'stopSingle': false, 'stopDouble': false });
 	},
 
 	/**
@@ -63,3 +65,5 @@ FacilMap.Control.CreateMarker = OpenLayers.Class(OpenLayers.Control, {
 
 	CLASS_NAME: "FacilMap.Control.CreateMarker"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

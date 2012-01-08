@@ -17,14 +17,19 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * OpenPisteMap rendering of OpenStreetMap data. See http://openpistemap.org/.
 */
-FacilMap.Layer.OSM.OpenPisteMap = OpenLayers.Class(OpenLayers.Layer.OSM, {
+
+FacilMap.Layer.OSM.OpenPisteMap = ol.Class(fm.Layer.OSM, {
 	numZoomLevels : 18,
-	attribution : OpenLayers.String.format(OpenLayers.i18n("attribution-osm"), { rendering: "<a href=\"http://www.openpistemap.org/\">OpenPisteMap</a>" }),
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://www.openpistemap.org/\">OpenPisteMap</a>" }),
 	initialize: function(name, options) {
-		OpenLayers.Layer.OSM.prototype.initialize.apply(this, [ name, "http://tiles.openpistemap.org/contours/${z}/${x}/${y}.png", options ]);
+		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "http://tiles.openpistemap.org/contours/${z}/${x}/${y}.png", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.OSM.OpenPisteMap"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

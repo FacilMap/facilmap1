@@ -17,13 +17,18 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Google Terrain (http://maps.google.com/)
 */
-FacilMap.Layer.Google.MapsTerrain = OpenLayers.Class(FacilMap.Layer.Google, {
+
+FacilMap.Layer.Google.MapsTerrain = ol.Class(fm.Layer.Google, {
 	initialize : function() {
 		this.type = G_PHYSICAL_MAP;
-		FacilMap.Layer.Google.prototype.initialize.apply(this, arguments);
+		fm.Layer.Google.prototype.initialize.apply(this, arguments);
 	},
 	CLASS_NAME : "FacilMap.Layer.Google.MapsTerrain"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

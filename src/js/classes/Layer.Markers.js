@@ -17,21 +17,23 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * A Markers layer with a function to easily add a marker with a popup.
  * When the layer is hidden, the popups are hidden as well. They open again when the layer is made visible again.
  * @event markersChanged A marker popup has been opened or closed.
 */
 
-FacilMap.Layer.Markers = OpenLayers.Class(OpenLayers.Layer.Markers, {
-	defaultIcon : new OpenLayers.Icon(FacilMap.apiUrl+"/img/marker.png", new OpenLayers.Size(21,25), new OpenLayers.Pixel(-9, -25)),
+FacilMap.Layer.Markers = ol.Class(ol.Layer.Markers, {
+	defaultIcon : new ol.Icon(fm.apiUrl+"/img/marker.png", new ol.Size(21,25), new ol.Pixel(-9, -25)),
 	openPopupsOnShow : null,
 	zoomableInLayerSwitcher : true,
-	projection: new OpenLayers.Projection("EPSG:4326"),
+	projection: new ol.Projection("EPSG:4326"),
 	initialize : function(name, options) {
 		this.openPopupsOnShow = [ ];
 
-		OpenLayers.Layer.Markers.prototype.initialize.apply(this, [ name, options ]);
+		ol.Layer.Markers.prototype.initialize.apply(this, [ name, options ]);
 		this.events.addEventType("markersChanged");
 
 		this.events.register("visibilitychanged", this, function() {
@@ -75,9 +77,9 @@ FacilMap.Layer.Markers = OpenLayers.Class(OpenLayers.Layer.Markers, {
 		if(icon == null)
 			icon = this.defaultIcon;
 
-		var feature = new OpenLayers.Feature(this, lonlat.clone().transform(this.projection, this.map.getProjectionObject()));
+		var feature = new ol.Feature(this, lonlat.clone().transform(this.projection, this.map.getProjectionObject()));
 		feature.data.icon = icon.clone();
-		feature.popupClass = FacilMap.Popup.FramedCloud;
+		feature.popupClass = fm.Popup.FramedCloud;
 		var marker = feature.createMarker();
 		marker.events.addEventType("close");
 		marker.events.addEventType("open");
@@ -94,7 +96,7 @@ FacilMap.Layer.Markers = OpenLayers.Class(OpenLayers.Layer.Markers, {
 			popup.events.register("close", feature, function(e)
 			{
 				this.popup.hide();
-				OpenLayers.Event.stop(e);
+				ol.Event.stop(e);
 				layer.events.triggerEvent("markersChanged");
 				this.marker.events.triggerEvent("close");
 			});
@@ -103,7 +105,7 @@ FacilMap.Layer.Markers = OpenLayers.Class(OpenLayers.Layer.Markers, {
 				this.popup.toggle();
 				if(this.popup.visible())
 					this.popup.updateSize();
-				OpenLayers.Event.stop(e);
+				ol.Event.stop(e);
 				this.marker.events.triggerEvent(this.popup.visible() ? "open" : "close");
 				layer.events.triggerEvent("markersChanged");
 			});
@@ -120,7 +122,7 @@ FacilMap.Layer.Markers = OpenLayers.Class(OpenLayers.Layer.Markers, {
 					marker.icon.setUrl(currentIcon.url);
 					marker.icon.display(true);
 
-					// OpenLayers.Icon.draw() sets display to none when icon position is not set yet without setting
+					// ol.Icon.draw() sets display to none when icon position is not set yet without setting
 					// it back later.
 					marker.icon.imageDiv.style.display = displayPreserve;
 				});
@@ -160,7 +162,9 @@ FacilMap.Layer.Markers = OpenLayers.Class(OpenLayers.Layer.Markers, {
 	{
 		if(marker.fmFeature && marker.fmFeature.popup)
 			marker.fmFeature.popup.destroy();
-		OpenLayers.Layer.Markers.prototype.removeMarker.apply(this, arguments);
+		ol.Layer.Markers.prototype.removeMarker.apply(this, arguments);
 	},
 	CLASS_NAME : "FacilMap.Layer.Markers"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

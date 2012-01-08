@@ -19,7 +19,7 @@
 
 (function(fm, ol, $){
 
-fm.Routing.MapQuest = ol.Class(fm.Routing, {
+FacilMap.Routing.MapQuest = ol.Class(fm.Routing, {
 	routingURL : "http://open.mapquestapi.com/directions/v0/route",
 	orderedURL : "http://open.mapquestapi.com/directions/v0/optimizedRoute",
 	elevationChartURL : "http://open.mapquestapi.com/elevation/v1/getElevationChart",

@@ -25,7 +25,8 @@
 
  * @event draggedRoute The route was changed using drag and drop.
 */
-fm.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
+
+FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 	HOVER_MAX_DISTANCE : 10,
 
 	fromIcon : new ol.Icon(fm.apiUrl+"/img/route-start.png", new ol.Size(20,34), new ol.Pixel(-10, -34)),

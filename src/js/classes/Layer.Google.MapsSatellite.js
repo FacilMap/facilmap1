@@ -17,14 +17,19 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Google Satellite (http://maps.google.com/)
 */
-FacilMap.Layer.Google.MapsSatellite = OpenLayers.Class(FacilMap.Layer.Google, {
+
+FacilMap.Layer.Google.MapsSatellite = ol.Class(fm.Layer.Google, {
 	numZoomLevels : 22,
 	initialize : function() {
 		this.type = G_SATELLITE_MAP;
-		FacilMap.Layer.Google.prototype.initialize.apply(this, arguments);
+		fm.Layer.Google.prototype.initialize.apply(this, arguments);
 	},
 	CLASS_NAME : "FacilMap.Layer.Google.MapsSatellite"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);

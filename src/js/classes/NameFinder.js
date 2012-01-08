@@ -22,7 +22,8 @@
 /**
  * An abstract class whose implementations connect to a NameFinder.
 */
-fm.NameFinder = ol.Class({
+
+FacilMap.NameFinder = ol.Class({
 	initialize : function(options) {
 		ol.Util.extend(this, options);
 

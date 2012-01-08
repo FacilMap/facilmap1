@@ -26,7 +26,7 @@
  * @event newState The return value of getStateObject() probably has changed.
 */
 
-fm.Map = ol.Class(ol.Map, {
+FacilMap.Map = ol.Class(ol.Map, {
 	/**
 	 * The projection to use in coordinates in the Permalink.
 	 * @var OpenLayers.Projection

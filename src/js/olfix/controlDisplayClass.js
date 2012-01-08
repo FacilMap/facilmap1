@@ -17,14 +17,18 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 // Fix displayClass in OpenLayers Controls to also use parent class names
 
-if(FacilMap.olBackup.Control == undefined)
-	FacilMap.olBackup.Control = { };
+if(fm.olBackup.Control == undefined)
+	fm.olBackup.Control = { };
 
-FacilMap.olBackup.Control.initialize = OpenLayers.Control.prototype.initialize;
+fm.olBackup.Control.initialize = ol.Control.prototype.initialize;
 
-OpenLayers.Control.prototype.initialize = function() {
-	FacilMap.olBackup.Control.initialize.apply(this, arguments);
-	this.displayClass = FacilMap.Util.makeClassName(this);
+ol.Control.prototype.initialize = function() {
+	fm.olBackup.Control.initialize.apply(this, arguments);
+	this.displayClass = fm.Util.makeClassName(this);
 };
+
+})(FacilMap, OpenLayers, FacilMap.$);

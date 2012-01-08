@@ -17,7 +17,9 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
-FacilMap.Layer.Yahoo = OpenLayers.Class(OpenLayers.Layer.Yahoo, {
+(function(fm, ol, $){
+
+FacilMap.Layer.Yahoo = ol.Class(ol.Layer.Yahoo, {
 	sphericalMercator : true,
 	CLASS_NAME : "FacilMap.Layer.Yahoo"
 });
@@ -41,7 +43,9 @@ FacilMap.Layer.Yahoo.APPID = null;
 */
 FacilMap.Layer.Yahoo.loadAPI = function(callback) {
 	var url = null;
-	if(FacilMap.Layer.Yahoo.APPID != null)
-		url = "http://api.maps.yahoo.com/ajaxymap?v=3.0&appid="+encodeURIComponent(FacilMap.Layer.Yahoo.APPID);
-	FacilMap.Util.loadJavaScript(url, function() { return window.YMap != undefined; }, callback);
+	if(fm.Layer.Yahoo.APPID != null)
+		url = "http://api.maps.yahoo.com/ajaxymap?v=3.0&appid="+encodeURIComponent(fm.Layer.Yahoo.APPID);
+	fm.Util.loadJavaScript(url, function() { return window.YMap != undefined; }, callback);
 };
+
+})(FacilMap, OpenLayers, FacilMap.$);

@@ -17,9 +17,14 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
+(function(fm, ol, $){
+
 /**
  * Yahoo Streets (http://maps.yahoo.com/)
 */
-FacilMap.Layer.Yahoo.Maps = OpenLayers.Class(FacilMap.Layer.Yahoo, {
+
+FacilMap.Layer.Yahoo.Maps = ol.Class(fm.Layer.Yahoo, {
 	CLASS_NAME : "FacilMap.Layer.Yahoo.Maps"
 });
+
+})(FacilMap, OpenLayers, FacilMap.$);
