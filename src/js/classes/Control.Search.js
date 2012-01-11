@@ -27,6 +27,9 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 	_layerRouting : null,
 	_layerXML : null,
 
+	_fromAutoSuggest : null,
+	_toAutoSuggest : null,
+
 	_stateObject : { },
 
 	/**
@@ -130,8 +133,8 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 			/////////////////
 			// Event handlers
 
-			new FacilMap.AutoSuggest($(".from", ret)[0], this.makeSuggestions);
-			new FacilMap.AutoSuggest($(".to", ret)[0], this.makeSuggestions);
+			t._fromAutoSuggest = new FacilMap.AutoSuggest($(".from", ret)[0], this.makeSuggestions);
+			t._toAutoSuggest = new FacilMap.AutoSuggest($(".to", ret)[0], this.makeSuggestions);
 
 			var routingVisible = true;
 			$(".directions", ret).click(function(){
@@ -411,6 +414,10 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 		$(".to", this.div).val(obj.to || "");
 		$(".medium", this.div).val(obj.medium || null);
 		$(".type", this.div).val(obj.type || null);
+
+		// Prevent autosuggest from showing up on any key press
+		this._fromAutoSuggest._waitingValue = $(".from", this.div).val();
+		this._toAutoSuggest._waitingValue = $(".to", this.div).val();
 
 		if(!!obj.from != $(this.div).hasClass("routing"))
 			$(".directions", this.div).click();

@@ -81,7 +81,9 @@ FacilMap.AutoSuggest = ol.Class({
 		$(input.ownerDocument).click(function(){
 			if(!mouseover)
 				t._hideList();
-		})
+		});
+
+		t._waitingValue = t.input.val();
 	},
 
 	_keyDown : function(e) {
