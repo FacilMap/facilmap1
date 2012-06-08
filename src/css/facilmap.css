@@ -10,6 +10,10 @@
 	border-color:#00272a;
 }
 
+.fmMap img.olImageLoadError {
+	visibility: hidden;
+}
+
 /* === FacilMap.Control.Search === */
 
 .olMap .fmControlSearch {
