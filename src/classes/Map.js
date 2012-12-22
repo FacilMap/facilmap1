@@ -116,7 +116,6 @@ FacilMap.Map = OpenLayers.Class(OpenLayers.Map, {
 
 		this.addLayer(new FacilMap.Layer.OSM.Mapnik(OpenLayers.i18n("Mapnik"), { shortName : "Mpnk" }));
 		this.addLayer(new FacilMap.Layer.OSM.MapSurfer.Road(OpenLayers.i18n("MapSurfer Road"), { shortName : "MSfR" }));
-		this.addLayer(new FacilMap.Layer.OSM.MapSurfer.Topographic(OpenLayers.i18n("MapSurfer Topographic"), { shortName : "MSfT" }));
 		this.addLayer(new FacilMap.Layer.OSM.OpenStreetBrowser(OpenLayers.i18n("OpenStreetBrowser"), { shortName : "OSBr" }));
 		this.addLayer(new FacilMap.Layer.OSM.Osmarender(OpenLayers.i18n("Osmarender"), { shortName : "Osmr" }));
 		this.addLayer(new FacilMap.Layer.OSM.CycleMap(OpenLayers.i18n("OpenCycleMap"), { shortName : "OCyc" }));
