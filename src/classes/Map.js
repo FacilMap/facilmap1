@@ -120,7 +120,7 @@ FacilMap.Map = OpenLayers.Class(OpenLayers.Map, {
 		this.addLayer(new FacilMap.Layer.OSM.CycleMap(OpenLayers.i18n("OpenCycleMap"), { shortName : "OCyc" }));
 		//this.addLayer(new FacilMap.Layer.OSM.Wanderkarte(OpenLayers.i18n("Reit- und Wanderkarte"), { shortName : "OSMC" }));
 		this.addLayer(new FacilMap.Layer.OSM.HikeAndBike(OpenLayers.i18n("Hike & Bike Map"), { shortName : "HiBi" }));
-		this.addLayer(new FacilMap.Layer.OSM.OpenPisteMap(OpenLayers.i18n("OpenPisteMap"), { shortName : "OPis" }));
+		this.addLayer(new FacilMap.Layer.OSM.OpenPisteMap(OpenLayers.i18n("OpenPisteMap"), { shortName : "OPis", visibility: false }));
 		this.addLayer(new FacilMap.Layer.OSM.OPNVKarte(OpenLayers.i18n("ÖPNV-Karte"), { shortName : "OPNV" }));
 		//this.addLayer(new FacilMap.Layer.OSM.Kybl3DMap(OpenLayers.i18n("Izometrická 3D mapa ČR"), { shortName : "kybl" }));
 
