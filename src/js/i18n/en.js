@@ -49,7 +49,6 @@ ol.Lang.en = ol.Util.extend(ol.Lang.en, {
 	"MapSurfer Road" : "MapSurfer Road",
 	"MapSurfer Topographic" : "MapSurfer Topographic",
 	"OpenStreetBrowser" : "OpenStreetBrowser",
-	"Osmarender" : "Osmarender",
 	"OpenCycleMap" : "OpenCycleMap",
 	"Reit- und Wanderkarte" : "Reit- und Wanderkarte",
 	"Hike & Bike Map" : "Hike & Bike Map",

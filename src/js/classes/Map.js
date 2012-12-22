@@ -160,9 +160,7 @@ FacilMap.Map = ol.Class(ol.Map, {
 
 		this.addLayer(new fm.Layer.OSM.Mapnik(ol.i18n("Mapnik"), { permalinkName : "Mpnk", category : cat }));
 		this.addLayer(new fm.Layer.OSM.MapSurfer.Road(ol.i18n("MapSurfer Road"), { permalinkName : "MSfR", category : cat }));
-		this.addLayer(new fm.Layer.OSM.MapSurfer.Topographic(ol.i18n("MapSurfer Topographic"), { permalinkName : "MSfT", category : cat }));
 		this.addLayer(new fm.Layer.OSM.OpenStreetBrowser(ol.i18n("OpenStreetBrowser"), { permalinkName : "OSBr", category : cat }));
-		this.addLayer(new fm.Layer.OSM.Osmarender(ol.i18n("Osmarender"), { permalinkName : "Osmr", category : cat }));
 		this.addLayer(new fm.Layer.OSM.CycleMap(ol.i18n("OpenCycleMap"), { permalinkName : "OCyc", category : cat }));
 		//this.addLayer(new fm.Layer.OSM.Wanderkarte(ol.i18n("Reit- und Wanderkarte"), { permalinkName : "OSMC", category : cat }));
 		this.addLayer(new fm.Layer.OSM.HikeAndBike(ol.i18n("Hike & Bike Map"), { permalinkName : "HiBi", category : cat }));

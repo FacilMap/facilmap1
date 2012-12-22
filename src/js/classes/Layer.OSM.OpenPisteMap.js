@@ -27,7 +27,7 @@ FacilMap.Layer.OSM.OpenPisteMap = ol.Class(fm.Layer.OSM, {
 	numZoomLevels : 18,
 	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://www.openpistemap.org/\">OpenPisteMap</a>" }),
 	initialize: function(name, options) {
-		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "http://tiles.openpistemap.org/contours/${z}/${x}/${y}.png", options ]);
+		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "http://tiles.openpistemap.org/nocontours/${z}/${x}/${y}.png", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.OSM.OpenPisteMap"
 });
