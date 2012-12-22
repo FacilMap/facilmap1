@@ -164,7 +164,6 @@ FacilMap.Map = ol.Class(ol.Map, {
 		this.addLayer(new fm.Layer.OSM.CycleMap(ol.i18n("OpenCycleMap"), { permalinkName : "OCyc", category : cat }));
 		//this.addLayer(new fm.Layer.OSM.Wanderkarte(ol.i18n("Reit- und Wanderkarte"), { permalinkName : "OSMC", category : cat }));
 		this.addLayer(new fm.Layer.OSM.HikeAndBike(ol.i18n("Hike & Bike Map"), { permalinkName : "HiBi", category : cat }));
-		this.addLayer(new fm.Layer.OSM.OpenPisteMap(ol.i18n("OpenPisteMap"), { permalinkName : "OPis", category : cat, visibility: false }));
 		//this.addLayer(new fm.Layer.OSM.OPNVKarte(ol.i18n("ÖPNV-Karte"), { permalinkName : "OPNV", category : cat }));
 		//this.addLayer(new fm.Layer.OSM.Kybl3DMap(ol.i18n("Izometrická 3D mapa ČR"), { permalinkName : "kybl", category : cat }));
 
@@ -173,6 +172,7 @@ FacilMap.Map = ol.Class(ol.Map, {
 		this.addLayer(new fm.Layer.OSM.OOMLabels(ol.i18n("Labels overlay"), { permalinkName : "OOML", visibility : false }));
 		this.addLayer(new fm.Layer.OSM.Hiking(ol.i18n("Hiking symbols"), { visibility: false, permalinkName : "Hike" }));
 		this.addLayer(new fm.Layer.Markers.OpenLinkMap(ol.i18n("POI"), { permalinkName: "OLiM", visibility: false }));
+		this.addLayer(new fm.Layer.OSM.OpenPisteMap(ol.i18n("OpenPisteMap"), { permalinkName : "OPis", visibility: false }));
 
 		fm.Layer.Markers.OpenStreetBugs.loadAPI(function() {
 			map.addLayer(new fm.Layer.Markers.OpenStreetBugs(ol.i18n("OpenStreetBugs"), { visibility: false, permalinkName: "OSBu" }));
