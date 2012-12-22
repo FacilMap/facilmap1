@@ -44,7 +44,6 @@ OpenLayers.Lang.nl = OpenLayers.Util.extend(OpenLayers.Lang.nl, {
 	"MapSurfer Road" : "MapSurfer Road",
 	"MapSurfer Topographic" : "MapSurfer Topographic",
 	"OpenStreetBrowser" : "OpenStreetBrowser",
-	"Osmarender" : "Osmarender",
 	"OpenCycleMap" : "OpenCycleMap",
 	"Reit- und Wanderkarte" : "Fiets- en wandelkaart",
 	"Hike & Bike Map" : "Hike & Bike Map",
