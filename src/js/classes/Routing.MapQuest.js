@@ -20,9 +20,9 @@
 (function(fm, ol, $){
 
 FacilMap.Routing.MapQuest = ol.Class(fm.Routing, {
-	routingURL : "http://open.mapquestapi.com/directions/v0/route",
-	orderedURL : "http://open.mapquestapi.com/directions/v0/optimizedRoute",
-	elevationChartURL : "http://open.mapquestapi.com/elevation/v1/getElevationChart",
+	routingURL : "http://open.mapquestapi.com/directions/v2/route",
+	orderedURL : "http://open.mapquestapi.com/directions/v2/optimizedRoute",
+	elevationChartURL : "http://open.mapquestapi.com/elevation/v1/chart",
 	attribution : ol.i18n("attribution-routing-mapquest"),
 
 	getRoute : function(options, callback) {
@@ -90,7 +90,7 @@ FacilMap.Routing.MapQuest = ol.Class(fm.Routing, {
 
 		json += "}}";
 
-		var url = this.orderedURL + "?inFormat=json&outFormat=xml&json=" + encodeURIComponent(json);
+		var url = this.orderedURL + "?key="+encodeURIComponent(FacilMap.Routing.MapQuest.API_KEY)+"&inFormat=json&outFormat=xml&json=" + encodeURIComponent(json);
 
 		ol.Request.GET({
 			url: url,
@@ -155,7 +155,7 @@ FacilMap.Routing.MapQuest = ol.Class(fm.Routing, {
 
 		json += "}}";
 
-		return this.routingURL + "?inFormat=json&outFormat=xml&json=" + encodeURIComponent(json);
+		return this.routingURL + "?key="+encodeURIComponent(FacilMap.Routing.MapQuest.API_KEY)+"&inFormat=json&outFormat=xml&json=" + encodeURIComponent(json);
 	},
 
 	_getRouteDistance : function(dom) {
@@ -222,10 +222,12 @@ FacilMap.Routing.MapQuest = ol.Class(fm.Routing, {
 
 		var json = "{shapeFormat:'raw',unit:'k',width:'"+size.w+"',height:'"+size.h+"',latLngCollection:["+latlons.join(",")+"]}";
 
-		return this.elevationChartURL + "?inFormat=json&json="+encodeURIComponent(json);
+		return this.elevationChartURL + "?key="+encodeURIComponent(FacilMap.Routing.MapQuest.API_KEY)+"&inFormat=json&json="+encodeURIComponent(json);
 	},
 
 	CLASS_NAME : "FacilMap.Routing.MapQuest"
 });
+
+FacilMap.Routing.MapQuest.API_KEY = "Fmjtd|luu2296rl1,r0=o5-5r8g1";
 
 })(FacilMap, OpenLayers, FacilMap.$);
