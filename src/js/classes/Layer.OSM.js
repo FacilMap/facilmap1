@@ -20,6 +20,18 @@
 (function(fm, ol, $){
 
 FacilMap.Layer.OSM = ol.Class(ol.Layer.OSM, {
+	cors : false,
+
+	initialize : function() {
+		ol.Layer.OSM.prototype.initialize.apply(this, arguments);
+
+		if(!this.cors) {
+			this.tileOptions = ol.Util.extend({
+				crossOriginKeyword: null
+			}, this.options && this.options.tileOptions);
+		}
+	},
+
 	CLASS_NAME : "FacilMap.Layers.OSM"
 });
 

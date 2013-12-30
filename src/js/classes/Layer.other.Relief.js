@@ -22,11 +22,11 @@
 /**
  * Relief rendering from Hike & Bike map (http://hikebikemap.de/)
 */
-FacilMap.Layer.other.Relief = ol.Class(ol.Layer.OSM, {
+FacilMap.Layer.other.Relief = ol.Class(fm.Layer.OSM, {
 	isBaseLayer : false,
 	attribution : ol.i18n("attribution-relief"),
 	initialize: function(name, options) {
-		ol.Layer.OSM.prototype.initialize.apply(this, [ name, "http://toolserver.org/~cmarqu/hill/${z}/${x}/${y}.png", options ]);
+		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "http://toolserver.org/~cmarqu/hill/${z}/${x}/${y}.png", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.other.Relief"
 });

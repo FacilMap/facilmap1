@@ -27,7 +27,7 @@ FacilMap.Layer.OSM.Hiking = ol.Class(fm.Layer.OSM, {
 	isBaseLayer : false,
 	attribution : ol.i18n("attribution-hiking"),
 	initialize : function(name, options) {
-		ol.Layer.OSM.prototype.initialize.apply(this, [ name, "http://osm.lonvia.de/hiking/${z}/${x}/${y}.png", options ]);
+		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "http://osm.lonvia.de/hiking/${z}/${x}/${y}.png", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.OSM.Hiking"
 });

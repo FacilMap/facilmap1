@@ -25,6 +25,7 @@
 
 FacilMap.Layer.OSM.CycleMap = ol.Class(fm.Layer.OSM, {
 	numZoomLevels : 19,
+	cors : true,
 	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://www.opencyclemap.org/\">OpenCycleMap</a>" }),
 	initialize : function(name, options) {
 		ol.Layer.OSM.prototype.initialize.apply(this, [

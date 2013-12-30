@@ -25,6 +25,7 @@
 
 FacilMap.Layer.OSM.Mapnik = ol.Class(fm.Layer.OSM, {
 	numZoomLevels: 19,
+	cors : true,
 	initialize : function(name, options) {
 		ol.Layer.OSM.prototype.initialize.apply(this, [
 			name,
