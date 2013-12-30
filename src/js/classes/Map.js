@@ -193,17 +193,6 @@ FacilMap.Map = ol.Class(ol.Map, {
 		});
 	},
 
-	addAllAvailableYahooLayers : function()
-	{
-		var map = this;
-		var cat = ol.i18n("Yahoo");
-		fm.Layer.Yahoo.loadAPI(function() {
-			map.addLayer(new fm.Layer.Yahoo.Maps(ol.i18n("Yahoo Street"), { permalinkName : "YaSt", category : cat }));
-			map.addLayer(new fm.Layer.Yahoo.Satellite(ol.i18n("Yahoo Satellite"), { permalinkName : "YaSa", category : cat }));
-			map.addLayer(new fm.Layer.Yahoo.Hybrid(ol.i18n("Yahoo Hybrid"), { permalinkName : "YaHy", category : cat }));
-		});
-	},
-
 	/**
 	 * Adds all available layers from this library to your map.
 	*/
@@ -215,7 +204,6 @@ FacilMap.Map = ol.Class(ol.Map, {
 		this.addLayer(new fm.Layer.other.OSStreetView(ol.i18n("Ordnance Survey (UK)"), { permalinkName : "OSSV", category : ol.i18n("Other") }));
 
 		this.addAllAvailableGoogleLayers();
-		this.addAllAvailableYahooLayers();
 	},
 
 	/**
