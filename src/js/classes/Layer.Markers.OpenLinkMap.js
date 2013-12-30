@@ -86,7 +86,7 @@ FacilMap.Layer.Markers.OpenLinkMap = ol.Class(fm.Layer.Markers, {
 			success : function(request) {
 				if(request.responseText)
 				{
-					var objects = request.responseText.split(/<br\/>/);
+					var objects = request.responseText.split(/\r?\n/);
 					for(var i=0; i<objects.length; i++)
 					{
 						var line = objects[i].split(/\|/);
