@@ -34,12 +34,12 @@ var FacilMap = {
 		}
 	});
 
-	OpenLayers.ImgPath = fm.apiUrl+"/img/openlayers/";
+	OpenLayers.ImgPath = fm.apiUrl+"/img/openlayers-facilmap/";
 
 	setTimeout(function(){
 		// Execute after loading all the JavaScript files
 
-		fm.Util.loadCSSFile(fm.apiUrl+"/facilmap_src.css", true);
+		fm.Util.loadCSSFile(fm.apiUrl+(ol._fm ? "/facilmap_ol.css" : "/facilmap.css"), true);
 	}, 0);
 
 })(FacilMap, OpenLayers, FacilMap.$);
