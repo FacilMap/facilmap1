@@ -66,7 +66,7 @@ FacilMap.Control.ToolsMenu = ol.Class(fm.Control, {
 			}
 		});
 
-		this._contentClone = this._content.clone().appendTo(ret).menu().popup({ trigger: button });
+		this._contentClone = this._content.clone().css({display: "inline-block"}).appendTo("body").menu().popup({ trigger: button });
 		this._contentClone.bind("menuselect", function(event, ui) {
 			var onclick = $(ui.item).data("fmOnClick");
 			if(onclick)
