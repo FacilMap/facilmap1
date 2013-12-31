@@ -168,8 +168,6 @@ FacilMap.Map = ol.Class(ol.Map, {
 		//this.addLayer(new fm.Layer.OSM.Kybl3DMap(ol.i18n("Izometrická 3D mapa ČR"), { permalinkName : "kybl", category : cat }));
 
 		this.addLayer(new fm.Layer.OSM.OpenPTMap(ol.i18n("Public transportation"), { permalinkName : "OPTM", visibility : false }));
-		this.addLayer(new fm.Layer.OSM.OOMStreets(ol.i18n("Streets overlay"), { permalinkName : "OOMS", visibility : false }));
-		this.addLayer(new fm.Layer.OSM.OOMLabels(ol.i18n("Labels overlay"), { permalinkName : "OOML", visibility : false }));
 		this.addLayer(new fm.Layer.OSM.Hiking(ol.i18n("Hiking symbols"), { visibility: false, permalinkName : "Hike" }));
 		this.addLayer(new fm.Layer.Markers.OpenLinkMap(ol.i18n("POI"), { permalinkName: "OLiM", visibility: false }));
 		this.addLayer(new fm.Layer.OSM.OpenPisteMap(ol.i18n("OpenPisteMap"), { permalinkName : "OPis", visibility: false }));
