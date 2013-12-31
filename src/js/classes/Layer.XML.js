@@ -29,8 +29,8 @@
  * @event allloadend If an array of URL is passed, this is only called when the last URL is actually loaded.
 */
 
-FacilMap.Layer.XML = ol.Class(ol.Layer.GML, {
-	fmURL : null,
+FacilMap.Layer.XML = ol.Class(ol.Layer.Vector, {
+	fmUrl : null,
 	relations : null,
 	colour : null,
 	toLoad : 0,
@@ -43,7 +43,6 @@ FacilMap.Layer.XML = ol.Class(ol.Layer.GML, {
 	zoomableInLayerSwitcher : true,
 
 	initialize : function(name, url, options) {
-		this.fmURL = url;
 		this.relations = { };
 
 		if(this.colour == null)
@@ -57,81 +56,104 @@ FacilMap.Layer.XML = ol.Class(ol.Layer.GML, {
 			}
 		}
 
-		ol.Layer.GML.prototype.initialize.apply(this, [ name ? name : url, url, options ]);
+		ol.Layer.Vector.prototype.initialize.apply(this, [ name ? name : url, options ]);
 
+		this.events.addEventType("loadstart");
 		this.events.addEventType("allloadend");
+		this.events.addEventType("loadend");
+
+		this.events.register("loadend", this, function() {
+			if(this.toLoad == 0)
+				this.events.triggerEvent("allloadend");
+		});
+
+		if(url)
+			this.setUrl(url);
 	},
-	afterAdd : function() {
-		var ret = ol.Layer.GML.prototype.afterAdd.apply(this, arguments);
+
+	/*afterAdd : function() {
+		var ret = ol.Layer.Vector.prototype.afterAdd.apply(this, arguments);
 		this.map.setLayerZIndex(this, 0);
 		return ret;
-	},
-	loadGML : function(url) {
-		if(!url)
-		{
-			if(!this.loaded)
-			{
-				url = this.url;
-				this.loaded = true;
-			}
-			else
-				return;
+	},*/
+
+	setUrl : function(url) {
+		this.removeAllFeatures();
+		this.fmUrl = url;
+
+		this.toLoad = 0;
+		this.relations = { };
+
+		if(url) {
+			this.events.triggerEvent("loadstart");
+			this._loadUrls([ this.fmUrl ]);
 		}
 
-		if(!(url instanceof Array))
-			url = [ url ];
-		this.events.triggerEvent("loadstart");
+		this.events.triggerEvent("stateChanged");
+	},
+
+	_loadUrls : function(url) {
 		for(var i=0; i<url.length; i++)
 		{
 			if(!url[i])
 				continue;
+
 			this.toLoad++;
 			ol.Request.GET({
 				url: url[i],
-				success: function() {
-					this.requestSuccess.apply(this, arguments);
-					if(--this.toLoad == 0)
-						this.events.triggerEvent("allloadend");
+				success: function(req) {
+					if(req.responseXML)
+						this._loadXml(req.responseXML.documentElement);
+					else {
+						ol.Console.userError(ol.i18n("Error parsing file."));
+						if(window.console && console.error)
+							console.error("Could not parse XML", req);
+					}
+
+					this.toLoad--;
+					this.events.triggerEvent("loadend");
 				},
-				failure: function() {
-					this.requestFailure.apply(this, arguments);
-					if(--this.toLoad == 0)
-						this.events.triggerEvent("allloadend");
+				failure: function(req) {
+					ol.Console.userError(ol.i18n("Error loading file."));
+
+					if(window.console && console.error)
+						console.error("HTTP request failed", req);
+
+					this.toLoad--;
+					this.events.triggerEvent("loadend");
 				},
 				scope: this
 			});
 		}
 	},
-	requestSuccess : function(request) {
-		if(request.responseXML && request.responseXML.documentElement)
+
+	_loadXml : function(xml) {
+		var format = null;
+		switch(xml.tagName)
 		{
-			switch(request.responseXML.documentElement.tagName)
-			{
-				case "gpx":
-					if(request.responseXML.documentElement.getAttribute("creator") == "CloudMade")
-						this.format = fm.Routing.Cloudmade.Format;
-					else
-						this.format = ol.Format.GPX;
-					break;
-				case "osm": this.format = ol.Format.OSM; break;
-				case "kml": this.format = ol.Format.KML; break;
-				case "response": this.format = fm.Routing.MapQuest.Format;
-			}
-		}
-		this.formatOptions = { extractAttributes: false };
-		try
-		{
-			ol.Layer.GML.prototype.requestSuccess.apply(this, arguments);
-		}
-		catch(e)
-		{
-			alert(ol.i18n("Error parsing file."));
-			this.events.triggerEvent("loadend");
+			case "gpx":
+				if(xml.getAttribute("creator") == "CloudMade")
+					format = fm.Routing.Cloudmade.Format;
+				else
+					format = ol.Format.GPX;
+				break;
+			case "osm": format = ol.Format.OSM; break;
+			case "kml": format = ol.Format.KML; break;
+			case "response": format = fm.Routing.MapQuest.Format;
 		}
 
-		if(fm.Layer.XML.relationURL && this.format == ol.Format.OSM && request.responseXML)
+		if(format == null) {
+			ol.Console.userError(ol.i18n("Error parsing file."));
+			if(window.console && console.error)
+				console.error("Unknown root tag for XML file", xml);
+			return;
+		}
+
+		var formatObj = new format({ extractAttributes: false, internalProjection: this.map.projection });
+
+		if(fm.Layer.XML.relationURL && format == ol.Format.OSM)
 		{
-			var relations = request.responseXML.getElementsByTagName("relation");
+			var relations = xml.getElementsByTagName("relation");
 			for(var i=0; i<relations.length; i++)
 			{
 				var id = relations[i].getAttribute("id");
@@ -142,22 +164,23 @@ FacilMap.Layer.XML = ol.Class(ol.Layer.GML, {
 				var url = ol.String.format(fm.Layer.XML.relationURL, {"id": id});
 				if(url == this.url)
 					continue;
-				this.loadGML(url);
+				this._loadUrls([ url ]);
 			}
 		}
+
+		this.addFeatures(formatObj.read(xml));
 	},
+
 	getStateObject : function() {
 		var obj = { };
 		if(this.removableInLayerSwitcher)
-			obj.url = this.fmURL;
+			obj.url = this.fmUrl;
 		return obj;
 	},
+
 	setStateObject : function(obj) {
-		if(obj.url != undefined && obj.url != this.fmURL)
-		{
-			this.fmUrl = obj.url;
+		if(obj.url != undefined && obj.url != this.fmUrl)
 			this.setUrl(obj.url);
-		}
 	},
 
 	CLASS_NAME : "FacilMap.Layer.XML"

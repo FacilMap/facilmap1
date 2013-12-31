@@ -318,7 +318,7 @@ FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 					}
 				}
 
-				this.requestSuccess({ responseXML : route.gpx });
+				this._loadXml(route.gpx.documentElement);
 				this._currentRoute = route;
 				this.events.triggerEvent("allloadend");
 			}, this));
