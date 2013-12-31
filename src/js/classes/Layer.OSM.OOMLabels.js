@@ -26,7 +26,7 @@
 FacilMap.Layer.OSM.OOMLabels = ol.Class(fm.Layer.OSM, {
 	numZoomLevels: 19,
 	isBaseLayer: false,
-	attribution : ol.i18n("attribution-oom-labels"),
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://oobrien.com/oom/\">OpenOrienteeringMap</a>" }),
 	initialize : function(name, options) {
 		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "http://tiler1.censusprofiler.org/labelsonly/${z}/${x}/${y}.png", options ]);
 	},

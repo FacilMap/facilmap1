@@ -27,7 +27,7 @@ FacilMap.Layer.OSM.OOMStreets = ol.Class(fm.Layer.OSM, {
 	numZoomLevels : 19,
 	isBaseLayer : false,
 	opacity : 0.25,
-	attribution : ol.i18n("attribution-oom-streets"),
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://oobrien.com/oom/\">OpenOrienteeringMap</a>" }),
 	initialize : function(name, options) {
 		// New world-wide tiles. Aren’t transparent anymore so not as good for using them as an overlay as the old ones. See http://www.openstreetmap.org/user/Ollie/diary/9223.
 		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "http://tiler1.censusprofiler.org/streeto/${z}/${x}/${y}.png", options ]);

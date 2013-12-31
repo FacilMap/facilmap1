@@ -25,7 +25,7 @@
 
 FacilMap.Layer.OSM.Hiking = ol.Class(fm.Layer.OSM, {
 	isBaseLayer : false,
-	attribution : ol.i18n("attribution-hiking"),
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://osm.lonvia.de/world_hiking.html\">Lonvia's Hiking Map</a>" }),
 	initialize : function(name, options) {
 		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "http://tile.waymarkedtrails.org/hiking/${z}/${x}/${y}.png", options ]);
 	},

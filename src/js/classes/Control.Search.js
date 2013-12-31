@@ -20,6 +20,8 @@
 (function(fm, ol, $){
 
 FacilMap.Control.Search = ol.Class(ol.Control, {
+	name : ol.i18n("Search"), // For attribution popup
+
 	nameFinder : null,
 	tabindex : 1,
 
@@ -38,6 +40,7 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 	 */
 	initialize : function(options) {
 		this.nameFinder = new FacilMap.NameFinder.Nominatim();
+		this.attribution = this.nameFinder.attribution;
 
 		this.makeSuggestions = $.proxy(this.makeSuggestions, this);
 
@@ -90,7 +93,7 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 			t.map.addLayer(t._layerXML);
 			t._layerXML.events.register("allloadend", t._layerXML, zoomFunc);
 
-			t._layerRouting = new fm.Layer.XML.Routing("[routing]", { displayInLayerSwitcher : false });
+			t._layerRouting = new fm.Layer.XML.Routing(ol.i18n("Routing"), { displayInLayerSwitcher : false });
 			t.map.addLayer(t._layerRouting);
 			t._layerRouting.events.register("draggedRoute", this, function(e) {
 				if(e.draggedPoint == "from")

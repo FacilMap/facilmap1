@@ -24,7 +24,7 @@ FacilMap.Routing.YOURS = ol.Class(fm.Routing, {
 	permalinkURL : "http://www.yournavigation.org/",
 	routingMediumMapping : { "car" : "motorcar", "bicycle" : "bicycle", "foot" : "foot" },
 	routingTypeMapping : { "shortest" : "0", "fastest" : "1" },
-	attribution : ol.i18n("attribution-routing-yours"),
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://www.yournavigation.org/\"><acronym title=\"Yet Another OpenStreetMap Routing Service\">YOURS</acronym></a>" }),
 
 	getRoute : function(options, callback) {
 		var t = this;
