@@ -34,11 +34,6 @@ FacilMap.Layer.XML = ol.Class(ol.Layer.Vector, {
 	relations : null,
 	colour : null,
 	toLoad : 0,
-	style : {
-		strokeColor: this.colour,
-		strokeWidth: 3,
-		strokeOpacity: 0.5
-	},
 	projection : new ol.Projection("EPSG:4326"),
 	zoomableInLayerSwitcher : true,
 
@@ -55,6 +50,12 @@ FacilMap.Layer.XML = ol.Class(ol.Layer.Vector, {
 				case 3: this.colour = "black"; break;
 			}
 		}
+
+		this.style = {
+			strokeColor: this.colour,
+			strokeWidth: 3,
+			strokeOpacity: 0.5
+		};
 
 		ol.Layer.Vector.prototype.initialize.apply(this, [ name ? name : url, options ]);
 
