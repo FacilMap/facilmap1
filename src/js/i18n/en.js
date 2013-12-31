@@ -51,8 +51,6 @@ ol.Lang.en = ol.Util.extend(ol.Lang.en, {
 	"Google Satellite" : "Google Satellite",
 	"Google Hybrid" : "Google Hybrid",
 	"Google Terrain" : "Google Terrain",
-	"Google MapMaker" : "Google MapMaker",
-	"Google MapMaker Hybrid" : "Google MapMaker Hybrid",
 	"Relief" : "Relief",
 	"Hiking symbols" : "Hiking symbols",
 	"Coordinate grid" : "Coordinate grid",

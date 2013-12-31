@@ -25,7 +25,7 @@
 
 FacilMap.Layer.Google.MapsTerrain = ol.Class(fm.Layer.Google, {
 	initialize : function() {
-		this.type = G_PHYSICAL_MAP;
+		this.type = google.maps.MapTypeId.TERRAIN;
 		fm.Layer.Google.prototype.initialize.apply(this, arguments);
 	},
 	CLASS_NAME : "FacilMap.Layer.Google.MapsTerrain"

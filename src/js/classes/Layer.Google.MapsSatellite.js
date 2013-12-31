@@ -26,7 +26,7 @@
 FacilMap.Layer.Google.MapsSatellite = ol.Class(fm.Layer.Google, {
 	numZoomLevels : 22,
 	initialize : function() {
-		this.type = G_SATELLITE_MAP;
+		this.type = google.maps.MapTypeId.SATELLITE;
 		fm.Layer.Google.prototype.initialize.apply(this, arguments);
 	},
 	CLASS_NAME : "FacilMap.Layer.Google.MapsSatellite"

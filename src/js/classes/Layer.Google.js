@@ -25,27 +25,19 @@ FacilMap.Layer.Google = ol.Class(ol.Layer.Google, {
 });
 
 /**
- * Set this to your Google Maps API key (http://code.google.com/apis/maps/signup.html) prior to adding the Google layers
- * to your map. In theory, this will asynchronously include the API JavaScript file as soon as the Google layers
- * are added to the map using {@link FacilMap.Map.addAllAvailableGoogleLayers()}. In practice, it is
- * currently impossible to do that because the Google Maps API relies on document.write(), so you have to leave this value null.
- * You still have to include the JavaScript file http://maps.google.com/maps?file=api&v=2&key=[Your key] manually,
- * but you can do that after adding the Google Layers, they will then be added as soon as the API is loaded.
- * @var String
-*/
-FacilMap.Layer.Google.API_KEY = null;
-
-/**
- * Loads the Google Maps API with the API key set in {@link FacilMap.Layer.Google.API_KEY} and calls the given callback
- * function as soon as it’s loaded.
+ * Loads the Google Maps API and calls the given callback function as soon as it’s loaded.
  * @param callback {Function}
  * @return {void}
 */
 FacilMap.Layer.Google.loadAPI = function(callback) {
-	var url = null;
-	if(fm.Layer.Google.API_KEY != null)
-		url = "http://maps.google.com/maps?file=api&v=2&key="+encodeURIComponent(fm.Layer.Google.API_KEY);
-	fm.Util.loadJavaScript(url, function() { return window.GMap2 != undefined; }, callback);
+	if(window.google && google.maps)
+		return callback();
+
+	var cbName = "fm_"+(new Date()).getTime();
+	window[cbName] = function() {
+		callback();
+	};
+	fm.Util.loadJavaScript("https://maps.googleapis.com/maps/api/js?sensor=false&callback="+encodeURIComponent(cbName));
 };
 
 })(FacilMap, OpenLayers, FacilMap.$);

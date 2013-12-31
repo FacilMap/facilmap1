@@ -187,8 +187,6 @@ FacilMap.Map = ol.Class(ol.Map, {
 			map.addLayer(new fm.Layer.Google.MapsSatellite(ol.i18n("Google Satellite"), { permalinkName : "GgSa", category: cat }));
 			map.addLayer(new fm.Layer.Google.MapsHybrid(ol.i18n("Google Hybrid"), { permalinkName : "GgHy", category: cat }));
 			map.addLayer(new fm.Layer.Google.MapsTerrain(ol.i18n("Google Terrain"), { permalinkName : "GgTe", category: cat }));
-			map.addLayer(new fm.Layer.Google.MapMaker(ol.i18n("Google MapMaker"), { permalinkName : "GgMM", category: cat }));
-			map.addLayer(new fm.Layer.Google.MapMakerHybrid(ol.i18n("Google MapMaker Hybrid"), { permalinkName : "GgMH", category: cat }));
 		});
 	},
 

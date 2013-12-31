@@ -51,8 +51,6 @@ ol.Lang.de = ol.Util.extend(ol.Lang.de, {
 	"Google Satellite" : "Google Satellit",
 	"Google Hybrid" : "Google Hybrid",
 	"Google Terrain" : "Google Gelände",
-	"Google MapMaker" : "Google MapMaker",
-	"Google MapMaker Hybrid" : "Google MapMaker Hybrid",
 	"Relief" : "Relief",
 	"Hiking symbols" : "Wanderbeschilderung",
 	"Coordinate grid" : "Koordinatensystem",

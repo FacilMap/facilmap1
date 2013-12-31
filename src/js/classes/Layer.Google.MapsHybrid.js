@@ -25,7 +25,7 @@
 
 FacilMap.Layer.Google.MapsHybrid = ol.Class(fm.Layer.Google, {
 	initialize : function() {
-		this.type = G_HYBRID_MAP;
+		this.type = google.maps.MapTypeId.HYBRID;
 		fm.Layer.Google.prototype.initialize.apply(this, arguments);
 	},
 	CLASS_NAME : "FacilMap.Layer.Google.MapsHybrid"
