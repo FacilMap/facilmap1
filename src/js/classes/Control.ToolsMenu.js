@@ -61,7 +61,7 @@ FacilMap.Control.ToolsMenu = ol.Class(fm.Control, {
 
 		var button = $("<button />").append(this.caption).appendTo(ret).button({
 			icons : {
-				primary : "ui-icon-wrench",
+				primary : "ui-icon-wrench",
 				secondary : "ui-icon-triangle-1-s"
 			}
 		});
