@@ -24,7 +24,7 @@
  *
  * Makes use of the features and styles of {@link FacilMap.Layer.Markers}.
  *
- * Make sure to load the OpenStreetBugs API from http://api.facilmap.org/osblayer/osblayer.js before adding this
+ * Make sure to load the OpenStreetBugs API from https://api.facilmap.org/osblayer/osblayer.js before adding this
  * layer or use the {@link FacilMap.Layer.Markers.OpenStreetBugs.loadAPI} function.
 */
 
@@ -76,7 +76,7 @@ FacilMap.Layer.Markers.OpenStreetBugs = ol.Class(fm.Layer.Markers, {
  * @param callback {Function} A function to call as soon as the API is loaded.
  */
 FacilMap.Layer.Markers.OpenStreetBugs.loadAPI = function(callback) {
-	fm.Util.loadJavaScript("http://api.facilmap.org/osblayer/osblayer.js", function() { return ol.Layer.OpenStreetBugs != undefined; }, callback);
+	fm.Util.loadJavaScript("https://api.facilmap.org/osblayer/osblayer.js", function() { return ol.Layer.OpenStreetBugs != undefined; }, callback);
 };
 
 })(FacilMap, OpenLayers, FacilMap.$);

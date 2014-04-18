@@ -20,10 +20,10 @@
 (function(fm, ol, $){
 
 FacilMap.Routing.MapQuest = ol.Class(fm.Routing, {
-	routingURL : "http://open.mapquestapi.com/directions/v2/route",
-	orderedURL : "http://open.mapquestapi.com/directions/v2/optimizedRoute",
-	elevationChartURL : "http://open.mapquestapi.com/elevation/v1/chart",
-	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://open.mapquest.co.uk/\">MapQuest Open</a>" }),
+	routingURL : "https://open.mapquestapi.com/directions/v2/route",
+	orderedURL : "https://open.mapquestapi.com/directions/v2/optimizedRoute",
+	elevationChartURL : "https://open.mapquestapi.com/elevation/v1/chart",
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://open.mapquest.com/\">MapQuest Open</a>" }),
 
 	getRoute : function(options, callback) {
 		var t = this;

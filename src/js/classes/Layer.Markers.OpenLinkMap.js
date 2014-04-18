@@ -34,7 +34,7 @@ FacilMap.Layer.Markers.OpenLinkMap = ol.Class(fm.Layer.Markers, {
 	markerIcon : new ol.Icon(fm.apiUrl+"/img/circle.png", new ol.Size(32,32), new ol.Pixel(-16, -16)),
 	markerIconHighlight : new ol.Icon(fm.apiUrl+"/img/circle_red.png", new ol.Size(32,32), new ol.Pixel(-16, -16)),
 	minZoomLevel : 13,
-	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://olm.openstreetmap.de/\">OpenLinkMap</a>" }),
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://openlinkmap.org/\">OpenLinkMap</a>" }),
 
 	lastBBOX : null,
 	olmMarkers : { },

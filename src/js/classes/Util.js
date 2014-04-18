@@ -176,12 +176,12 @@ FacilMap.Util = {
 
 		var ul = document.createElement("ul");
 		ul.className = "fieldset-content";
-		ul.appendChild(makeEntry("http://www.openstreetmap.org/?mlat="+lonlat.lat+"&mlon="+lonlat.lon+"&zoom="+zoom, "OpenStreetMap Permalink"));
+		ul.appendChild(makeEntry("https://www.openstreetmap.org/?mlat="+lonlat.lat+"&mlon="+lonlat.lon+"&zoom="+zoom, "OpenStreetMap Permalink"));
 		ul.appendChild(makeEntry("http://osm.org/go/"+fm.Util.encodeShortLink(lonlat, zoom)+"?m", "OpenStreetMap Shortlink"));
-		ul.appendChild(makeEntry("http://maps.google.com/?q="+lonlat.lat+","+lonlat.lon, "Google Maps Permalink"));
-		ul.appendChild(makeEntry("http://maps.yahoo.com/broadband/#lat="+lonlat.lat+"&lon="+lonlat.lon+"&zoom="+zoom, "Yahoo Maps Permalink"));
+		ul.appendChild(makeEntry("https://maps.google.com/?q="+lonlat.lat+","+lonlat.lon, "Google Maps Permalink"));
+		ul.appendChild(makeEntry("https://maps.yahoo.com/broadband/#lat="+lonlat.lat+"&lon="+lonlat.lon+"&zoom="+zoom, "Yahoo Maps Permalink"));
 		ul.appendChild(makeEntry("http://osmtools.de/osmlinks/?lat="+lonlat.lat+"&lon="+lonlat.lon+"&zoom="+zoom, "OpenStreetMap Links"));
-		ul.appendChild(makeEntry("http://stable.toolserver.org/geohack/geohack.php?params="+lonlat.lat+"_N_"+lonlat.lon+"_E", "Wikimedia GeoHack"));
+		ul.appendChild(makeEntry("https://stable.toolserver.org/geohack/geohack.php?params="+lonlat.lat+"_N_"+lonlat.lon+"_E", "Wikimedia GeoHack"));
 		fieldset.appendChild(ul);
 
 		div.appendChild(fieldset);
@@ -561,14 +561,14 @@ FacilMap.Util = {
 			else if(key.match(/^wiki:symbol:?/i))
 			{
 				el = document.createElement("a");
-				el.href = "http://wiki.openstreetmap.org/wiki/Image:"+thisValue;
+				el.href = "https://wiki.openstreetmap.org/wiki/Image:"+thisValue;
 				el.appendChild(document.createTextNode(thisValue));
 				break;
 			}
 			else if(key.match(/^wiki:?/i))
 			{
 				el = document.createElement("a");
-				el.href = "http://wiki.openstreetmap.org/wiki/"+thisValue;
+				el.href = "https://wiki.openstreetmap.org/wiki/"+thisValue;
 				el.appendChild(document.createTextNode(thisValue));
 				break;
 			}

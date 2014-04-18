@@ -60,9 +60,9 @@ FacilMap.Control.ToolsMenu.Default = ol.Class(fm.Control.ToolsMenu, {
 		var lat = fm.Util.round(lonlat.lat, 5);
 		var zoom = this.map.getZoom();
 
-		submenu.addItem(ol.i18n("OpenStreetMap"), "http://www.openstreetmap.org/?lat="+lat+"&lon="+lon+"&zoom="+zoom);
-		submenu.addItem(ol.i18n("Google Maps"), "http://maps.google.com/?ll="+lat+","+lon+"&z="+zoom);
-		submenu.addItem(ol.i18n("Bing Maps"), "http://maps.bing.com/?cp="+lat+"~"+lon+"&lvl="+zoom);
+		submenu.addItem(ol.i18n("OpenStreetMap"), "https://www.openstreetmap.org/?lat="+lat+"&lon="+lon+"&zoom="+zoom);
+		submenu.addItem(ol.i18n("Google Maps"), "https://maps.google.com/?ll="+lat+","+lon+"&z="+zoom);
+		submenu.addItem(ol.i18n("Bing Maps"), "https://www.bing.com/maps/?cp="+lat+"~"+lon+"&lvl="+zoom);
 		submenu.addItem(ol.i18n("OSM Links"), "http://osmtools.de/osmlinks/?lat="+lat+"&lon="+lon+"&zoom="+zoom);
 	},
 

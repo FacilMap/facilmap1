@@ -191,7 +191,7 @@ FacilMap.Layer.XML = ol.Class(ol.Layer.Vector, {
  * Set this to the XML URL that shall be loaded for relations referenced in OSM files. “${id}" will be replaced by the ID of the relation.
  * @var String
 */
-FacilMap.Layer.XML.relationURL = "http://www.openstreetmap.org/api/0.6/relation/${id}/full";
+FacilMap.Layer.XML.relationURL = "https://www.openstreetmap.org/api/0.6/relation/${id}/full";
 
 FacilMap.Layer.XML.colourCounter = 1;
 

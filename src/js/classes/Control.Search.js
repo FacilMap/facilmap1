@@ -263,10 +263,10 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 				{
 					switch(m[1].toLowerCase())
 					{
-						case "node": query1 = "http://www.openstreetmap.org/api/0.6/node/"+m[2]; break;
-						case "way": query1 = "http://www.openstreetmap.org/api/0.6/way/"+m[2]+"/full"; break;
-						case "relation": query1 = "http://www.openstreetmap.org/api/0.6/relation/"+m[2]+"/full"; break;
-						case "trace": query1 = "http://www.openstreetmap.org/trace/"+m[2]+"/data.xml"; break;
+						case "node": query1 = "https://www.openstreetmap.org/api/0.6/node/"+m[2]; break;
+						case "way": query1 = "https://www.openstreetmap.org/api/0.6/way/"+m[2]+"/full"; break;
+						case "relation": query1 = "https://www.openstreetmap.org/api/0.6/relation/"+m[2]+"/full"; break;
+						case "trace": query1 = "https://www.openstreetmap.org/trace/"+m[2]+"/data.xml"; break;
 					}
 				}
 

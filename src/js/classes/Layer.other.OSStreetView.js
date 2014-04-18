@@ -27,7 +27,7 @@ FacilMap.Layer.other.OSStreetView = ol.Class(ol.Layer.XYZ, {
 	attribution : ol.i18n("attribution-os-streetview"),
 
 	initialize : function(name, options) {
-		ol.Layer.XYZ.prototype.initialize.apply(this, [ name, [ "http://a.os.openstreetmap.org/sv/${z}/${x}/${y}.png", "http://b.os.openstreetmap.org/sv/${z}/${x}/${y}.png", "http://c.os.openstreetmap.org/sv/${z}/${x}/${y}.png" ], options ]);
+		ol.Layer.XYZ.prototype.initialize.apply(this, [ name, [ "https://a.os.openstreetmap.org/sv/${z}/${x}/${y}.png", "https://b.os.openstreetmap.org/sv/${z}/${x}/${y}.png", "https://c.os.openstreetmap.org/sv/${z}/${x}/${y}.png" ], options ]);
 	},
 
 	CLASS_NAME : "FacilMap.Layer.other.OSStreetView"

@@ -25,7 +25,7 @@
 FacilMap.Layer.OSM.HikeAndBike = ol.Class(fm.Layer.OSM, {
 	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://hikebikemap.de/\">Hike &amp; Bike Map</a>" }),
 	initialize : function(name, options) {
-		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "http://toolserver.org/tiles/hikebike/${z}/${x}/${y}.png", options ]);
+		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "https://toolserver.org/tiles/hikebike/${z}/${x}/${y}.png", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.OSM.HikeAndBike"
 });

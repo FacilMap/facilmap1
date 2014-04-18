@@ -20,7 +20,7 @@
 (function(fm, ol, $){
 
 // Make use of ajax-proxy (http://gitorious.org/ajax-proxy/ajax-proxy)
-// Include http://api.facilmap.org/ajax-proxy/ajax-proxy.js to "disable" the Same Origin Policy.
-fm.Util.loadJavaScript("http://api.facilmap.org/ajax-proxy/ajax-proxy.js", function() { return window.AjaxProxyXMLHttpRequest != undefined; }, function() { OpenLayers.Request.XMLHttpRequest = AjaxProxyXMLHttpRequest; });
+// Include https://api.facilmap.org/ajax-proxy/ajax-proxy.js to "disable" the Same Origin Policy.
+fm.Util.loadJavaScript("https://api.facilmap.org/ajax-proxy/ajax-proxy.js", function() { return window.AjaxProxyXMLHttpRequest != undefined; }, function() { OpenLayers.Request.XMLHttpRequest = AjaxProxyXMLHttpRequest; });
 
 })(FacilMap, OpenLayers, FacilMap.$);

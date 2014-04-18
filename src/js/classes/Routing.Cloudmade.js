@@ -20,8 +20,8 @@
 (function(fm, ol, $){
 
 FacilMap.Routing.Cloudmade = ol.Class(fm.Routing, {
-	routingURL : "http://routes.cloudmade.com/0abc333ea36c4c34bc67a72442d9770b/api/0.3/",
-	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://cloudmade.com/\">CloudMade</a>" }),
+	routingURL : "https://routes.cloudmade.com/0abc333ea36c4c34bc67a72442d9770b/api/0.3/",
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"https://cloudmade.com/\">CloudMade</a>" }),
 
 	getRoute : function(options, callback) {
 		var t = this;
