@@ -30,7 +30,7 @@ FacilMap.Layer.OSM.CycleMap = ol.Class(fm.Layer.OSM, {
 	initialize : function(name, options) {
 		ol.Layer.OSM.prototype.initialize.apply(this, [
 			name,
-			[ "https://a.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png", "https://b.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png", "https://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png" ],
+			[ "http://a.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png", "http://b.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png", "http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png" ],
 			options
 		]);
 	},
