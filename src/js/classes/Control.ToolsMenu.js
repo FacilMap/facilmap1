@@ -66,12 +66,37 @@ FacilMap.Control.ToolsMenu = ol.Class(fm.Control, {
 			}
 		});
 
-		this._contentClone = this._content.clone().css({display: "inline-block"}).appendTo("body").menu().popup({ trigger: button });
+		this._contentClone = this._content.clone().css({display: "inline-block"}).appendTo("body").position({
+			my: "right top",
+			at: "right bottom",
+			of: button
+		}).menu();
 		this._contentClone.bind("menuselect", function(event, ui) {
 			var onclick = $(ui.item).data("fmOnClick");
-			if(onclick)
+			if(onclick) {
 				onclick.apply(this, arguments);
+				hide();
+			}
 		});
+		
+		var show = $.proxy(function() {
+			this._contentClone.show().position({
+				my: "right top",
+				at: "right bottom",
+				of: button
+			});
+			setTimeout($.proxy(function() {
+				this.map.events.register("click", null, hide);
+			}, this), 0);
+		}, this);
+		
+		var hide = $.proxy(function() {
+			this.map.events.unregister("click", null, hide);
+			this._contentClone.hide();
+			button.one("click", show);
+		}, this);
+		
+		hide();
 
 		return ret;
 	},
