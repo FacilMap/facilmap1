@@ -415,8 +415,8 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 
 		$(".from", this.div).val(obj.from || obj.query || "");
 		$(".to", this.div).val(obj.to || "");
-		$(".medium", this.div).val(obj.medium || null);
-		$(".type", this.div).val(obj.type || null);
+		$(".medium", this.div).val(obj.medium || $(".medium option:first").val());
+		$(".type", this.div).val(obj.type || $(".type option:first").val());
 
 		// Prevent autosuggest from showing up on any key press
 		this._fromAutoSuggest._waitingValue = $(".from", this.div).val();
