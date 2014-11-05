@@ -21,12 +21,11 @@
 
 FacilMap.Control.Loading = ol.Class(fm.Control, {
 	_loadingInstances : 0,
-	_interval : null,
 
 	draw : function(px) {
 		var ret = fm.Control.prototype.draw.apply(this, arguments);
 
-		$(this.div).append("<p>"+ol.i18n("Loading")+"</p>");
+		$("<img/>").attr("src", fm.apiUrl+"/img/spinner.gif").attr("alt", ol.i18n("Loading")).appendTo(this.div);
 		this._update();
 
 		return ret;
@@ -45,25 +44,6 @@ FacilMap.Control.Loading = ol.Class(fm.Control, {
 	_update : function() {
 		var visible = (this._loadingInstances > 0);
 		$(this.div).css("display", visible ? "block" : "none");
-
-		if(visible && this._interval == null)
-		{
-			var text = ol.i18n("Loading");
-			var el = $("> p", this.div);
-			this._interval = setInterval(function(){
-				switch(el.html()) {
-					case text: el.html("."+text+"."); break;
-					case "."+text+".": el.html(".."+text+".."); break;
-					case ".."+text+"..": el.html("..."+text+"..."); break;
-					default: el.html(text); break;
-				}
-			}, 1000);
-		}
-		else if(!visible && this._interval != null)
-		{
-			clearInterval(this._interval);
-			this._interval = null;
-		}
 	},
 
 	CLASS_NAME : "FacilMap.Control.Loading"

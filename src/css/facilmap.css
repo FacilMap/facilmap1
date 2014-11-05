@@ -156,28 +156,12 @@ ol.fmAutoSuggest li.selected,ol.fmAutoSuggest li:hover {
 
 .olMap .fmControlLoading {
 	position:absolute;
-	top:0;
+	top:40px;
 	right:0;
-	width:100%;
-	text-align:center;
-}
-
-.olMap .fmControlLoading p {
-	margin:0 auto;
-	width:7em;
-	background-color:#00272a;
-	opacity:0.75;
-	border-bottom-left-radius:5px;
-	border-bottom-right-radius:5px;
-	padding:3px 5px;
-	color:#fff;
-	font-weight:bold;
-
-	-moz-border-bottom-left-radius:5px;
-	-moz-border-bottom-right-radius:5px;
-	filter:alpha(opacity=75);
-	-moz-opacity:0.75;
-	-khtml-opacity:0.75;
+	height:28px;
+	width:29px;
+	padding:16px 16px 16px 15px;
+	background:url(img/spinner-background.png);
 }
 
 /* === */
