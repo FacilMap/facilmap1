@@ -35,6 +35,8 @@ FacilMap.Map = ol.Class(ol.Map, {
 
 	attributionIcon : new ol.Icon(fm.apiUrl+"/img/logo_beta.png", new ol.Size(170, 129), new ol.Pixel(-25, -108)),
 
+	_currentExpectClick : null,
+
 	initialize : function(div, options)
 	{
 		ol.Map.prototype.initialize.apply(this, [ div, ol.Util.extend({
@@ -400,6 +402,30 @@ FacilMap.Map = ol.Class(ol.Map, {
 		});
 
 		return hashObject;
+	},
+
+	expectClick : function(handler, helpText) {
+		if(this._currentExpectClick)
+			this._currentExpectClick.cancel();
+
+		$(this.div).addClass("expect-click");
+		this.events.register("click", this, listener);
+
+		var help = (helpText && { message: helpText, closeable: false, actions: [ { label: ol.i18n("Cancel"), click: $.proxy(end, this) } ] });
+		this.events.triggerEvent("alert", help);
+
+		function end() {
+			this.events.unregister("click", this, listener);
+			$(this.div).removeClass("expect-click");
+			help && help.close();
+		}
+
+		function listener(e) {
+			end.apply(this);
+			handler(this.getLonLatFromViewPortPx(e.xy).clone().transform(map.getProjectionObject(), fm.proj));
+		}
+
+		return this._currentExpectClick = { cancel: $.proxy(end, this) };
 	},
 
 	CLASS_NAME : "FacilMap.Map"

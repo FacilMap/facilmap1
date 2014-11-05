@@ -174,7 +174,18 @@ FacilMap.Control.ToolsMenu = ol.Class(fm.Control, {
 	 * @param control {OpenLayers.Control} The control
 	 */
 	addControl : function(caption, control) {
-		this._addItem(caption);
+		var checkbox = $('<input type="checkbox" />');
+		this._addItem(checkbox.add(document.createTextNode(caption)), function() {
+			control.active ? control.deactivate() : control.activate();
+		});
+
+		control.events.register("activate", null, function() {
+			checkbox.prop("checked", true);
+		});
+
+		control.events.register("deactivate", null, function() {
+			checkbox.prop("checked", false);
+		});
 	},
 
 	/**

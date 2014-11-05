@@ -20,7 +20,8 @@
 var FacilMap = {
 	olBackup : { },
 	apiUrl : ".",
-	$ : jQuery.noConflict(true)
+	$ : jQuery.noConflict(true),
+	proj : new OpenLayers.Projection("EPSG:4326")
 };
 
 (function(fm, ol, $){

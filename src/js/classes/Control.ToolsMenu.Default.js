@@ -25,6 +25,7 @@
 
 FacilMap.Control.ToolsMenu.Default = ol.Class(fm.Control.ToolsMenu, {
 	_mapMoveHandlers : null,
+	_layerMarkers : null,
 	
 	initialize : function() {
 		fm.Control.ToolsMenu.prototype.initialize.apply(this, arguments);
@@ -35,6 +36,13 @@ FacilMap.Control.ToolsMenu.Default = ol.Class(fm.Control.ToolsMenu, {
 
 		var otherMaps = this.addSubMenu(ol.i18n("Other maps"));
 		this._mapMoveHandlers.push($.proxy(function() { otherMaps.empty(); this._addOtherMapsLinks(otherMaps); }, this));
+
+		this._layerMarkers = new fm.Layer.Markers.LonLat(ol.i18n("Markers"), { shortName : "m", saveInPermalink : true });
+		this.addItem(ol.i18n("Add marker"), $.proxy(function() {
+			this.map.expectClick($.proxy(function(pos) {
+				this._layerMarkers.addLonLatMarker(pos);
+			}, this), ol.i18n("CreateMarkerHelp"));
+		}, this));
 	},
 
 	setMap : function() {
@@ -46,6 +54,8 @@ FacilMap.Control.ToolsMenu.Default = ol.Class(fm.Control.ToolsMenu, {
 
 		this.map.events.register("move", this, onMove);
 		onMove();
+
+		this.map.addLayer(this._layerMarkers);
 
 		return ret;
 	},

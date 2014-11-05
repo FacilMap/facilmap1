@@ -103,7 +103,10 @@ ol.Lang.en = ol.Util.extend(ol.Lang.en, {
 	"Google Maps" : "Google Maps",
 	"Yahoo Maps" : "Yahoo Maps",
 	"Bing Maps" : "Bing Maps",
-	"OSM Links" : "OSM Links"
+	"OSM Links" : "OSM Links",
+	"Add marker" : "Add marker",
+	"CreateMarkerHelp" : "Click somewhere on the map to create a marker.",
+	"Cancel" : "Cancel"
 });
 
 })(FacilMap, OpenLayers, FacilMap.$);

@@ -15,6 +15,10 @@
 	visibility: hidden;
 }
 
+.fmMap.expect-click {
+	cursor: crosshair;
+}
+
 /* === FacilMap.Control.Search === */
 
 .olMap .fmControlSearch {
