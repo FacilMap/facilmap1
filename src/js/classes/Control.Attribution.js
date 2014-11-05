@@ -47,7 +47,7 @@ FacilMap.Control.Attribution = ol.Class(ol.Control, {
 	getAttributions : function() {
 		var ret = [ ];
 
-		FacilMap.$.each([ ].concat(this.map.layers).concat(this.map.controls), function(i, it) {
+		$.each([ ].concat(this.map.layers).concat(this.map.controls), function(i, it) {
 			if(it.attribution)
 				ret.push((it.name ? it.name+": " : "")+it.attribution);
 		});
