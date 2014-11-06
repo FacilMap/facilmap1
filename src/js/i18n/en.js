@@ -106,7 +106,9 @@ ol.Lang.en = ol.Util.extend(ol.Lang.en, {
 	"OSM Links" : "OSM Links",
 	"Add marker" : "Add marker",
 	"CreateMarkerHelp" : "Click somewhere on the map to create a marker.",
-	"Cancel" : "Cancel"
+	"Cancel" : "Cancel",
+	"Add destination" : "Add destination",
+	"Via" : "Via"
 });
 
 })(FacilMap, OpenLayers, FacilMap.$);

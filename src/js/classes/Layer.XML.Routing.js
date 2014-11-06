@@ -95,11 +95,11 @@ FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 						if(marker == t._viaMarkers[i])
 						{
 							via[i] = lonlat;
+							which = "via"+i;
 							break;
 						}
 					}
 					$.extend(newRouteOptions, { via : via });
-					which = "via";
 				}
 				t.setRoute(newRouteOptions);
 				t.events.triggerEvent("draggedRoute", { newRouteOptions : newRouteOptions, draggedPoint : which });
@@ -180,7 +180,7 @@ FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 						var newRouteOptions = $.extend({ }, t._currentRoute);
 						newRouteOptions.via.splice(i, 1);
 						t.setRoute(newRouteOptions);
-						t.events.triggerEvent("draggedRoute", { newRouteOptions : newRouteOptions });
+						t.events.triggerEvent("draggedRoute", { draggedPoint: "via"+i, newRouteOptions : newRouteOptions });
 						return false;
 					}
 				}

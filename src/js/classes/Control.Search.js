@@ -17,7 +17,7 @@
 	Obtain the source code from http://gitorious.org/facilmap.
 */
 
-(function(fm, ol, $){
+(function(fm, ol, $, undefined){
 
 FacilMap.Control.Search = ol.Class(ol.Control, {
 	name : ol.i18n("Search"), // For attribution popup
@@ -97,11 +97,31 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 			t.map.addLayer(t._layerRouting);
 			t._layerRouting.events.register("draggedRoute", this, function(e) {
 				if(e.draggedPoint == "from")
-					$(".from", t.div).val(t._stateObject.from = fm.Util.round(e.newRouteOptions.from.lat, 5)+","+fm.Util.round(e.newRouteOptions.from.lon, 5));
+					$(".from", t.div).val(t._stateObject.query[0] = fm.Util.round(e.newRouteOptions.from.lat, 5)+","+fm.Util.round(e.newRouteOptions.from.lon, 5));
 				else if(e.draggedPoint == "to")
-					$(".to", t.div).val(t._stateObject.to = fm.Util.round(e.newRouteOptions.to.lat, 5)+","+fm.Util.round(e.newRouteOptions.to.lon, 5));
-				else if(e.draggedPoint == "via")
-					t._stateObject.via = $.map(e.newRouteOptions.via, function(it){ return fm.Util.round(it.lat, 5)+","+fm.Util.round(it.lon, 5); });
+					$(".destinations input", t.div).last().val(t._stateObject.query[t._stateObject.query.length-1] = fm.Util.round(e.newRouteOptions.to.lat, 5)+","+fm.Util.round(e.newRouteOptions.to.lon, 5));
+				else {
+					var m = e.draggedPoint.match(/^via([0-9]+)$/);
+					if(m) {
+						var i = 1*m[1];
+						if(e.newRouteOptions.via.length < this._stateObject.query.length-2) {
+							// Point has been removed
+							$(".destinations input", this.div).eq(i).remove();
+							this._stateObject.query = this._stateObject.query.slice(0, i+1).concat(this._stateObject.query.slice(i+2));
+							this._changeNumberOfDestinationFields(+0, true);
+						} else {
+							if(e.newRouteOptions.via.length > this._stateObject.query.length-2) {
+								// Point has been added
+								$(".destinations input", this.div).eq(i).before('<input type="text"/>');
+								this._stateObject.query = this._stateObject.query.slice(0, i+1).concat([ null ], this._stateObject.query.slice(i+1));
+								this._changeNumberOfDestinationFields(+0, true);
+							}
+
+							$(".destinations input", this.div).eq(i).val(t._stateObject.query[i+1] = fm.Util.round(e.newRouteOptions.via[i].lat, 5)+","+fm.Util.round(e.newRouteOptions.via[i].lon, 5));
+						}
+					}
+				}
+
 				t.events.triggerEvent("stateObjectChanged");
 			});
 			t._layerRouting.events.register("allloadend", t._layerRouting, zoomFunc);
@@ -117,18 +137,20 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 				'<form>' +
 					'<input type="text" class="from" />' +
 					'<img src="'+fm.apiUrl+'/img/help.png" alt="?" class="help" />' +
-					'<input type="text" class="to" />' +
-					'<a href="#" class="directions"></a>' +
+					'<span class="destinations"><input type="text"/></span>' +
+					'<a href="javascript:" class="add-destination">'+ol.i18n("Add destination")+'</a>' +
+					'<a href="javascript:" class="directions"></a>' +
 					'<input type="submit" value="" class="submit" />' +
 					'<input type="button" value="'+ol.i18n("Clear")+'" class="clear" />' +
 					'<select class="type">' +
 						'<option value="'+FacilMap.Routing.Type.FASTEST+'">'+ol.i18n("Fastest")+'</option>' +
 						'<option value="'+FacilMap.Routing.Type.SHORTEST+'">'+ol.i18n("Shortest")+'</option>' +
-					'</select>' +
+										'</select>' +
 					'<select class="medium">' +
 						'<option value="'+FacilMap.Routing.Medium.CAR+'">'+ol.i18n("Car")+'</option>' +
 						'<option value="'+FacilMap.Routing.Medium.BICYCLE+'">'+ol.i18n("Bicycle")+'</option>' +
 						'<option value="'+FacilMap.Routing.Medium.FOOT+'">'+ol.i18n("Foot")+'</option>' +
+						'<option value="'+FacilMap.Routing.Medium.BIRD+'">'+ol.i18n("Bird")+'</option>' +
 					'</select>' +
 				'</form>'
 			).appendTo(ret);
@@ -136,33 +158,63 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 			/////////////////
 			// Event handlers
 
-			t._fromAutoSuggest = new FacilMap.AutoSuggest($(".from", ret)[0], this.makeSuggestions);
-			t._toAutoSuggest = new FacilMap.AutoSuggest($(".to", ret)[0], this.makeSuggestions);
+			// TODO
+			//t._fromAutoSuggest = new FacilMap.AutoSuggest($(".from", ret)[0], this.makeSuggestions);
+			//t._toAutoSuggest = new FacilMap.AutoSuggest($(".to", ret)[0], this.makeSuggestions);
 
 			var routingVisible = true;
-			$(".directions", ret).click(function(){
+			$(".directions", ret).click($.proxy(function(){
 				routingVisible = !routingVisible;
 				$(".from", ret).attr("placeholder", routingVisible ? ol.i18n("From") : "");
 				$(".directions", ret).html(ol.i18n(routingVisible ? "Hide directions" : "Get directions"));
-				$(".to,.type,.medium", ret).css("display", routingVisible ? "" : "none").attr("placeholder", routingVisible ? ol.i18n("To") : "");
+				$(".destinations,.type,.medium,.add-destination", ret).css("display", routingVisible ? "" : "none");
 				$(".submit", ret).val(ol.i18n(routingVisible ? "Get directions" : "Search"));
 				$(ret)[routingVisible ? "addClass" : "removeClass"]("routing");
 				$(".help", ret).css("display", routingVisible ? "none" : "");
 
-				$.each(routingVisible ? [ ".from", ".to", ".submit", ".clear", ".type", ".medium", ".directions" ] : [ ".from", ".search", ".clear", ".directions" ], function(i, it) {
-					$(it, ret).attr("tabindex", t.tabindex+i);
-				});
+				this._changeNumberOfDestinationFields(+0, true); // To update tabindex
 
 				return false;
-			}).click();
+			}, this)).click();
+
+			$(".add-destination", ret).click($.proxy(function() {
+				this._changeNumberOfDestinationFields(+1, true);
+			}, this));
+
+			this._changeNumberOfDestinationFields(1);
 
 			$(".help", ret).click(function(){ fm.Util.popup(ol.i18n("searchHelpText"), ol.i18n("Search help")); });
 
 			$("form", ret).submit(function(){ t.submit(true); return false; });
-			$(".clear", ret).click(function() { $(".from,.to", ret).val(""); t.submit(true); });
+			$(".clear", ret).click(function() { $(".from,.destinations input", ret).val("");t._changeNumberOfDestinationFields(1); t.submit(true); });
 		}
 
 		return ret;
+	},
+
+	_changeNumberOfDestinationFields : function(number, relative) {
+		var t = this;
+
+		var fields = $(".destinations input", this.div);
+		var diff = relative ? number : number-fields.size();
+		if(diff < 0)
+			fields.slice(diff).remove();
+		else {
+			var add = [ ];
+			for(var i=0; i<diff; i++)
+				add.push($('<input type="text"/>'));
+			$(".destinations", this.div).append(add);
+		}
+
+		fields = $(".destinations input", this.div);
+		fields.attr("placeholder", ol.i18n("Via")).last().attr("placeholder", ol.i18n("To"));
+		$(".destinations a", this.div).remove();
+		if(fields.size() > 1)
+			$('<a href="javascript:">×</a>').click(function(){ $(this).prev().add(this).remove(); t._changeNumberOfDestinationFields(+0, true); }).insertAfter(fields);
+
+		$("input:visible,select:visible", this.div).each(function(i) {
+			$(this).attr("tabindex", t.tabindex+i);
+		});
 	},
 
 	/**
@@ -212,74 +264,73 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 	/**
 	 * Calls the {@link #search} function with the values of the form fields.
 	 * @param zoom {Boolean} Zoom to results?
-	 * @param via {Array<OpenLayers.LonLat>} Possible via points for the route
 	 */
-	submit : function(zoom, via) {
+	submit : function(zoom) {
 		if(!$(this.div).hasClass("routing"))
 			this.search($(".from", this.div).val(), null, null, null, null, zoom);
-		else
-			this.search($(".from", this.div).val(), $(".to", this.div).val(), $(".type", this.div).val(), $(".medium", this.div).val(), via, zoom);
+		else {
+			var points = [ $(".from", this.div).val() ];
+			$(".destinations input", this.div).each(function() {
+				points.push($(this).val());
+			});
+			this.search(points, $(".type", this.div).val(), $(".medium", this.div).val(), zoom);
+		}
 	},
 
 	/**
 	 * Decides what kind of search to start (GPX file, routing, POI search, ...) depending on the
 	 * contents of the search fields
-	 * @param query1 {String} The content of the “from” field
-	 * @param query2 {String} The content of the “to” field
+	 * @param queries {String|Array} Either one string for a search or multiple search terms to form a route
 	 * @param type {FacilMap.Routing.Type}
 	 * @param medium {FacilMap.Routing.Medium}
-	 * @param via {Array<OpenLayers.LonLat>} Possible via points for the route
 	 * @param zoom {Boolean} Zoom to results?
 	 */
-	search : function(query1, query2, type, medium, via, zoom) {
+	search : function(queries, type, medium, zoom) {
 		this.clear();
 
-		query1 = (query1 || "").replace(/^\s+/, "").replace(/\s+$/, "");
-		query2 = (query2 || "").replace(/^\s+/, "").replace(/\s+$/, "");
+		if(queries == null)
+			queries = [ ];
+		else if(!$.isArray(queries))
+			queries = [ queries ];
 
-		if(query1)
-		{
-			if(query2)
+		for(var i=0; i<queries.length; i++)
+			queries[i] = (queries[i] || "").replace(/^\s+/, "").replace(/\s+$/, "");
+
+		if(queries.length >= 2) {
+			this._stateObject = {
+				query : queries,
+				type : type,
+				medium : medium
+			};
+			this.events.triggerEvent("stateObjectChanged");
+			this.showRoute(queries, type, medium, zoom);
+		} else if(queries.length == 1) {
+			this._stateObject = {
+				query : queries[0]
+			};
+			this.events.triggerEvent("stateObjectChanged");
+
+			var m = queries[0].match(/^(node|way|relation|trace)\s*#?\s*(\d+)$/i);
+			if(m)
 			{
-				this._stateObject = {
-					from : query1,
-					to : query2,
-					type : type,
-					medium : medium,
-					via : via ? $.map(via, function(it){ return fm.Util.round(it.lat, 5)+","+fm.Util.round(it.lon, 5); }) : null
-				};
-				this.events.triggerEvent("stateObjectChanged");
-				this.showRoute(query1, query2, type, medium, via, zoom);
+				switch(m[1].toLowerCase())
+				{
+					case "node": queries[0] = "https://www.openstreetmap.org/api/0.6/node/"+m[2]; break;
+					case "way": queries[0] = "https://www.openstreetmap.org/api/0.6/way/"+m[2]+"/full"; break;
+					case "relation": queries[0] = "https://www.openstreetmap.org/api/0.6/relation/"+m[2]+"/full"; break;
+					case "trace": queries[0] = "https://www.openstreetmap.org/trace/"+m[2]+"/data.xml"; break;
+				}
 			}
+
+			if(queries[0].match(/^(http|https|ftp):\/\//) && !this.nameFinder.isLonLatQuery(queries[0]))
+				this.showGPX(queries[0], zoom);
 			else
 			{
-				this._stateObject = {
-					query : query1
-				};
-				this.events.triggerEvent("stateObjectChanged");
-
-				var m = query1.match(/^(node|way|relation|trace)\s*#?\s*(\d+)$/i);
-				if(m)
-				{
-					switch(m[1].toLowerCase())
-					{
-						case "node": query1 = "https://www.openstreetmap.org/api/0.6/node/"+m[2]; break;
-						case "way": query1 = "https://www.openstreetmap.org/api/0.6/way/"+m[2]+"/full"; break;
-						case "relation": query1 = "https://www.openstreetmap.org/api/0.6/relation/"+m[2]+"/full"; break;
-						case "trace": query1 = "https://www.openstreetmap.org/trace/"+m[2]+"/data.xml"; break;
-					}
-				}
-
-				if(query1.match(/^(http|https|ftp):\/\//) && !this.nameFinder.isLonLatQuery(query1))
-					this.showGPX(query1, zoom);
+				var poi = this.getPOISearchTerm(queries[0]);
+				if(poi.poi != null)
+					this.showPOISearchResults(poi.poi, poi.place, zoom);
 				else
-				{
-					var poi = this.getPOISearchTerm(query1);
-					if(poi.poi != null)
-						this.showPOISearchResults(poi.poi, poi.place, zoom);
-					else
-						this.showSearchResults(poi.place, zoom);
-				}
+					this.showSearchResults(poi.place, zoom);
 			}
 		}
 	},
@@ -328,7 +379,7 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 				}
 			};
 
-			t._makeResultList(null, results, ol.i18n("Did you mean?"), showResult).appendTo(t.div);
+			//t._makeResultList(null, results, ol.i18n("Did you mean?"), showResult).appendTo(t.div);
 
 			if(results.length > 0)
 				showResult(results[0], !zoom, true);
@@ -344,39 +395,32 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 		t._layerXML.setUrl(url);
 	},
 
-	showRoute : function(query1, query2, type, medium, via, zoom) {
+	showRoute : function(queries, type, medium, zoom) {
 		var t = this;
 
-		t.nameFinder.findMultiple([ query1, query2 ], function(results) {
+		t.nameFinder.findMultiple(queries, function(results) {
 			t._layerRouting._fmZoom = zoom;
-			var options = { type : type, medium : medium, via : via };
+			var options = { type : type, medium : medium };
 
-			if(results[query1].length > 0 && results[query2].length > 0)
-			{
-				options.from = results[query1][0].lonlat;
-				options.to = results[query2][0].lonlat;
-				t._layerRouting.setRoute(options);
+			var errors = [ ];
+			var points = [ ];
+			$.each(queries, function(i,it) {
+				if(results[it].length == 0)
+					errors.push($('<p class="error"/>').text(ol.i18n("No results found for %s.").replace(/%s/, it)));
+				else
+					points.push(results[it][0].lonlat);
+			});
+
+			if(errors.length > 0) {
+				$('<div class="results"/>').append(errors).appendTo(this.div);
+				return;
 			}
-			if(results[query1].length == 0 || results[query2].length > 0)
-			{
-				t._makeResultList(query1, results[query1], ol.i18n("Did you mean?"), function(result) {
-					options.from = result.lonlat;
-					t._layerRouting._fmZoom = true;
-					t._layerRouting.setRoute(options);
-					$(".from", t.div).val(t._stateObject.from = result.name);
-					t.events.triggerEvent("stateObjectChanged");
-				}).appendTo(t.div);
-			}
-			if(results[query2].length == 0 || results[query1].length > 0)
-			{
-				t._makeResultList(query2, results[query2], ol.i18n("Did you mean?"), function(result) {
-					options.to = result.lonlat;
-					t._layerRouting._fmZoom = true;
-					t._layerRouting.setRoute(options);
-					$(".to", t.div).val(t._stateObject.to = result.name);
-					t.events.triggerEvent("stateObjectChanged");
-				}).appendTo(t.div);
-			}
+
+			options.from = points.shift();
+			options.to = points.pop();
+			options.via = points;
+
+			t._layerRouting.setRoute(options);
 		});
 	},
 
@@ -413,31 +457,34 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 	setStateObject : function(obj) {
 		this.clear();
 
-		$(".from", this.div).val(obj.from || obj.query || "");
-		$(".to", this.div).val(obj.to || "");
+		var query = [ ];
+		if(obj.query && typeof obj.query == "object") {
+			for(var i=0; obj.query[i] !== undefined; i++)
+				query.push(obj.query[i]);
+		}
+		else { // from, to and via are for backwards compatibility
+			query = [ obj.from || obj.query || "" ].concat(obj.via || [ ]);
+			if(obj.to)
+				query.push(obj.to);
+		}
+
+		this._changeNumberOfDestinationFields(Math.max(1, query.length-1));
+
+		$(".from", this.div).add($(".destinations input", this.div)).each(function(i) {
+			$(this).val(query[i] || "");
+		});
 		$(".medium", this.div).val(obj.medium || $(".medium option:first").val());
 		$(".type", this.div).val(obj.type || $(".type option:first").val());
 
 		// Prevent autosuggest from showing up on any key press
-		this._fromAutoSuggest._waitingValue = $(".from", this.div).val();
-		this._toAutoSuggest._waitingValue = $(".to", this.div).val();
+		// TODO
+		//this._fromAutoSuggest._waitingValue = $(".from", this.div).val();
+		//this._toAutoSuggest._waitingValue = $(".to", this.div).val();
 
-		if(!!obj.from != $(this.div).hasClass("routing"))
+		if((query.length >= 2) != $(this.div).hasClass("routing"))
 			$(".directions", this.div).click();
 
-		var via = null;
-		if(obj.via)
-		{
-			via = $.map(obj.via, function(it) {
-				var m;
-				if(m = it.match(/^(\d+(\.\d+)?)\s*,\s*(\d+(\.\d+)?)$/))
-					return new OpenLayers.LonLat(1*m[3], 1*m[1]);
-				else
-					return null;
-			});
-		}
-
-		this.submit(!!obj.zoom, via);
+		this.submit(!!obj.zoom);
 	},
 
 	CLASS_NAME : "FacilMap.Control.Search"

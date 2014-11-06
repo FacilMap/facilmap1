@@ -28,7 +28,7 @@
 	position:absolute;
 	top:15px;
 	left:55px;
-	padding:42px 5px 5px 5px;
+	padding:31px 5px 5px 5px;
 	color:#fff;
 	width:352px;
 }
@@ -48,13 +48,17 @@
 .olMap .fmControlSearch .help { position:absolute; top:8px; left:169px; width:16px; height:16px; cursor:pointer; }
 .olMap .fmControlSearch .submit { position:absolute; top:5px; left:191px; width:75px; }
 .olMap .fmControlSearch .clear { position:absolute; top:5px; left:272px; width:75px; }
-.olMap .fmControlSearch .directions { position:absolute; top:29px; left:7px; height:12px; }
+.olMap .fmControlSearch .directions { height:12px; }
 
-.olMap .fmControlSearch .to { position:absolute; top:31px; left:5px; width:180px; font-weight:bold; }
+.olMap .fmControlSearch .destinations { display:block; width:190px; }
+.olMap .fmControlSearch .destinations input { font-weight:bold; width:180px; margin:0 0 2px 0; }
+.olMap .fmControlSearch .destinations a { font-weight:bold; color:#00272a; display:inline-block; width:10px; margin-left:-10px; text-decoration:none; font-size:1.3em; }
 .olMap .fmControlSearch .type { position:absolute; top:31px; left:191px; width:100px; }
 .olMap .fmControlSearch .medium { position:absolute; top:31px; left:297px; width:100px; }
 
-.olMap .fmControlSearch.routing { padding-top:68px; width:402px; }
+.olMap .fmControlSearch .add-destination { padding-right:1ex; }
+
+.olMap .fmControlSearch.routing { padding-top:31px; width:402px; }
 .olMap .fmControlSearch.routing .from { padding-right:1px; width:180px; }
 .olMap .fmControlSearch.routing .submit { width:125px; }
 .olMap .fmControlSearch.routing .clear { left:322px; }
