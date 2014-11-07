@@ -264,7 +264,7 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 	 */
 	submit : function(zoom) {
 		if(!$(this.div).hasClass("routing"))
-			this.search($(".from", this.div).val(), null, null, null, null, zoom);
+			this.search($(".from", this.div).val(), null, null, zoom);
 		else {
 			var points = [ $(".from", this.div).val() ];
 			$(".destinations input", this.div).each(function() {
