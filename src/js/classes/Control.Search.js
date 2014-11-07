@@ -29,9 +29,6 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 	_layerRouting : null,
 	_layerXML : null,
 
-	_fromAutoSuggest : null,
-	_toAutoSuggest : null,
-
 	_stateObject : { },
 
 	/**
@@ -158,10 +155,6 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 			/////////////////
 			// Event handlers
 
-			// TODO
-			//t._fromAutoSuggest = new FacilMap.AutoSuggest($(".from", ret)[0], this.makeSuggestions);
-			//t._toAutoSuggest = new FacilMap.AutoSuggest($(".to", ret)[0], this.makeSuggestions);
-
 			var routingVisible = true;
 			$(".directions", ret).click($.proxy(function(){
 				routingVisible = !routingVisible;
@@ -214,6 +207,10 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 
 		$("input:visible,select:visible", this.div).each(function(i) {
 			$(this).attr("tabindex", t.tabindex+i);
+		});
+
+		$(".from,.destinations input:not(.fmAutoSuggest)", this.div).each(function() {
+			new FacilMap.AutoSuggest(this, t.makeSuggestions);
 		});
 	},
 
@@ -379,8 +376,6 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 				}
 			};
 
-			//t._makeResultList(null, results, ol.i18n("Did you mean?"), showResult).appendTo(t.div);
-
 			if(results.length > 0)
 				showResult(results[0], !zoom, true);
 		};
@@ -475,11 +470,6 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 		});
 		$(".medium", this.div).val(obj.medium || $(".medium option:first").val());
 		$(".type", this.div).val(obj.type || $(".type option:first").val());
-
-		// Prevent autosuggest from showing up on any key press
-		// TODO
-		//this._fromAutoSuggest._waitingValue = $(".from", this.div).val();
-		//this._toAutoSuggest._waitingValue = $(".to", this.div).val();
 
 		if((query.length >= 2) != $(this.div).hasClass("routing"))
 			$(".directions", this.div).click();

@@ -82,8 +82,6 @@ FacilMap.AutoSuggest = ol.Class({
 			if(!mouseover)
 				t._hideList();
 		});
-
-		t._waitingValue = t.input.val();
 	},
 
 	_keyDown : function(e) {
@@ -125,7 +123,6 @@ FacilMap.AutoSuggest = ol.Class({
 				if(selected.size() != 0)
 				{ // If item is selected, put value in input field
 					t.setValue(selected.data("fmAutoSuggest-suggestion"));
-					t._waitingValue = t.getValue();
 					t.input.focus();
 					t._hideList();
 					return false;
@@ -142,17 +139,16 @@ FacilMap.AutoSuggest = ol.Class({
 			}
 		}
 
+		var before = t.getValue();
 		setTimeout(function(){
-			var val = t.getValue();
-			if(val != t._waitingValue)
+			if(t.getValue() != before)
 			{
-				t._waitingValue = val;
 				if(t._timeout != null)
 				{
 					clearTimeout(t._timeout);
 					t._timeout = null;
 				}
-				t._timeout = setTimeout(function(){ t._timeout = null; t._open(val); }, t.typingTimeout);
+				t._timeout = setTimeout(function(){ t._timeout = null; t._open(t.getValue()); }, t.typingTimeout);
 			}
 		}, 0);
 		return true;
