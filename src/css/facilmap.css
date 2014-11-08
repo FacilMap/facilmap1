@@ -52,7 +52,7 @@
 
 .olMap .fmControlSearch .destinations { display:block; width:190px; }
 .olMap .fmControlSearch .destinations input { font-weight:bold; width:180px; margin:0 0 2px 0; }
-.olMap .fmControlSearch .destinations a { font-weight:bold; color:#00272a; display:inline-block; width:10px; margin-left:-10px; text-decoration:none; font-size:1.3em; }
+.olMap .fmControlSearch .destinations a { font-weight:bold; color:#00272a; display:inline-block; width:10px; margin-left:-10px; text-decoration:none; font-size:1.3em; position:relative; /* Chromium needs this for some reason */ }
 .olMap .fmControlSearch .type { position:absolute; top:31px; left:191px; width:100px; }
 .olMap .fmControlSearch .medium { position:absolute; top:31px; left:297px; width:100px; }
 
