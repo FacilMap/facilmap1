@@ -33,7 +33,7 @@ FacilMap.Map = ol.Class(ol.Map, {
 	*/
 	permalinkProjection : new ol.Projection("EPSG:4326"),
 
-	attributionIcon : new ol.Icon(fm.apiUrl+"/img/logo_beta.png", new ol.Size(170, 129), new ol.Pixel(-25, -108)),
+	attributionIcon : null,
 
 	_currentExpectClick : null,
 
@@ -57,7 +57,8 @@ FacilMap.Map = ol.Class(ol.Map, {
 			numZoomLevels: 19,
 			units: 'm',
 			projection: new ol.Projection("EPSG:900913"),
-			displayProjection: new ol.Projection("EPSG:4326")
+			displayProjection: new ol.Projection("EPSG:4326"),
+			attributionIcon: new ol.Icon(fm.apiUrl+"/img/logo_beta.png", new ol.Size(170, 129), new ol.Pixel(-25, -108))
 		}, options) ]);
 
 		this.events.addEventType("mapResize");
@@ -71,6 +72,12 @@ FacilMap.Map = ol.Class(ol.Map, {
 		{
 			var div = this.attributionIcon.draw(new ol.Pixel(0, 0));
 			div.style.zIndex = 10000;
+
+			if(!options || !("attributionIcon" in options)) { // Avoid flowing over map div and creating a scroll bar
+				div.style.overflow = "hidden";
+				div.style.height = "108px";
+			}
+
 			this.div.appendChild(div);
 			var drawFunc = function() {
 				var left = 0;
