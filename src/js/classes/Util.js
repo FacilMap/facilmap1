@@ -685,11 +685,25 @@ FacilMap.Util = {
 	 * @param line {OpenLayers.Geometry.LineString}
 	 */
 	lonLatIndexOnLine : function(lonlat, line) {
-		var distanceSegment = new ol.Geometry.Point(lonlat.lon, lonlat.lat).distanceTo(line, { details: true });
-		var split = line.splitWithSegment(distanceSegment, { tolerance: 0.0000001 }); // Tolerance due to rounding errors? Like this it works...
-		if(!split) // This should not happen
-			return null;
-		return split.lines[0].components.length;
+		var point = new ol.Geometry.Point(lonlat.lon, lonlat.lat);
+		var minDistance = null;
+		var minIndex = null;
+
+		for(var i=0; i<line.components.length-1; i++) {
+			var distance = point.distanceTo(new ol.Geometry.LineString([ line.components[i], line.components[i+1] ]));
+			if(minDistance == null || distance < minDistance) {
+				minDistance = distance;
+				minIndex = i;
+
+				if(minDistance == 0)
+					break;
+			}
+		}
+
+		var distance1 = point.distanceTo(line.components[minIndex]);
+		var distance2 = point.distanceTo(line.components[minIndex+1]);
+
+		return minIndex + distance1 / (distance1+distance2);
 	}
 }
 
