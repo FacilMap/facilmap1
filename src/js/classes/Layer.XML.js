@@ -29,7 +29,7 @@
  * @event allloadend If an array of URL is passed, this is only called when the last URL is actually loaded.
 */
 
-FacilMap.Layer.XML = ol.Class(ol.Layer.Vector, {
+FacilMap.Layer.XML = ol.Class(fm.Layer.Vector, {
 	fmUrl : null,
 	relations : null,
 	colour : null,

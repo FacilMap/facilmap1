@@ -659,6 +659,37 @@ FacilMap.Util = {
 	round : function(number, digits) {
 		var f = Math.pow(10, digits);
 		return Math.round(number*f)/f;
+	},
+
+	/**
+	 * Converts an Icon into a Vector so that it can be added to a Vector layer.
+	 * @param lonlat {OpenLayers.LonLat}
+	 * @param icon {OpenLayers.Icon}
+	 * @returns {OpenLayers.Feature.Vector}
+	 */
+	createIconVector : function(lonlat, icon) {
+		var style = {
+			externalGraphic: icon.url,
+			graphicWidth: icon.size.w,
+			graphicHeight: icon.size.h,
+			graphicXOffset: icon.offset.x,
+			graphicYOffset: icon.offset.y
+		};
+		return new ol.Feature.Vector(new ol.Geometry.Point(lonlat.lon, lonlat.lat), null, style);
+	},
+
+	/**
+	 * Returns a number that, when compared with other numbers returned by this function, enables to find out the position of
+	 * a point on the given line.
+	 * @param lonlat {OpenLayers.LonLat}
+	 * @param line {OpenLayers.Geometry.LineString}
+	 */
+	lonLatIndexOnLine : function(lonlat, line) {
+		var distanceSegment = new ol.Geometry.Point(lonlat.lon, lonlat.lat).distanceTo(line, { details: true });
+		var split = line.splitWithSegment(distanceSegment, { tolerance: 0.0000001 }); // Tolerance due to rounding errors? Like this it works...
+		if(!split) // This should not happen
+			return null;
+		return split.lines[0].components.length;
 	}
 }
 

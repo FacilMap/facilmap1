@@ -62,11 +62,9 @@ FacilMap.Control.Search = ol.Class(ol.Control, {
 				$(ret).mouseover(function(){
 					navigationControl.deactivate();
 					t._layerRouting._dragFeature.deactivate();
-					t._layerRouting._featureHandler.deactivate();
 				}).mouseout(function() {
 					navigationControl.activate();
 					t._layerRouting._dragFeature.activate();
-					t._layerRouting._featureHandler.activate();
 				});
 			}
 

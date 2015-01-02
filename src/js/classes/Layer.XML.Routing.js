@@ -63,37 +63,23 @@ FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 
 		this.events.addEventType("draggedRoute");
 
-		// Feature for dragging from, to and via markers
-		this._dragFeature = new ol.Control.DragFeature(this, {
-			dragCallbacks : {
-				move : function(pixel) {
-					// this.feature is the marker
-					var newPx = new ol.Pixel(this.feature.icon.px.x + (pixel.x - this.lastPixel.x), this.feature.icon.px.y - (this.lastPixel.y - pixel.y));
-					this.lastPixel = pixel;
-					this.feature.draw(newPx);
-				}
-			},
-			onComplete : function(marker, pixel) {
-				var lonlat = this.map.getLonLatFromPixel(this.feature.icon.px).transform(this.map.getProjectionObject(), new ol.Projection("EPSG:4326"));
+		this._dragFeature = new fm.Control.LineDragFeature(this, this.viaIcon.clone(), {
+			onComplete : function(feature) {
+				var lonlat = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(this.map.getProjectionObject(), new ol.Projection("EPSG:4326"));
 				var newRouteOptions = $.extend({ }, t._currentRoute);
-				var which;
-				if(marker == t._fromMarker)
-				{
+				var which = null;
+				if(feature == t._fromMarker) {
 					$.extend(newRouteOptions, { from: lonlat });
 					which = "from";
 				}
-				else if(marker == t._toMarker)
-				{
+				else if(feature == t._toMarker) {
 					$.extend(newRouteOptions, { to : lonlat });
 					which = "to";
 				}
-				else
-				{
+				else {
 					var via = [ ].concat(t._currentRoute.via);
-					for(var i=0; i<t._viaMarkers.length; i++)
-					{
-						if(marker == t._viaMarkers[i])
-						{
+					for(var i=0; i<t._viaMarkers.length; i++) {
+						if(feature == t._viaMarkers[i]) {
 							via[i] = lonlat;
 							which = "via"+i;
 							break;
@@ -101,83 +87,41 @@ FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 					}
 					$.extend(newRouteOptions, { via : via });
 				}
-				t.setRoute(newRouteOptions);
-				this.outFeature(marker); // setRoute destroys the marker, DragFeature expects out
-				t.events.triggerEvent("draggedRoute", { newRouteOptions : newRouteOptions, draggedPoint : which });
-			}
-		});
 
-		// Dragging of route
-		this._featureHandler = ol.Util.extend(new ol.Handler({ map : null }), {
-			lastPoint : null,
-			lastXY : null,
-			mousemove : function(evt) {
-				var point = t.getPointFromMousePosition(evt.xy);
-				if(point != null && !t._dragFeature.handlers.drag.active)
-				{
-					if(t._temporaryViaMarker == null)
-					{
-						t._temporaryViaMarker = new ol.Marker(new ol.LonLat(0, 0), t.viaIcon.clone());
-						t._temporaryViaMarker.layer = t;
-						t.addMarker(t._temporaryViaMarker);
-						t.map.cursorRoutingBkp = (t.map.viewPortDiv.style.cursor || "");
-					}
-					t._temporaryViaMarker.lonlat = point.lonlat;
-					t.drawMarker(t._temporaryViaMarker);
-					this.lastPoint = point;
-					this.lastXY = evt.xy;
-					t.map.viewPortDiv.style.cursor = "pointer";
-				}
-				else if(t._temporaryViaMarker != null)
-				{
-					t.removeMarker(t._temporaryViaMarker);
-					t._temporaryViaMarker.destroy();
-					t._temporaryViaMarker = null;
-					this.lastPoint = null;
-					t.map.viewPortDiv.style.cursor = t.map.cursorRoutingBkp;
-				}
-			},
-			mousedown : function(evt) {
-				if(this.lastPoint != null)
-				{
-					t.map.viewPortDiv.style.cursor = t.map.cursorRoutingBkp;
+				if(which == null) {
+					if(feature.fmStartLonLat) { // New via marker
+						var index = fm.Util.lonLatIndexOnLine(feature.fmStartLonLat, feature.fmLine.geometry);
+						if(index != null) {
+							var newIndex = newRouteOptions.via.length;
+							for(var i=0; i<newIndex; i++) {
+								if(index < fm.Util.lonLatIndexOnLine(fm.Util.toMapProjection(newRouteOptions.via[i], this.map), feature.fmLine.geometry))
+									newIndex = i;
+							}
 
-					var newIndex = t._currentRoute.via.length;
-					while(newIndex > 0)
-					{
-						var thisPoint = t.getPointFromLonLat(fm.Util.toMapProjection(t._currentRoute.via[newIndex-1], t.map));
-						if(thisPoint == null || thisPoint.index > this.lastPoint.index)
-						{
-							t._currentRoute.via[newIndex] = t._currentRoute.via[newIndex-1];
-							t._viaMarkers[newIndex] = t._viaMarkers[newIndex-1];
-							newIndex--;
+							which = "via"+newIndex;
+							newRouteOptions.via = t._currentRoute.via.slice(0, newIndex).concat([ lonlat ], t._currentRoute.via.slice(newIndex));
 						}
 						else
-							break;
+							console.warn("Index = null", feature.fmStartLonLat);
+
+						t.removeFeatures([ feature ]);
+						feature.destroy();
 					}
-					t._temporaryViaMarker.draw(new ol.Pixel(this.lastXY.x, this.lastXY.y+2));
-					t._currentRoute.via[newIndex] = this.lastPoint.lonlat;
-					t._viaMarkers[newIndex] = t._temporaryViaMarker;
-					t._temporaryViaMarker = null;
-					this.lastPoint = null;
+				}
 
-					t._dragFeature.handlers.feature.mousemove({ type : "mousemove", target : t._viaMarkers[newIndex].icon.imageDiv.firstChild });
-					t._dragFeature.handlers.drag.mousedown(evt);
-
-					ol.Event.stop(evt);
-					return false;
+				if(which != null) {
+					t.setRoute(newRouteOptions);
+					this.outFeature(feature); // setRoute destroys the marker, DragFeature expects out
+					t.events.triggerEvent("draggedRoute", { newRouteOptions : newRouteOptions, draggedPoint : which });
 				}
 			},
-			dblclick : function(evt) {
-				var feature = t.getFeatureFromEvent(evt);
-				if(feature == null)
-					return true;
+			onDblClick : function(feature) {
+				for(var i=0; i<t._viaMarkers.length; i++) {
+					if(t._viaMarkers[i] === feature) {
+						this._simulateOverFeature(null);
+						t.removeFeatures([ t._viaMarkers[i] ]);
+						t._viaMarkers[i].destroy();
 
-				for(var i=0; i<t._viaMarkers.length; i++)
-				{
-					if(t._viaMarkers[i] == feature)
-					{
-						t.removeMarker(t._viaMarkers[i]);
 						var newRouteOptions = $.extend({ }, t._currentRoute);
 						newRouteOptions.via.splice(i, 1);
 						t.setRoute(newRouteOptions);
@@ -185,8 +129,6 @@ FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 						return false;
 					}
 				}
-
-				return true;
 			}
 		});
 	},
@@ -196,76 +138,6 @@ FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 
 		map.addControl(this._dragFeature);
 		this._dragFeature.activate();
-
-		this._featureHandler.setMap(map);
-		this._featureHandler.activate();
-	},
-
-	getFeatureFromEvent : function(evt) {
-		// We don't want to drag the actual features, but the markers instead
-		var markers = [ this._fromMarker, this._toMarker ].concat(this._viaMarkers);
-		for(var i=0; i<markers.length; i++)
-		{
-			if(markers[i] != null && markers[i].icon && markers[i].icon.imageDiv && (evt.target || evt.srcElement) == markers[i].icon.imageDiv.firstChild)
-				return markers[i];
-		}
-		return null;
-	},
-
-	getPointFromMousePosition : function(xy) {
-		if(this.map == null)
-			return null;
-		var lonlat = this.map.getLonLatFromPixel(xy);
-		return this.getPointFromLonLat(lonlat);
-	},
-
-	getPointFromLonLat : function(lonlat) {
-		if(!this.features)
-			return null;
-		var smallestDistance = null;
-		var smallestDistancePoint = null;
-		var index = 0; // Index is used to find out the position of the point in the ordered list of points
-		var maxDistance = this.HOVER_MAX_DISTANCE * this.map.getResolution();
-
-		for(var j=0; j<this.features.length; j++)
-		{
-			if(!this.features[j] || !this.features[j].geometry || !this.features[j].geometry.components)
-				continue;
-
-			var points = this.features[j].geometry.components;
-			var p1,p2,d,u,px;
-			for(var i=0; i<points.length-1; i++,index++)
-			{
-				p1 = points[i];
-				p2 = points[i+1];
-				d = { x : p2.x-p1.x, y : p2.y-p1.y };
-				if(d.x == 0 && d.y == 0)
-					continue;
-				u = ((lonlat.lon-p1.x)*d.x + (lonlat.lat-p1.y)*d.y) / (d.x*d.x + d.y*d.y); // See http://local.wasp.uwa.edu.au/~pbourke/geometry/pointline/
-				if(u < 0 || u > 1)
-					continue;
-
-				px = { x : p1.x+u*d.x, y : p1.y+u*d.y };
-
-				var distanceX = Math.abs(px.x-lonlat.lon);
-				var distanceY = Math.abs(px.y-lonlat.lat);
-				if(distanceX > maxDistance || distanceY > maxDistance)
-					continue;
-				var distance = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
-				if(distance > maxDistance)
-					continue;
-				if(smallestDistance == null || distance < smallestDistance)
-				{
-					smallestDistancePoint = [ index+u, px ];
-					smallestDistance = distance;
-				}
-			}
-		}
-
-		if(smallestDistancePoint != null)
-			return { index : smallestDistancePoint[0], lonlat : new ol.LonLat(smallestDistancePoint[1].x, smallestDistancePoint[1].y) };
-		else
-			return null;
 	},
 
 	setRoute : function(options) {
@@ -273,19 +145,19 @@ FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 
 		if(this._fromMarker != null)
 		{
-			this.removeMarker(this._fromMarker);
+			this.removeFeatures([ this._fromMarker ]);
 			this._fromMarker = null;
 		}
 
 		if(this._toMarker != null)
 		{
-			this.removeMarker(this._toMarker);
+			this.removeFeatures([ this._toMarker ]);
 			this._toMarker = null;
 		}
 
 		for(var i=0; i<this._viaMarkers.length; i++)
 		{
-			this.removeMarker(this._viaMarkers[i]);
+			this.removeFeatures([ this._viaMarkers[i] ]);
 			this._viaMarkers[i].destroy();
 		}
 		this._viaMarkers = [ ];
@@ -297,25 +169,22 @@ FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 			this.provider.getRoute(options, $.proxy(function(route) {
 				if(route.from != null)
 				{
-					this._fromMarker = new ol.Marker(route.from.clone().transform(new ol.Projection("EPSG:4326"), this.map.getProjectionObject()), this.fromIcon.clone())
-					this._fromMarker.layer = this; // Required for the drag control
-					this.addMarker(this._fromMarker);
+					this._fromMarker = fm.Util.createIconVector(route.from.clone().transform(new ol.Projection("EPSG:4326"), this.map.getProjectionObject()), this.fromIcon);
+					this.addFeatures([ this._fromMarker ]);
 				}
 
 				if(route.to != null)
 				{
-					this._toMarker = new ol.Marker(route.to.clone().transform(new ol.Projection("EPSG:4326"), this.map.getProjectionObject()), this.toIcon.clone())
-					this._toMarker.layer = this; // Required for the drag control
-					this.addMarker(this._toMarker);
+					this._toMarker = fm.Util.createIconVector(route.to.clone().transform(new ol.Projection("EPSG:4326"), this.map.getProjectionObject()), this.toIcon);
+					this.addFeatures([ this._toMarker ]);
 				}
 
 				if(route.via)
 				{
 					for(var i=0; i<route.via.length; i++)
 					{
-						this._viaMarkers[i] = new ol.Marker(fm.Util.toMapProjection(route.via[i], this.map), this.viaIcon.clone())
-						this._viaMarkers[i].layer = this; // Required for the drag control
-						this.addMarker(this._viaMarkers[i]);
+						this._viaMarkers[i] = fm.Util.createIconVector(fm.Util.toMapProjection(route.via[i], this.map), this.viaIcon);
+						this.addFeatures([ this._viaMarkers[i] ]);
 					}
 				}
 
@@ -387,9 +256,6 @@ FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 				marker.icon.moveTo(px);
 		}
 	},
-	addMarker : ol.Layer.Markers.prototype.addMarker,
-	removeMarker : ol.Layer.Markers.prototype.removeMarker,
-	clearMarkers : ol.Layer.Markers.prototype.clearMarkers,
 	moveTo : function(bounds, zoomChanged, dragging) {
 		fm.Layer.XML.prototype.moveTo.apply(this, arguments);
 		if(zoomChanged || !this.markersDrawn || !dragging)
