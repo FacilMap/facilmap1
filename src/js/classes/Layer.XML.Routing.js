@@ -63,7 +63,7 @@ FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 
 		this.events.addEventType("draggedRoute");
 
-		this._dragFeature = new fm.Control.LineDragFeature(this, this.viaIcon.clone(), {
+		this._dragFeature = new fm.Control.DragLine(this, this.viaIcon.clone(), {
 			onComplete : function(feature) {
 				var lonlat = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(this.map.getProjectionObject(), new ol.Projection("EPSG:4326"));
 				var newRouteOptions = $.extend({ }, t._currentRoute);

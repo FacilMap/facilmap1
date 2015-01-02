@@ -24,7 +24,7 @@
  * example).
  */
 
-fm.Control.LineDragFeature = ol.Class(ol.Control.DragFeature, {
+fm.Control.DragLine = ol.Class(ol.Control.DragFeature, {
 	/**
 	 * The temporary icon to show along the line.
 	 * @type {OpenLayers.Marker}
@@ -133,7 +133,9 @@ fm.Control.LineDragFeature = ol.Class(ol.Control.DragFeature, {
 
 	isLine : function(feature) {
 		return feature.geometry != null && feature.geometry.components != null;
-	}
+	},
+
+	CLASS_NAME: "FacilMap.Control.DragLine"
 });
 
 
