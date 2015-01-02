@@ -59,7 +59,7 @@ fm.Control.DragLine = ol.Class(ol.Control.DragFeature, {
 	overFeature : function(feature) {
 		ol.Control.DragFeature.prototype.overFeature.apply(this, arguments);
 
-		if(this.isLine(feature)) {
+		if(!this.handlers.drag.dragging && this.isLine(feature)) {
 			feature.fmDragFeature = fm.Util.createIconVector(this.layer._lastFeature.lonlat, this.dragIcon);
 			feature.fmDragFeature._fmExcludeFromHandler = true; // FacilMap.Layer.Vector.getFeatureFromEvent() will ignore it
 			this.layer.addFeatures([ feature.fmDragFeature ]);
@@ -79,7 +79,7 @@ fm.Control.DragLine = ol.Class(ol.Control.DragFeature, {
 	},
 
 	outFeature : function(feature) {
-		if(feature.fmDragFeature) {
+		if(!this.handlers.drag.dragging && feature.fmDragFeature) {
 			this.layer.removeFeatures([ feature.fmDragFeature ]);
 			feature.fmDragFeature.destroy();
 			delete feature.fmDragFeature;
@@ -97,7 +97,7 @@ fm.Control.DragLine = ol.Class(ol.Control.DragFeature, {
 			dragFeature.fmStartLonLat = new OpenLayers.LonLat(dragFeature.geometry.x, dragFeature.geometry.y);
 			dragFeature.fmLine = this.feature;
 
-			this._simulateOverFeature(dragFeature);
+			this._simulateOverFeature(dragFeature, true);
 
 			var lonlat = this.map.getLonLatFromPixel(pixel);
 			this.feature.geometry.x = lonlat.lon;
@@ -108,22 +108,28 @@ fm.Control.DragLine = ol.Class(ol.Control.DragFeature, {
 		ol.Control.DragFeature.prototype.downFeature.apply(this, arguments);
 	},
 
-	_simulateOverFeature : function(feature) {
-		this.handlers.feature.feature = feature;
-
+	_simulateOverFeature : function(feature, preserveDragging) {
 		var dragActive = this.handlers.drag.active;
 
+		this.handlers.feature.feature = feature;
+
 		if(this.feature) {
-			this.handlers.drag.active = false; // Trick dragHandler so that it is not deactivated by outFeature()
+			if(preserveDragging)
+				this.handlers.drag.active = false; // Trick dragHandler so that it is not deactivated by outFeature()
+
 			this.outFeature(this.feature);
 		}
 
 		if(feature) {
-			this.handlers.drag.active = true;
+			if(preserveDragging)
+				this.handlers.drag.active = true;
+
 			this.overFeature(feature);
 		}
 
-		this.handlers.drag.active = dragActive;
+		if(preserveDragging)
+			this.handlers.drag.active = dragActive;
+
 		this.handlers.feature.lastFeature = feature;
 	},
 
