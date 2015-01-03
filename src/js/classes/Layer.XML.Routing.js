@@ -111,7 +111,7 @@ FacilMap.Layer.XML.Routing = ol.Class(fm.Layer.XML, {
 
 				if(which != null) {
 					t.setRoute(newRouteOptions);
-					this.outFeature(feature); // setRoute destroys the marker, DragFeature expects out
+					this._simulateOverFeature(null); // setRoute destroys the marker, DragFeature expects out
 					t.events.triggerEvent("draggedRoute", { newRouteOptions : newRouteOptions, draggedPoint : which });
 				}
 			},
