@@ -242,7 +242,7 @@ FacilMap.NameFinder.Nominatim = ol.Class(fm.NameFinder, {
 							results.push({
 								id : place.attr("place_id"),
 								lonlat : new ol.LonLat(place.attr("lon"), place.attr("lat")),
-								info : place.attr("class"),
+								info : place.attr("type"),
 								icon : place.attr("icon"),
 								name : t.makeDisplayName(place),
 								getZoom : function(map) {
