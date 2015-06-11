@@ -342,23 +342,36 @@ FacilMap.Util = {
 			var olClass = (olObject.prototype != undefined ? olObject.prototype : olObject);
 			if(olClass.CLASS_NAME != undefined)
 				array[olClass.CLASS_NAME.replace("OpenLayers.", "ol").replace("FacilMap.", "fm").replace(/\./g, "")] = true;
+
+
 			if(olClass.fmParentClasses != undefined)
 			{
 				for(var i=0; i<olClass.fmParentClasses.length; i++)
 					fm.Util.makeClassName(olClass.fmParentClasses[i], array);
 			}
+
+			if(Object.getPrototypeOf && Object.getPrototypeOf(olObject) !== Object) {
+				fm.Util.makeClassName(Object.getPrototypeOf(olObject), array);
+			}
 		}
 
 		if(arguments[1] == undefined)
 		{
-			var ret = "";
+			var ret = [ ];
+			var firstOl = null;
 			for(var it in array)
 			{
-				if(ret != "")
-					ret += " ";
-				ret += it;
+				if(firstOl == null && it.substring(0, 2) == "ol") {
+					// Some OpenLayers classes append something to the class name. For compatibility with this, we put the original
+					// OpenLayers class name at the end
+					firstOl = it;
+				} else {
+					ret.push(it);
+				}
 			}
-			return ret;
+			if(firstOl != null)
+				ret.push(firstOl);
+			return ret.join(" ");
 		}
 	},
 

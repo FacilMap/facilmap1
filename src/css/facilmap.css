@@ -241,3 +241,11 @@ ol.fmAutoSuggest li.selected,ol.fmAutoSuggest li:hover {
 }
 
 /* === */
+
+/* === Print styles === */
+
+@media print {
+	.olControl:not(.olControlScaleLine):not(.olControlScaleLineTop):not(.olControlScaleLineBottom) {
+		display: none;
+	}
+}

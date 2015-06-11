@@ -20,6 +20,13 @@
 (function(fm, ol, $){
 
 // Save parent classes in class objects, needed for FacilMap.Util.makeClassName()
+
+// Because of the way OpenLayers.Class works, we cannot use Object.constructor to
+// get the class hierarchy, as it is always pointing to Object (because the prototype
+// property is not extended but overridden with an Object, so it overrides the constructor
+// property). The alternative would be to use __proto__ or Object.getPrototypeOf(),
+// but those are not supported in old browsers)
+
 fm.olBackup.Class = ol.Class;
 ol.Class = function() {
 	var ret = fm.olBackup.Class.apply(this, arguments);
