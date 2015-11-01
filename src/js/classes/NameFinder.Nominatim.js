@@ -24,9 +24,9 @@
 */
 
 FacilMap.NameFinder.Nominatim = ol.Class(fm.NameFinder, {
-	nameFinderURL : "https://open.mapquestapi.com/nominatim/v1/search",
+	nameFinderURL : "https://nominatim.openstreetmap.org/search",
 	limit : 25,
-	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"https://open.mapquest.co.uk/\">MapQuest Open</a>" }),
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"https://nominatim.openstreetmap.org/search\">OpenStreetMap Nominatim</a>" }),
 
 	stateAbbr : {
 		"us" : {
