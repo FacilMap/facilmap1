@@ -37,7 +37,7 @@ FacilMap.Control.ToolsMenu.Default = ol.Class(fm.Control.ToolsMenu, {
 		var otherMaps = this.addSubMenu(ol.i18n("Other maps"));
 		this._mapMoveHandlers.push($.proxy(function() { otherMaps.empty(); this._addOtherMapsLinks(otherMaps); }, this));
 
-		this._layerMarkers = new fm.Layer.Markers.LonLat(ol.i18n("Markers"), { shortName : "m", saveInPermalink : true });
+		this._layerMarkers = new fm.Layer.Markers.LonLat(ol.i18n("Markers"), { permalinkName : "m", saveInPermalink : true });
 		this.addItem(ol.i18n("Add marker"), $.proxy(function() {
 			this.map.expectClick($.proxy(function(pos) {
 				this._layerMarkers.addLonLatMarker(pos);
