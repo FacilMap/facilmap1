@@ -412,6 +412,8 @@ FacilMap.Map = ol.Class(ol.Map, {
 	},
 
 	expectClick : function(handler, helpText) {
+		var map = this;
+		
 		if(this._currentExpectClick)
 			this._currentExpectClick.cancel();
 
