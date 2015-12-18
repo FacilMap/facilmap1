@@ -25,7 +25,7 @@
 
 FacilMap.Layer.OSM.MapSurfer.Road = ol.Class(fm.Layer.OSM.MapSurfer, {
 	initialize : function(name, options) {
-		fm.Layer.OSM.MapSurfer.prototype.initialize.apply(this, [ name, "http://openmapsurfer.uni-hd.de/tiles/roads/x=${x}&y=${y}&z=${z}", options ]);
+		fm.Layer.OSM.MapSurfer.prototype.initialize.apply(this, [ name, "http://korona.geog.uni-heidelberg.de/tiles/roads/x=${x}&y=${y}&z=${z}", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.OSM.MapSurfer.Road"
 });

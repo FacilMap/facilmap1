@@ -23,7 +23,7 @@
  * Parent class for MapSurfer (http://www.mapsurfer.net/) renderings.
 */
 FacilMap.Layer.OSM.MapSurfer = ol.Class(fm.Layer.OSM, {
-	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://www.openmapsurfer.uni-hd.de/\">OpenMapSurfer</a>" }),
+	attribution : ol.String.format(ol.i18n("attribution-osm"), { rendering: "<a href=\"http://korona.geog.uni-heidelberg.de/contact.html\">GIScience Research Group @ Heidelberg University</a>" }),
 	CLASS_NAME : "FacilMap.Layer.OSM.MapSurfer"
 });
 
