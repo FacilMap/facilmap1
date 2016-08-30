@@ -42,7 +42,6 @@ ol.Lang.nl = ol.Util.extend(ol.Lang.nl, {
 	"Mapnik" : "Mapnik",
 	"MapSurfer Road" : "MapSurfer Road",
 	"MapSurfer Topographic" : "MapSurfer Topographic",
-	"OpenStreetBrowser" : "OpenStreetBrowser",
 	"OpenCycleMap" : "OpenCycleMap",
 	"Reit- und Wanderkarte" : "Fiets- en wandelkaart",
 	"Hike & Bike Map" : "Hike & Bike Map",
