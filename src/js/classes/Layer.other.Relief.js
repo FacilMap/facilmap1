@@ -26,7 +26,7 @@ FacilMap.Layer.other.Relief = ol.Class(fm.Layer.OSM, {
 	isBaseLayer : false,
 	attribution : ol.i18n("attribution-relief"),
 	initialize: function(name, options) {
-		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "https://toolserver.org/~cmarqu/hill/${z}/${x}/${y}.png", options ]);
+		fm.Layer.OSM.prototype.initialize.apply(this, [ name, "http://c.tiles.wmflabs.org/hillshading/${z}/${x}/${y}.png", options ]);
 	},
 	CLASS_NAME : "FacilMap.Layer.other.Relief"
 });
